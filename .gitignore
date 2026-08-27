@@ -30,3 +30,7 @@ dist-ssr
 HYDRA-UMC-DASHBOARD-AI.zip
 # HYDRA-UMC shared secret protection
 !.env.example
+
+# Python bytecode (generated locally; never source)
+__pycache__/
+*.py[cod]
