@@ -22,6 +22,10 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.0.4]
+
+- Build version synchronized across `hydra-umc.project.json`, `package.json` and the native package lock.
+
 ## [0.0.2] - Real Trend Summary and Anomaly Check panels
 
 - **`src/api/datalakeClient.ts`** - real HTTP client (browser `fetch`, no new dependency) for a real, running HYDRA-UMC-DATALAKE instance's `GET /query`. Throws `DatalakeApiError` on any real failure (network, non-2xx, malformed JSON) rather than returning a silently-empty array.
