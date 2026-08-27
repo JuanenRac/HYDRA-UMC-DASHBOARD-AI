@@ -4,8 +4,8 @@
 // GPL-3.0 - see LICENSE
 // =============================================================================
 // Identical script to sibling repo HYDRA-UMC-STUDIO's own
-// scripts/bump-version.mjs (same stack, same "cuentakilometros" convention -
-// see SONNET/5.PLAN_EJECUCION_32_PROYECTOS_NUEVOS.txt) - copied rather than
+// scripts/bump-version.mjs (same stack and versioning convention as sibling
+// projects) - copied rather than
 // reinvented. Runs as the first step of `npm run build` so every real
 // production build bumps package.json's own "version" field automatically.
 //

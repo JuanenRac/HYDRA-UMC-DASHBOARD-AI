@@ -4,7 +4,7 @@
 // GPL-3.0 - see LICENSE
 // =============================================================================
 // Same base config as sibling repo HYDRA-UMC-STUDIO's own vite.config.ts
-// (same stack, React/Vite - see SONNET/5.PLAN_EJECUCION_32_PROYECTOS_NUEVOS.txt),
+// (same React/Vite stack),
 // plus a `test` block for the real Vitest suite under tests/ (see
 // src/api/*.ts's own real HTTP clients and src/lib/summary.ts for what
 // it covers). Real backend calls go straight to HYDRA-UMC-DATALAKE /

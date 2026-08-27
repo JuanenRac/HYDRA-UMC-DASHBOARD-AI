@@ -52,5 +52,4 @@ when a change is actually worth summarizing for a human.
 - The real analytics features described in the README (Smart Summaries,
   Trend Prediction, Anomaly Highlighting, Optimization Tips) are the next
   milestone - they need HYDRA-UMC-DATALAKE and HYDRA-UMC-ANOMALY-DETECTOR
-  to exist and expose real data first. Tracked in
-  `SONNET/HYDRA-UMC-DASHBOARD-AI/mejoras_futuras.txt`.
+  to exist and expose real data first. This is tracked in the project roadmap.
