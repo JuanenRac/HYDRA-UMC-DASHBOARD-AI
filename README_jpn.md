@@ -1,0 +1,226 @@
+<p align="center">
+  <img src="images/HYDRA_UMC_BANNER.svg" alt="HYDRA-UMC-DASHBOARD-AI banner" width="100%">
+</p>
+
+# 🧠 HYDRA-UMC-DASHBOARD-AI
+
+<p align="center"><a href="README.md">🇺🇸 English</a> | <a href="README_spa.md">🇪🇸 Español</a> | <a href="README_fra.md">🇫🇷 Français</a> | <a href="README_ita.md">🇮🇹 Italiano</a> | <a href="README_deu.md">🇩🇪 Deutsch</a> | <a href="README_zho.md">🇨🇳 简体中文</a> | 🇯🇵 <b>日本語</b></p>
+
+### 📈 STUDIO Web ダッシュボード向けの AI 駆動分析拡張機能
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Licencia-GPL%203.0-blue.svg" alt="GPL 3.0">
+  <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="React/Vite/TS">
+  <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Insights">
+</p>
+
+---
+
+## 1. 🛠️ 技術概要
+
+**HYDRA-UMC-DASHBOARD-AI** は、STUDIO Web インターフェースの分析用
+プラグインです。リアルタイムの AI インサイト、予測的トレンド分析、
+自動化された異常ハイライトにより、標準のダッシュボードを強化します。
+
+生のテレメトリデータを実用的なインテリジェンスへと変換し、工場オペレー
+ターにスウォームのパフォーマンス、エネルギー消費パターンの「スマート
+サマリー」、そして予測保守アラートをブラウザ内で直接提供します。新しい
+技術スタックを導入するのではなく、HYDRA-UMC-STUDIO 自身の技術スタック
+（React 19 + Vite + TypeScript）を再利用しているため、将来的には
+STUDIO 自体の内部にパネルとして組み込むことが可能です。
+
+### 主な機能：
+* 🧠 **スマートサマリー（v0）** — HYDRA-UMC-DATALAKE の実際の履歴データから計算された、実際の最小値/最大値/平均値/最新値/傾向の統計。*（実際の統計値として実装済み、AI 生成のサマリーはまだ——下記の「ビルドと実行」を参照）*
+* 📈 **トレンド予測** — v0 の実際だが単純な方向インジケーターを超える、実際の予測モデル。*（計画中）*
+* 🚨 **異常ハイライト（v0）：** 最新の実際のサンプルを、HYDRA-UMC-ANOMALY-DETECTOR の実際に適合済みのベースラインと照合します。*（実際のテキストパネルとして実装済み。STUDIO 自身の 3D ビューへの重ね合わせは計画中）*
+* 🛠️ **最適化のヒント：** サイクルタイムやモーター寿命を改善するパラメーター変更を提案します。*（計画中）*
+* ✅ **ツールチェーンの足場** — `tsc --noEmit` で問題なくビルドでき、Vite で提供される実際の React/Vite/TypeScript アプリ。*（実装済み——下記の「ビルドと実行」を参照）*
+
+---
+
+## 2. 🔄 Dashboard AI フロー
+
+```mermaid
+flowchart LR
+    STUDIO["HYDRA-UMC-STUDIO"] --> DASH_AI["DASHBOARD-AI (Plugin)"]
+    LAKE["HYDRA-UMC-DATALAKE"] --> ANALY["AI Analysis Engine"]
+    ANALY --> DASH_AI
+    DASH_AI --> INSIGHTS["Smart Widgets & Alerts"]
+    INSIGHTS --> OPERATOR["Web Browser View"]
+```
+
+---
+
+## 3. 🧱 アーキテクチャと設計上の決定
+
+* **他の AI 関連プロジェクトのような Python ではなく、Node/TS プロジェクトである理由。** これは独立した AI サービスではなく、HYDRA-UMC-STUDIO 自身の React/Vite フロントエンドの直接的な拡張です——STUDIO 自身の技術スタックに合わせる（HYDRA-UMC-COGNITIVE-NODE の Python スタックではなく）ことが、後にユーザーが切り替える必要のある別アプリとしてではなく、実際の STUDIO パネルとしてマウントできることを可能にします。
+* **STUDIO の内部のフォルダではなく、STUDIO の兄弟プロジェクトである理由。** これを独自のリポジトリ/ビルドとして保つことで、AI ダッシュボード層が STUDIO 自身のロボット制御リリースのペースとは独立してバージョン管理・出荷できるようになります。これは、そもそも HYDRA-UMC-SERVER を STUDIO から分離した理由と同じです。
+* **エントリポイントが今日は身元/バージョン/役割のみを表示する理由。** 足場（アンダミアヘ、スキャフォールディング）段階にあります：本パッケージが問題なくビルドされることを証明することが、実際のダッシュボードパネルに先立ちます。
+* **エコシステムの他の部分との関係。** HYDRA-UMC-COGNITIVE-NODE に支えられ、HYDRA-UMC-STUDIO を AI 駆動のインサイトで拡張します——その認知層が実際に決定する内容の視覚的なインターフェースです。
+* **異常チェックパネルが、何かをスコアリングする前に `/stats` を確認する理由。** HYDRA-UMC-ANOMALY-DETECTOR 自身の検出器は、メモリ上で適合された単一の共有ベースラインです（そのプロジェクト自身の `api.py` を参照）——このダッシュボードは意図的にその適合処理を管理しません（読み取り志向のダッシュボードから共有の検出器状態を変更することは、本当に望ましくない結合になります）。実際の「まだ適合されていない」状態は、汎用的なエラーに丸め込まれることなく、まさにその状態として表示されます。
+* **トレンドサマリーが予測ではなく「方向」を報告する理由。** 実際の初期値から最新値への差分の符号（フラットな信号が「上昇」/「下降」の間でちらつかないよう、小さな相対ノイズ閾値付き）は、v0 が実際に計算している内容について正直です——実際の予測モデルは独立した、本物の将来の作業であり、「予測」を装った線形外挿でごまかすようなものではありません。
+
+---
+
+## 📂 リポジトリ構成
+
+純粋なソフトウェアの Web アプリ——独自のハードウェア/ファームウェア/OS
+を一切持たず、本プロジェクトのテンプレートに含まれたことはありません
+（エコシステム全体の省略ルールは
+`SONNET/5.PLAN_EJECUCION_32_PROYECTOS_NUEVOS.txt` を参照）。
+
+```text
+HYDRA-UMC-DASHBOARD-AI/
+├── src/
+│   ├── api/                 # 実際の HTTP クライアント：datalakeClient.ts、anomalyClient.ts
+│   ├── lib/
+│   │   └── summary.ts        # 実際のトレンドサマリー統計
+│   ├── components/
+│   │   ├── TrendSummaryPanel.tsx
+│   │   └── AnomalyCheckPanel.tsx
+│   ├── main.tsx              # アプリケーションエントリポイント
+│   ├── App.tsx                # ルートコンポーネント——両方の実際のパネルをマウント
+│   ├── index.css              # ベーススタイルシート
+│   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL の型定義
+├── tests/                   # 実際のテスト：HTTP ラウンドトリップ + コンポーネントテスト
+├── scripts/
+│   └── bump-version.mjs    # オドメーター式バージョンインクリメント（ビルドが実行）
+├── docs/                   # ドキュメントと統合ガイド
+├── build/                  # リリース成果物用に予約（dist/ 自体は gitignore 対象）
+├── images/                 # メディアと図表
+├── index.html              # Vite エントリ HTML
+├── vite.config.ts          # Vite バンドラー + Vitest 設定
+├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
+├── dev.sh / dev.bat        # 実際の開発サーバー：依存関係のインストール + vite
+├── build.sh / build.bat    # 実際のビルド：依存関係のインストール + 実際のテストスイート + バージョンインクリメント + tsc + vite build
+└── package.json
+```
+
+---
+
+## 4. ⚙️ ビルドと実行
+
+Node.js >= 20 が必要です。
+
+```bash
+# Linux/macOS
+./dev.sh      # 依存関係をインストールし、:5174 で Vite 開発サーバーを起動します
+./build.sh    # 依存関係をインストールし、実際のテストスイートを実行し、バージョンを増加させ、型チェックを行い、dist/ をビルドします
+
+# Windows
+dev.bat
+build.bat
+```
+
+`npm run build` は `node scripts/bump-version.mjs && tsc --noEmit &&
+vite build` を連鎖的に実行します——バージョンのインクリメントは、厳格な
+TypeScript チェックが既に通過した後にのみ発生するため、壊れたビルドが
+増加したバージョン番号を出荷することは決してありません。`npm run dev`
+はポート `5174` で Vite を起動します（HYDRA-UMC-STUDIO 自身の `5173`
+とは別のポートのため、両方を同時に並行して実行できます）。`npm test`
+は実際の Vitest スイートを直接実行します。
+
+デフォルトでは、2つの実際のパネルは `http://localhost:8095`
+（HYDRA-UMC-DATALAKE）と `http://localhost:8097`
+（HYDRA-UMC-ANOMALY-DETECTOR）を指しています——`VITE_DATALAKE_URL`/
+`VITE_ANOMALY_URL`（`vite build`/`vite dev` の前に設定、Vite がビルド時
+にインライン化します）で上書きして、別のデプロイ先を指すことができます。
+
+---
+
+## 🔗 関連プロジェクト
+
+本プロジェクトは、同一著者（JuanenRac / Electro Hobby 3D）による、
+ファームウェア、制御ソフトウェア、AI ノード、フリート管理ツールにまたがる、
+より大きなロボティクスエコシステムの一部です。ご要望が実際にはこれらの
+プロジェクトのいずれかに関するものであり、本リポジトリのものではない
+可能性もあるため、知っておく価値があります。
+
+### 直接関連
+
+- **[HYDRA-UMC-STUDIO](https://github.com/JuanenRac/HYDRA-UMC-STUDIO)** —— 本プロジェクトが直接拡張するダッシュボード。
+- **[HYDRA-UMC-COGNITIVE-NODE](https://github.com/JuanenRac/HYDRA-UMC-COGNITIVE-NODE)** —— 本ダッシュボードにデータを供給する AI バックエンド。
+
+### エコシステムのその他のプロジェクト
+
+**HYDRA-UMC プラットフォーム** — マルチロボット・マイクロファクトリーセル
+- **[HYDRA-UMC](https://github.com/JuanenRac/HYDRA-UMC)** — 最大 8 台のロボットアームを統括する CM5 + STM32H745 マザーボード。
+- **[HYDRA-UMC-SERVER](https://github.com/JuanenRac/HYDRA-UMC-SERVER)** — すべての制御クライアントが接続する Express/WebSocket バックエンド。
+- **[HYDRA-UMC-STUDIO](https://github.com/JuanenRac/HYDRA-UMC-STUDIO)** — Web ベースの制御ダッシュボード、マルチロボット 3D 可視化。
+- **[HYDRA-UMC-ANDROID-CONTROL](https://github.com/JuanenRac/HYDRA-UMC-ANDROID-CONTROL)** — Wi-Fi/Bluetooth 経由の Android 制御アプリ。
+- **[HYDRA-UMC-IOS-CONTROL](https://github.com/JuanenRac/HYDRA-UMC-IOS-CONTROL)** — Flutter で構築された iOS/iPadOS 制御アプリ。
+- **[HYDRA-UMC-SUITE](https://github.com/JuanenRac/HYDRA-UMC-SUITE)** — デスクトップ版群制御コマンドセンター（Python/PySide6）。
+- **[HYDRA-UMC-EDITOR-URDF](https://github.com/JuanenRac/HYDRA-UMC-EDITOR-URDF)** — ロボットカタログ向けのデスクトップ版 URDF モデルエディター。
+- **[HYDRA-UMC-DSI](https://github.com/JuanenRac/HYDRA-UMC-DSI)** — 機載 DSI タッチスクリーン用のネイティブタッチ UI。
+
+**URTC プラットフォーム** — すべての HYDRA-UMC ロボットアームが搭載するツールヘッドコントローラー
+- **[URTC](https://github.com/JuanenRac/URTC)** — CAN バスツールヘッドコントローラー、25 種類のツールプロファイル。
+- **[URTC-FLASHER](https://github.com/JuanenRac/URTC-FLASHER)** — デスクトップ版 CAN-OTA + SWD/JTAG フラッシュツール。
+- **[URTC-TESTER](https://github.com/JuanenRac/URTC-TESTER)** — デスクトップ版ライブ CAN バス診断ツール。
+- **[URTC-WEB-STUDIO](https://github.com/JuanenRac/URTC-WEB-STUDIO)** — Web Serial API によるブラウザベースの代替版。
+
+**🎥 ビジョン AI ノード（Hailo-8）**
+- [HYDRA-UMC-VISION-NODE](https://github.com/JuanenRac/HYDRA-UMC-VISION-NODE)
+- [HYDRA-UMC-VISION-STREAMER](https://github.com/JuanenRac/HYDRA-UMC-VISION-STREAMER)
+- [HYDRA-UMC-DETECTION-HEF](https://github.com/JuanenRac/HYDRA-UMC-DETECTION-HEF)
+- [HYDRA-UMC-SAFETY-ZONES](https://github.com/JuanenRac/HYDRA-UMC-SAFETY-ZONES)
+- [HYDRA-UMC-VISUAL-SERVOING-API](https://github.com/JuanenRac/HYDRA-UMC-VISUAL-SERVOING-API)
+
+**🧠 認知 AI ノード（Hailo-10）**
+- [HYDRA-UMC-COGNITIVE-NODE](https://github.com/JuanenRac/HYDRA-UMC-COGNITIVE-NODE)
+- [HYDRA-UMC-VLA-ENGINE](https://github.com/JuanenRac/HYDRA-UMC-VLA-ENGINE)
+- [HYDRA-UMC-VOICE-UI](https://github.com/JuanenRac/HYDRA-UMC-VOICE-UI)
+- [HYDRA-UMC-SEMANTIC-PLANNER](https://github.com/JuanenRac/HYDRA-UMC-SEMANTIC-PLANNER)
+- [HYDRA-UMC-DOCS-QA](https://github.com/JuanenRac/HYDRA-UMC-DOCS-QA)
+
+**🐝 オーケストレーションと群制御**
+- [HYDRA-UMC-ORCHESTRATOR](https://github.com/JuanenRac/HYDRA-UMC-ORCHESTRATOR)
+- [HYDRA-UMC-SWARM-SYNC](https://github.com/JuanenRac/HYDRA-UMC-SWARM-SYNC)
+- [HYDRA-UMC-PATH-PLANNER-3D](https://github.com/JuanenRac/HYDRA-UMC-PATH-PLANNER-3D)
+- [HYDRA-UMC-JOB-DISPATCHER](https://github.com/JuanenRac/HYDRA-UMC-JOB-DISPATCHER)
+- [HYDRA-UMC-NODE-HEALING](https://github.com/JuanenRac/HYDRA-UMC-NODE-HEALING)
+
+**🎮 デジタルツインとシミュレーション**
+- [HYDRA-UMC-TWIN](https://github.com/JuanenRac/HYDRA-UMC-TWIN)
+- [HYDRA-UMC-PHYSICS-REPLICA](https://github.com/JuanenRac/HYDRA-UMC-PHYSICS-REPLICA)
+- [HYDRA-UMC-HIL-BRIDGE](https://github.com/JuanenRac/HYDRA-UMC-HIL-BRIDGE)
+- [HYDRA-UMC-SYNTHETIC-DATA-GEN](https://github.com/JuanenRac/HYDRA-UMC-SYNTHETIC-DATA-GEN)
+
+**📊 データと分析**
+- [HYDRA-UMC-DATALAKE](https://github.com/JuanenRac/HYDRA-UMC-DATALAKE)
+- [HYDRA-UMC-TELEMETRY-COLLECTOR](https://github.com/JuanenRac/HYDRA-UMC-TELEMETRY-COLLECTOR)
+- [HYDRA-UMC-ANOMALY-DETECTOR](https://github.com/JuanenRac/HYDRA-UMC-ANOMALY-DETECTOR)
+- [HYDRA-UMC-PRODUCTION-REPORTS](https://github.com/JuanenRac/HYDRA-UMC-PRODUCTION-REPORTS)
+
+**🏭 産業用ゲートウェイ**
+- [HYDRA-UMC-GATEWAY-INDUSTRIAL](https://github.com/JuanenRac/HYDRA-UMC-GATEWAY-INDUSTRIAL)
+- [HYDRA-UMC-OPCUA-SERVER](https://github.com/JuanenRac/HYDRA-UMC-OPCUA-SERVER)
+- [HYDRA-UMC-MQTT-BROKER](https://github.com/JuanenRac/HYDRA-UMC-MQTT-BROKER)
+- [HYDRA-UMC-MTCONNECT-ADAPTER](https://github.com/JuanenRac/HYDRA-UMC-MTCONNECT-ADAPTER)
+
+**🛠️ 補完ツール**
+- [URTC-SMART-RACK](https://github.com/JuanenRac/URTC-SMART-RACK)
+- [URTC-VISION-TOOL](https://github.com/JuanenRac/URTC-VISION-TOOL)
+- [HYDRA-UMC-WATCH](https://github.com/JuanenRac/HYDRA-UMC-WATCH)
+- [HYDRA-UMC-TOOL-CLI](https://github.com/JuanenRac/HYDRA-UMC-TOOL-CLI)
+
+
+## 👤 作者
+**JuanenRac**（Electro Hobby 3D）
+📧 electrohobby3d@gmail.com
+
+## 📜 ライセンス
+GPL-3.0 —— 詳細は LICENSE を参照してください。
+
+## 関連プロジェクト
+
+> Canonical public ecosystem relationship map.
+
+**Direct integrations:**
+[HYDRA-UMC-OS](https://github.com/JuanenRac/HYDRA-UMC-OS) · [HYDRA-UMC-SDK](https://github.com/JuanenRac/HYDRA-UMC-SDK) · [HYDRA-UMC-SERVER](https://github.com/JuanenRac/HYDRA-UMC-SERVER) · [URTC](https://github.com/JuanenRac/URTC) · [HYDRA-UMC-DATALAKE](https://github.com/JuanenRac/HYDRA-UMC-DATALAKE) · [HYDRA-UMC-TELEMETRY-COLLECTOR](https://github.com/JuanenRac/HYDRA-UMC-TELEMETRY-COLLECTOR) · [HYDRA-UMC-ANOMALY-DETECTOR](https://github.com/JuanenRac/HYDRA-UMC-ANOMALY-DETECTOR) · [HYDRA-UMC-PRODUCTION-REPORTS](https://github.com/JuanenRac/HYDRA-UMC-PRODUCTION-REPORTS)
+
+**Platform and contracts:**
+[HYDRA-UMC-OS](https://github.com/JuanenRac/HYDRA-UMC-OS) · [HYDRA-UMC-SDK](https://github.com/JuanenRac/HYDRA-UMC-SDK)
+
+**Rest of the ecosystem:**
+All remaining public repositories are grouped by the seven ecosystem layers in the [JuanenRac ecosystem dashboard](https://juanenrac.github.io/JuanenRac/).

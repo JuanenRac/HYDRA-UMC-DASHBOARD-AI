@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "ecosystem": "HYDRA-UMC",
+  "name": "HYDRA-UMC-DASHBOARD-AI",
+  "version": "0.0.2",
+  "role": "ui",
+  "stack": "node",
+  "technologies": [
+    "TypeScript/React",
+    "Vite"
+  ],
+  "deployment_target": "cm5",
+  "maturity": "functional",
+  "family": "Complementary Tools",
+  "parent": null,
+  "build": "npm install && npm run build.",
+  "notes": "Real v0 Smart Summaries (min/max/average/latest/direction stats from real HYDRA-UMC-DATALAKE history) and Anomaly Highlighting (real check against a real, already-fitted HYDRA-UMC-ANOMALY-DETECTOR baseline), each a real text panel, verified against live sibling services. 16 tests. Trend Prediction (real forecasting) and embedding the panels inside STUDIO itself are future work.",
+  "native_version": {
+    "file": "package.json",
+    "pattern": "\"version\":\\s*\"(\\d+)\\.(\\d+)\\.(\\d+)\""
+  }
+}
