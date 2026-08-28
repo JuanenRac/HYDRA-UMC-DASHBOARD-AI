@@ -63,6 +63,15 @@ describe('TrendSummaryPanel', () => {
     expect(screen.getByText('50.00')).toBeInTheDocument() // max
     expect(screen.getByText('29.00')).toBeInTheDocument() // average: (10+50+20+36)/4
     expect(screen.getByText('36.00')).toBeInTheDocument() // latest
+
+    // No real AI provider is configured for v0 - the panel must show the
+    // real, honestly-labeled statistical fallback narrative, not silently
+    // omit it.
+    await waitFor(() => {
+      expect(screen.getByTestId('trend-narrative')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Statistical fallback')).toBeInTheDocument()
+    expect(screen.getByTestId('trend-narrative')).toHaveTextContent('robot-1/motor_temp/value')
   })
 
   it('shows a real error message when the server is unreachable', async () => {

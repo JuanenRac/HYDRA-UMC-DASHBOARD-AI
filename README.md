@@ -24,6 +24,7 @@ It transforms raw telemetry data into actionable intelligence, providing plant o
 
 ### Key Features:
 * 🧠 **Smart Summaries (v0)** — real min/max/average/latest/direction statistics computed from real HYDRA-UMC-DATALAKE history. *(implemented as real statistics, not yet an LLM-generated summary — see BUILD & RUN below)*
+* 🔒 **AI-Provider Gate (v0)** — real input/output schema validation for the eventual LLM-backed narrative, plus a real, honestly-labeled statistical fallback used whenever no AI provider is configured or one fails/returns unstructured output. *(implemented and wired into the Trend Summary panel today; a real LLM-backed provider itself is planned)*
 * 📈 **Trend Prediction** — a real forecast model, beyond v0's real-but-simple direction indicator. *(planned)*
 * 🚨 **Anomaly Highlighting (v0)** — checks the most recent real samples against a real, already-fitted HYDRA-UMC-ANOMALY-DETECTOR baseline. *(implemented as a real text panel; overlaying it on STUDIO's own 3D view is planned)*
 * 🛠️ **Optimization Tips** — suggests parameter changes to improve cycle time or motor lifespan. *(planned)*
@@ -52,6 +53,8 @@ flowchart LR
 * **How this fits the rest of the ecosystem.** Extends HYDRA-UMC-STUDIO with AI-driven insights, backed by HYDRA-UMC-COGNITIVE-NODE - the visual surface for what that cognitive layer actually decides.
 * **Why the Anomaly Check panel checks `/stats` before offering to score anything.** HYDRA-UMC-ANOMALY-DETECTOR's own detector is one shared, in-memory-fitted baseline (see that project's own `api.py`) - this dashboard deliberately does not manage fitting it (mutating shared detector state from a read-oriented dashboard would be a real coupling smell). A real "not fitted yet" state is shown as exactly that, not folded into a generic error.
 * **Why the Trend Summary reports "direction", not a forecast.** A real first-to-last delta sign (with a small relative-noise threshold so a flat signal doesn't flicker "up"/"down") is honest about what v0 actually computes - a real forecast model is separate, real future work, not something to fake with a linear extrapolation dressed up as "prediction".
+* **Why `safeGenerateNarrative()` validates the request but never throws for a bad response.** A malformed request is a real wiring bug in this codebase - there's no summary to honestly fall back to, so it's allowed to throw. A malformed/unstructured *response* from a provider is a fact of life for any real external API - that path always degrades to the real statistical fallback instead of crashing the panel, because the caller already has everything it needs (the real summary) to say something true.
+* **Why `NO_PROVIDER_CONFIGURED` reuses `summary.ts` instead of a separate fallback implementation.** A second, independent "fallback narrative" formula would drift from the real statistics the panel already trusts and displays numerically - reusing the same `TrendSummary` values keeps the fallback narrative provably consistent with the numbers right next to it.
 
 ---
 
@@ -64,7 +67,8 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── src/
 │   ├── api/                 # Real HTTP clients: datalakeClient.ts, anomalyClient.ts
 │   ├── lib/
-│   │   └── summary.ts        # Real trend-summary statistics
+│   │   ├── summary.ts        # Real trend-summary statistics
+│   │   └── aiProvider.ts     # Real AI-provider gate: schema validation + honest fallback
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -105,6 +109,18 @@ build.bat
 `npm run build` chains `node scripts/bump-version.mjs && tsc --noEmit && vite build` — the version bump only happens once the strict TypeScript check has already passed, so a broken build never ships a bumped version number. `npm run dev` starts Vite on port `5174` (separate from HYDRA-UMC-STUDIO's own `5173`, so both can run side by side). `npm test` runs the real Vitest suite directly.
 
 By default the two real panels point at `http://localhost:8095` (HYDRA-UMC-DATALAKE) and `http://localhost:8097` (HYDRA-UMC-ANOMALY-DETECTOR) - override with `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (set before `vite build`/`vite dev`, Vite inlines them at build time) to point at a different deployment.
+
+Every real Trend Summary fetch also runs the real AI-provider gate. With no real provider configured (v0's honest default), the panel shows the real statistical fallback, clearly labeled:
+
+```ts
+import { safeGenerateNarrative, NO_PROVIDER_CONFIGURED } from './lib/aiProvider'
+
+const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId, kind, field, summary })
+// { narrative: "robot-1/motor_temp/value: 4 sample(s), ranging 10.00 to 50.00,
+//    averaging 29.00, latest 36.00 (rising).", generatedBy: 'statistical-fallback' }
+```
+
+A provider that throws, or returns a response missing/malformed `narrative`, degrades to that exact same real fallback instead of crashing the panel or rendering nothing.
 
 ---
 

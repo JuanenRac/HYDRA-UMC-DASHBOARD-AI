@@ -22,6 +22,12 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.0.5] - Real AI-provider gate: input/output schema validation and honest fallback
+
+- **`src/lib/aiProvider.ts`** (new) - the real, honest v0 contract an eventual LLM-based "Smart Summary" narrative (still future work, see `mejoras_futuras.txt`) will have to satisfy. `validateNarrativeRequest()` schema-checks what would be sent to a provider; `validateNarrativeResponse()` schema-checks whatever a provider returns - catching the real "unstructured output" failure mode (a missing/empty/non-string narrative, an absurdly long one, an unrecognized `generatedBy` tag) before it ever reaches the UI. `NO_PROVIDER_CONFIGURED` is the real default provider for v0: no LLM backend exists yet, so it builds its narrative directly from the already-real statistics in `summary.ts`, honestly labeled `statistical-fallback` rather than passed off as AI-generated. `safeGenerateNarrative()` is the real safe entry point: validates the request, calls a provider, validates its response, and falls back to the same real statistical narrative for every real failure mode - a thrown error, or a provider returning malformed/unstructured output - rather than ever showing a broken or empty panel.
+- **`TrendSummaryPanel.tsx`** - now calls `safeGenerateNarrative()` after computing a real summary and renders the result (labeled "AI" or "Statistical fallback") alongside the existing stats grid.
+- 24 new tests (`aiProvider.test.ts`'s full request/response validation matrix including the real unstructured-output rejection cases, plus a new real end-to-end panel assertion) - 39 total, all passing. Verified live via a real `npm run build`/`vitest run` pass (0.0.4 -> 0.0.5) and the existing real HTTP-server-backed component test now also asserting the real fallback narrative renders.
+
 ## [0.0.4]
 
 - Build version synchronized across `hydra-umc.project.json`, `package.json` and the native package lock.

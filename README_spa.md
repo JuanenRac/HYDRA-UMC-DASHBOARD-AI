@@ -24,6 +24,7 @@ Transforma datos brutos de telemetria en inteligencia accionable, ofreciendo a l
 
 ### Caracteristicas Clave:
 * 🧠 **Resumenes Inteligentes (v0)** — estadisticas reales de minimo/maximo/promedio/ultimo valor/tendencia calculadas a partir del historial real de HYDRA-UMC-DATALAKE. *(implementado como estadisticas reales, todavia no un resumen generado por IA — ver COMPILACION Y EJECUCION abajo)*
+* 🔒 **Verja de Proveedor de IA (v0)** — validacion real de esquema de entrada/salida para la futura narrativa basada en LLM, mas un respaldo estadistico real y honestamente etiquetado usado siempre que no hay proveedor de IA configurado o uno falla/devuelve salida no estructurada. *(implementado y conectado al panel de Resumen de Tendencia hoy; un proveedor real basado en LLM esta planeado)*
 * 📈 **Prediccion de Tendencias** — un modelo de prediccion real, mas alla del indicador de direccion real-pero-simple de v0. *(planeado)*
 * 🚨 **Resaltado de Anomalias (v0)** — comprueba las muestras reales mas recientes contra una linea base real ya ajustada de HYDRA-UMC-ANOMALY-DETECTOR. *(implementado como un panel de texto real; superponerlo en la vista 3D de STUDIO esta planeado)*
 * 🛠️ **Consejos de Optimizacion** — sugiere cambios de parametros para mejorar el tiempo de ciclo o la vida util de los motores. *(planeado)*
@@ -52,6 +53,8 @@ flowchart LR
 * **Cómo encaja en el resto del ecosistema.** Extiende HYDRA-UMC-STUDIO con información impulsada por IA, respaldada por HYDRA-UMC-COGNITIVE-NODE - la superficie visual de lo que esa capa cognitiva realmente decide.
 * **Por que el panel de Comprobacion de Anomalias comprueba `/stats` antes de ofrecer puntuar nada.** El propio detector de HYDRA-UMC-ANOMALY-DETECTOR es una unica linea base compartida, ajustada en memoria (ver el propio `api.py` de ese proyecto) - este dashboard deliberadamente no gestiona su ajuste (mutar el estado compartido del detector desde un dashboard orientado a lectura seria un acoplamiento real indebido). Un estado real de "todavia no ajustado" se muestra exactamente como tal, no se mezcla con un error generico.
 * **Por que el Resumen de Tendencias reporta "direccion", no una prediccion.** Un signo real de delta primero-a-ultimo (con un pequeno umbral de ruido relativo para que una senal plana no parpadee entre "sube"/"baja") es honesto sobre lo que v0 realmente calcula - un modelo de prediccion real es trabajo futuro real y separado, no algo que fingir con una extrapolacion lineal disfrazada de "prediccion".
+* **Por que `safeGenerateNarrative()` valida la peticion pero nunca lanza excepcion por una respuesta mala.** Una peticion malformada es un bug real de conexionado en este codigo - no hay un resumen al que recurrir honestamente, asi que se le permite lanzar excepcion. Una respuesta *malformada/no estructurada* de un proveedor es un hecho de la vida para cualquier API externa real - ese camino siempre degrada al respaldo estadistico real en vez de romper el panel, porque quien llama ya tiene todo lo que necesita (el resumen real) para decir algo verdadero.
+* **Por que `NO_PROVIDER_CONFIGURED` reutiliza `summary.ts` en vez de una implementacion de respaldo separada.** Una segunda formula de "narrativa de respaldo" independiente se desincronizaria de las estadisticas reales en las que el panel ya confia y que ya muestra numericamente - reutilizar los mismos valores de `TrendSummary` mantiene la narrativa de respaldo demostrablemente consistente con los numeros justo al lado.
 
 ---
 
@@ -64,7 +67,8 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── src/
 │   ├── api/                 # Clientes HTTP reales: datalakeClient.ts, anomalyClient.ts
 │   ├── lib/
-│   │   └── summary.ts        # Estadisticas reales de resumen de tendencias
+│   │   ├── summary.ts        # Estadisticas reales de resumen de tendencias
+│   │   └── aiProvider.ts     # Verja real de proveedor de IA: validacion de esquema + respaldo honesto
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -105,6 +109,18 @@ build.bat
 `npm run build` encadena `node scripts/bump-version.mjs && tsc --noEmit && vite build` — el incremento de version solo ocurre una vez que la comprobacion estricta de TypeScript ya ha pasado, asi que un build roto nunca publica un numero de version incrementado. `npm run dev` arranca Vite en el puerto `5174` (separado del `5173` propio de HYDRA-UMC-STUDIO, para que ambos puedan correr a la vez). `npm test` corre la suite real de Vitest directamente.
 
 Por defecto los dos paneles reales apuntan a `http://localhost:8095` (HYDRA-UMC-DATALAKE) y `http://localhost:8097` (HYDRA-UMC-ANOMALY-DETECTOR) - sobreescribible con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (definidas antes de `vite build`/`vite dev`, Vite las inserta en tiempo de build) para apuntar a un despliegue distinto.
+
+Cada fetch real de Resumen de Tendencia tambien corre la verja real de proveedor de IA. Sin proveedor real configurado (el default honesto de v0), el panel muestra el respaldo estadistico real, claramente etiquetado:
+
+```ts
+import { safeGenerateNarrative, NO_PROVIDER_CONFIGURED } from './lib/aiProvider'
+
+const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId, kind, field, summary })
+// { narrative: "robot-1/motor_temp/value: 4 sample(s), ranging 10.00 to 50.00,
+//    averaging 29.00, latest 36.00 (rising).", generatedBy: 'statistical-fallback' }
+```
+
+Un proveedor que lanza excepcion, o devuelve una respuesta con `narrative` ausente o malformada, degrada a ese mismo respaldo real en vez de romper el panel o no mostrar nada.
 
 ---
 

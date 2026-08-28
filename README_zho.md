@@ -28,6 +28,7 @@
 
 ### 关键特性：
 * 🧠 **智能摘要（v0）** —— 根据 HYDRA-UMC-DATALAKE 的真实历史数据计算的真实最小值/最大值/平均值/最新值/趋势统计。*（已实现为真实统计数据，尚非 AI 生成的摘要——见下方"构建与运行"）*
+* 🔒 **AI 提供方关卡（v0）** —— 为未来基于 LLM 的叙述真实校验输入/输出模式，加上一个真实的、诚实标注的统计回退方案，在没有配置 AI 提供方，或提供方失败/返回非结构化输出时始终使用。*（今天已实现并接入了趋势摘要面板；真正基于 LLM 的提供方本身仍在计划中）*
 * 📈 **趋势预测** —— 一个真实的预测模型，超越 v0 中真实但简单的方向指示器。*（计划中）*
 * 🚨 **异常高亮（v0）：** 将最新的真实样本与 HYDRA-UMC-ANOMALY-DETECTOR 已拟合的真实基线进行对比检查。*（已实现为真实的文字面板；在 STUDIO 自身的 3D 视图中叠加显示尚在计划中）*
 * 🛠️ **优化建议：** 提出改进周期时间或电机寿命的参数变更建议。*（计划中）*
@@ -56,6 +57,8 @@ flowchart LR
 * **这如何融入生态系统的其余部分。** 以 HYDRA-UMC-COGNITIVE-NODE 为支撑，为 HYDRA-UMC-STUDIO 扩展了 AI 驱动的洞察——是那个认知层实际决策内容的可视化界面。
 * **为何异常检查面板在提供任何评分之前先检查 `/stats`。** HYDRA-UMC-ANOMALY-DETECTOR 自身的检测器是一个共享的、在内存中拟合的单一基线（参见该项目自身的 `api.py`）——本仪表盘刻意不管理其拟合过程（从一个以读取为导向的仪表盘修改共享检测器状态将是一种真实的、不应有的耦合）。真实的"尚未拟合"状态会被准确地显示为该状态本身，而不会被并入一个通用错误中。
 * **为何趋势摘要报告的是"方向"，而非预测。** 一个真实的首末增量符号（带有一个小的相对噪声阈值，以避免平坦信号在"上升"/"下降"之间闪烁）如实反映了 v0 实际计算的内容——真实的预测模型是独立的、真正的未来工作，而不是用伪装成"预测"的线性外推来假装实现的东西。
+* **为何 `safeGenerateNarrative()` 会校验请求，但从不因一个糟糕的响应而抛出异常。** 一个格式错误的请求是这份代码里真实的接线错误——没有摘要可以诚实地回退到，因此允许它抛出异常。而提供方返回*格式错误/非结构化*的响应，对任何真实的外部 API 来说都是常态——那条路径总会降级到真实的统计回退，而不是让面板崩溃，因为调用方已经拥有说出真话所需的一切（真实的摘要）。
+* **为何 `NO_PROVIDER_CONFIGURED` 复用 `summary.ts`，而不是一个独立的回退实现。** 第二份独立的"回退叙述"公式会与面板已经信任、并已经以数字形式展示的真实统计数据产生偏差——复用相同的 `TrendSummary` 数值，能让回退叙述与旁边的数字保持可证明的一致。
 
 ---
 
@@ -69,7 +72,8 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── src/
 │   ├── api/                 # 真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts
 │   ├── lib/
-│   │   └── summary.ts        # 真实的趋势摘要统计
+│   │   ├── summary.ts        # 真实的趋势摘要统计
+│   │   └── aiProvider.ts     # 真实的 AI 提供方关卡：模式校验 + 诚实的回退
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -119,6 +123,21 @@ Vitest 测试套件。
 （HYDRA-UMC-ANOMALY-DETECTOR）——可通过 `VITE_DATALAKE_URL`/
 `VITE_ANOMALY_URL`（在 `vite build`/`vite dev` 之前设置，Vite 会在构建
 时内联它们）覆盖，以指向不同的部署环境。
+
+每一次真实的趋势摘要请求也都会运行真实的 AI 提供方关卡。在没有配置真实
+提供方的情况下（v0 诚实的默认状态），面板会显示真实的、清楚标注的统计
+回退：
+
+```ts
+import { safeGenerateNarrative, NO_PROVIDER_CONFIGURED } from './lib/aiProvider'
+
+const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId, kind, field, summary })
+// { narrative: "robot-1/motor_temp/value: 4 sample(s), ranging 10.00 to 50.00,
+//    averaging 29.00, latest 36.00 (rising).", generatedBy: 'statistical-fallback' }
+```
+
+一个抛出异常、或返回缺失/格式错误 `narrative` 字段的响应的提供方，会降级
+到这个真实的回退方案，而不是让面板崩溃或什么都不显示。
 
 ---
 

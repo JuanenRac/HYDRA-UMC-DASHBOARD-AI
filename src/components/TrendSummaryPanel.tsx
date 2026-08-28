@@ -11,6 +11,7 @@
 import { useState } from 'react'
 import { queryDatalake, DatalakeApiError } from '../api/datalakeClient'
 import { summarize, SummaryError, type TrendSummary } from '../lib/summary'
+import { NO_PROVIDER_CONFIGURED, safeGenerateNarrative, type NarrativeResponse } from '../lib/aiProvider'
 
 interface Props {
   datalakeBaseUrl: string
@@ -31,19 +32,27 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [summary, setSummary] = useState<TrendSummary | null>(null)
+  const [narrative, setNarrative] = useState<NarrativeResponse | null>(null)
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setLoading(true)
     setError(null)
     setSummary(null)
+    setNarrative(null)
 
     const end = Date.now()
     const start = end - minutesBack * 60_000
 
     try {
       const points = await queryDatalake(datalakeBaseUrl, { sourceId, kind, field, start, end })
-      setSummary(summarize(points))
+      const computed = summarize(points)
+      setSummary(computed)
+      // No real AI provider is configured for v0 - safeGenerateNarrative
+      // still runs the real request/response validation gate and returns
+      // the real, honestly-labeled statistical fallback rather than
+      // skipping straight to it.
+      setNarrative(await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId, kind, field, summary: computed }))
     } catch (err) {
       if (err instanceof DatalakeApiError || err instanceof SummaryError) {
         setError(err.message)
@@ -124,6 +133,15 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
             <dd>{DIRECTION_LABEL[summary.direction]}</dd>
           </div>
         </dl>
+      )}
+
+      {narrative && (
+        <p className="panel-narrative" data-testid="trend-narrative">
+          <span className="panel-narrative-badge">
+            {narrative.generatedBy === 'ai' ? 'AI' : 'Statistical fallback'}
+          </span>{' '}
+          {narrative.narrative}
+        </p>
       )}
     </section>
   )
