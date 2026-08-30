@@ -34,11 +34,68 @@ export interface QueryParams {
   limit?: number
 }
 
+const MAX_IDENTIFIER_LENGTH = 128
+const UNSAFE_IDENTIFIER_CHARACTERS = /[\u0000-\u001F\u007F-\u009F]/
+
+function requireSafeIdentifier(value: unknown, field: string, index: number): string {
+  if (typeof value !== 'string' || value.length === 0 || value.length > MAX_IDENTIFIER_LENGTH) {
+    throw new DatalakeApiError(`DATALAKE returned invalid ${field} in /query point ${index}`)
+  }
+  if (UNSAFE_IDENTIFIER_CHARACTERS.test(value)) {
+    throw new DatalakeApiError(`DATALAKE returned unsafe ${field} in /query point ${index}`)
+  }
+  return value
+}
+
+function requireFiniteNumber(value: unknown, field: string, index: number): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new DatalakeApiError(`DATALAKE returned invalid ${field} in /query point ${index}`)
+  }
+  return value
+}
+
+/** Validates data arriving from the Datalake trust boundary before a panel
+ * can sort it, calculate with it, or render its identifiers. React escapes
+ * text nodes, but the client still rejects malformed, overlong, or control-
+ * character-bearing payloads instead of treating a remote JSON response as a
+ * TypeScript value merely because it parsed. */
+export function validateDatalakePoint(value: unknown, index = 0): DatalakePoint {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    throw new DatalakeApiError(`DATALAKE returned a non-object /query point at index ${index}`)
+  }
+  const point = value as Record<string, unknown>
+  const timestamp = requireFiniteNumber(point.timestamp, 'timestamp', index)
+  if (!Number.isSafeInteger(timestamp)) {
+    throw new DatalakeApiError(`DATALAKE returned unsafe timestamp in /query point ${index}`)
+  }
+
+  return {
+    sourceId: requireSafeIdentifier(point.sourceId, 'sourceId', index),
+    kind: requireSafeIdentifier(point.kind, 'kind', index),
+    field: requireSafeIdentifier(point.field, 'field', index),
+    timestamp,
+    value: requireFiniteNumber(point.value, 'value', index),
+  }
+}
+
+function queryUrl(baseUrl: string): URL {
+  let url: URL
+  try {
+    url = new URL('/query', baseUrl)
+  } catch (err) {
+    throw new DatalakeApiError('DATALAKE base URL is invalid', err)
+  }
+  if ((url.protocol !== 'http:' && url.protocol !== 'https:') || url.username || url.password) {
+    throw new DatalakeApiError('DATALAKE base URL must be HTTP(S) and must not contain credentials')
+  }
+  return url
+}
+
 /** Real GET /query against a real DATALAKE instance. Throws
  * DatalakeApiError on any failure (network, non-2xx, malformed JSON) -
  * never returns a silently-empty array to mask a real failure. */
 export async function queryDatalake(baseUrl: string, params: QueryParams): Promise<DatalakePoint[]> {
-  const url = new URL('/query', baseUrl)
+  const url = queryUrl(baseUrl)
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined) {
       url.searchParams.set(key, String(value))
@@ -68,5 +125,5 @@ export async function queryDatalake(baseUrl: string, params: QueryParams): Promi
     throw new DatalakeApiError('DATALAKE returned a non-array /query response')
   }
 
-  return data as DatalakePoint[]
+  return data.map((point, index) => validateDatalakePoint(point, index))
 }

@@ -82,6 +82,17 @@ describe('validateNarrativeResponse', () => {
     expect(() => validateNarrativeResponse({ narrative: huge, generatedBy: 'ai' })).toThrow(AiProviderError)
   })
 
+  it('rejects control and bidirectional-format characters in a provider narrative', () => {
+    expect(() => validateNarrativeResponse({ narrative: 'safe\u0000hidden', generatedBy: 'ai' })).toThrow(AiProviderError)
+    expect(() => validateNarrativeResponse({ narrative: 'safe\u202Ehidden', generatedBy: 'ai' })).toThrow(AiProviderError)
+  })
+
+  it('trims accepted provider narratives before rendering them', () => {
+    expect(validateNarrativeResponse({ narrative: '  Values are rising.  ', generatedBy: 'ai' }).narrative).toBe(
+      'Values are rising.',
+    )
+  })
+
   it('rejects an unknown generatedBy value', () => {
     expect(() => validateNarrativeResponse({ narrative: 'ok', generatedBy: 'made-up' })).toThrow(AiProviderError)
   })

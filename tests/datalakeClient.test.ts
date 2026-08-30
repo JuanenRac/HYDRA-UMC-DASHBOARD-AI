@@ -68,7 +68,29 @@ describe('queryDatalake', () => {
     await expect(queryDatalake(baseUrl, {})).rejects.toThrow(DatalakeApiError)
   })
 
+  it('rejects malformed point objects before they reach a panel', async () => {
+    baseUrl = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify([{ sourceId: 'robot-1', kind: 'motor_temp', field: 'value', timestamp: 1, value: '42.5' }]))
+    })
+
+    await expect(queryDatalake(baseUrl, {})).rejects.toThrow(/invalid value/i)
+  })
+
+  it('rejects control characters in service-provided identifiers', async () => {
+    baseUrl = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify([{ sourceId: 'robot-1\u0000hidden', kind: 'motor_temp', field: 'value', timestamp: 1, value: 42.5 }]))
+    })
+
+    await expect(queryDatalake(baseUrl, {})).rejects.toThrow(/unsafe sourceId/i)
+  })
+
   it('throws DatalakeApiError when nothing is listening', async () => {
     await expect(queryDatalake('http://127.0.0.1:1', {})).rejects.toThrow(DatalakeApiError)
+  })
+
+  it('rejects a browser-visible service URL with embedded credentials', async () => {
+    await expect(queryDatalake('https://operator:secret@example.test', {})).rejects.toThrow(/must not contain credentials/i)
   })
 })

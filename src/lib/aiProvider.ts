@@ -3,8 +3,8 @@
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
 // GPL-3.0 - see LICENSE
 // =============================================================================
-// The real "Smart Summaries" LLM narrative (mejoras_futuras.txt's own
-// [PENDIENTE]) is future work - no real AI provider is wired in yet, and
+// The real "Smart Summaries" LLM narrative is future work - no real AI
+// provider is wired in yet, and
 // this module does not invent one. What IS real: the honest v0 contract
 // an eventual provider has to satisfy - real input-schema validation,
 // real structural validation of whatever a provider returns (catching
@@ -38,6 +38,7 @@ export interface AiProvider {
 
 const MAX_NARRATIVE_LENGTH = 2000
 const DIRECTIONS: ReadonlyArray<TrendSummary['direction']> = ['up', 'down', 'flat']
+const UNSAFE_NARRATIVE_CHARACTERS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u202A-\u202E\u2066-\u2069]/
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value)
@@ -91,11 +92,14 @@ export function validateNarrativeResponse(value: unknown): NarrativeResponse {
   if (v.narrative.length > MAX_NARRATIVE_LENGTH) {
     throw new AiProviderError(`provider response field "narrative" exceeds ${MAX_NARRATIVE_LENGTH} characters`)
   }
+  if (UNSAFE_NARRATIVE_CHARACTERS.test(v.narrative)) {
+    throw new AiProviderError('provider response field "narrative" contains unsafe control characters')
+  }
   if (v.generatedBy !== 'ai' && v.generatedBy !== 'statistical-fallback') {
     throw new AiProviderError('provider response field "generatedBy" must be "ai" or "statistical-fallback"')
   }
 
-  return { narrative: v.narrative, generatedBy: v.generatedBy }
+  return { narrative: v.narrative.trim(), generatedBy: v.generatedBy }
 }
 
 function directionWord(direction: TrendSummary['direction']): string {

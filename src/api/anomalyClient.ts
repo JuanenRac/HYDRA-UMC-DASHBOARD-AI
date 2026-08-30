@@ -33,6 +33,53 @@ export interface DetectVerdict {
   worstBinFreqHz: number
 }
 
+function requireRecord(value: unknown, context: string): Record<string, unknown> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    throw new AnomalyApiError(`${context}: response must be a JSON object`)
+  }
+  return value as Record<string, unknown>
+}
+
+function requireFiniteNumber(value: unknown, field: string, context: string): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new AnomalyApiError(`${context}: field "${field}" must be a finite number`)
+  }
+  return value
+}
+
+function validateDetectorStats(value: unknown): DetectorStats {
+  const body = requireRecord(value, 'GET /stats')
+  if (typeof body.fitted !== 'boolean') {
+    throw new AnomalyApiError('GET /stats: field "fitted" must be a boolean')
+  }
+  return { fitted: body.fitted }
+}
+
+function validateDetectVerdict(value: unknown): DetectVerdict {
+  const body = requireRecord(value, 'POST /detect')
+  if (typeof body.anomalous !== 'boolean') {
+    throw new AnomalyApiError('POST /detect: field "anomalous" must be a boolean')
+  }
+  return {
+    score: requireFiniteNumber(body.score, 'score', 'POST /detect'),
+    anomalous: body.anomalous,
+    worstBinFreqHz: requireFiniteNumber(body.worstBinFreqHz, 'worstBinFreqHz', 'POST /detect'),
+  }
+}
+
+function serviceUrl(baseUrl: string, path: string): URL {
+  let url: URL
+  try {
+    url = new URL(path, baseUrl)
+  } catch (err) {
+    throw new AnomalyApiError('HYDRA-UMC-ANOMALY-DETECTOR base URL is invalid', undefined, err)
+  }
+  if ((url.protocol !== 'http:' && url.protocol !== 'https:') || url.username || url.password) {
+    throw new AnomalyApiError('HYDRA-UMC-ANOMALY-DETECTOR base URL must be HTTP(S) and must not contain credentials')
+  }
+  return url
+}
+
 async function readJsonOrThrow(response: Response, context: string): Promise<unknown> {
   let body: unknown
   try {
@@ -54,11 +101,14 @@ async function readJsonOrThrow(response: Response, context: string): Promise<unk
 export async function fetchDetectorStats(baseUrl: string): Promise<DetectorStats> {
   let response: Response
   try {
-    response = await fetch(new URL('/stats', baseUrl).toString())
+    response = await fetch(serviceUrl(baseUrl, '/stats').toString())
   } catch (err) {
+    if (err instanceof AnomalyApiError) {
+      throw err
+    }
     throw new AnomalyApiError(`could not reach HYDRA-UMC-ANOMALY-DETECTOR at ${baseUrl}`, undefined, err)
   }
-  return (await readJsonOrThrow(response, 'GET /stats')) as DetectorStats
+  return validateDetectorStats(await readJsonOrThrow(response, 'GET /stats'))
 }
 
 /** Real POST /detect against a single real window of numeric samples.
@@ -72,14 +122,17 @@ export async function detectAnomaly(baseUrl: string, window: number[]): Promise<
 
   let response: Response
   try {
-    response = await fetch(new URL('/detect', baseUrl).toString(), {
+    response = await fetch(serviceUrl(baseUrl, '/detect').toString(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ window }),
     })
   } catch (err) {
+    if (err instanceof AnomalyApiError) {
+      throw err
+    }
     throw new AnomalyApiError(`could not reach HYDRA-UMC-ANOMALY-DETECTOR at ${baseUrl}`, undefined, err)
   }
 
-  return (await readJsonOrThrow(response, 'POST /detect')) as DetectVerdict
+  return validateDetectVerdict(await readJsonOrThrow(response, 'POST /detect'))
 }

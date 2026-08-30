@@ -25,6 +25,7 @@ Transforma datos brutos de telemetria en inteligencia accionable, ofreciendo a l
 ### Caracteristicas Clave:
 * 🧠 **Resumenes Inteligentes (v0)** — estadisticas reales de minimo/maximo/promedio/ultimo valor/tendencia calculadas a partir del historial real de HYDRA-UMC-DATALAKE. *(implementado como estadisticas reales, todavia no un resumen generado por IA — ver COMPILACION Y EJECUCION abajo)*
 * 🔒 **Verja de Proveedor de IA (v0)** — validacion real de esquema de entrada/salida para la futura narrativa basada en LLM, mas un respaldo estadistico real y honestamente etiquetado usado siempre que no hay proveedor de IA configurado o uno falla/devuelve salida no estructurada. *(implementado y conectado al panel de Resumen de Tendencia hoy; un proveedor real basado en LLM esta planeado)*
+* 🛡️ **Verja de Contrato Externo (v0)** — valida cada respuesta de Datalake y del servicio de anomalias antes de que un panel calcule o la muestre; rechaza numeros, flags, identificadores sobredimensionados y caracteres de control no seguros malformados. *(implementado; ver [`docs/SECURITY.md`](docs/SECURITY.md))*
 * 📈 **Prediccion de Tendencias** — un modelo de prediccion real, mas alla del indicador de direccion real-pero-simple de v0. *(planeado)*
 * 🚨 **Resaltado de Anomalias (v0)** — comprueba las muestras reales mas recientes contra una linea base real ya ajustada de HYDRA-UMC-ANOMALY-DETECTOR. *(implementado como un panel de texto real; superponerlo en la vista 3D de STUDIO esta planeado)*
 * 🛠️ **Consejos de Optimizacion** — sugiere cambios de parametros para mejorar el tiempo de ciclo o la vida util de los motores. *(planeado)*
@@ -79,7 +80,8 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── tests/                   # Tests reales: round-trips HTTP + tests de componentes
 ├── scripts/
 │   └── bump-version.mjs    # Incremento de version estilo cuentakilometros (ejecutado por build)
-├── docs/                   # Documentacion y guia de integracion
+├── docs/
+│   └── SECURITY.md          # Contrato publico de seguridad de contenido externo y despliegue
 ├── build/                  # Reservado para artefactos de release (dist/ esta ignorado por git)
 ├── images/                 # Medios y diagramas
 ├── index.html              # HTML de entrada de Vite
@@ -109,6 +111,8 @@ build.bat
 `npm run build` encadena `node scripts/bump-version.mjs && tsc --noEmit && vite build` — el incremento de version solo ocurre una vez que la comprobacion estricta de TypeScript ya ha pasado, asi que un build roto nunca publica un numero de version incrementado. `npm run dev` arranca Vite en el puerto `5174` (separado del `5173` propio de HYDRA-UMC-STUDIO, para que ambos puedan correr a la vez). `npm test` corre la suite real de Vitest directamente.
 
 Por defecto los dos paneles reales apuntan a `http://localhost:8095` (HYDRA-UMC-DATALAKE) y `http://localhost:8097` (HYDRA-UMC-ANOMALY-DETECTOR) - sobreescribible con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (definidas antes de `vite build`/`vite dev`, Vite las inserta en tiempo de build) para apuntar a un despliegue distinto.
+
+Lee [`docs/SECURITY.md`](docs/SECURITY.md) antes de configurar esas URL visibles en el navegador o conectar un proveedor de IA real; define la validacion de respuestas, seguridad de contenido, comportamiento ante fallos y la regla de no incluir secretos.
 
 Cada fetch real de Resumen de Tendencia tambien corre la verja real de proveedor de IA. Sin proveedor real configurado (el default honesto de v0), el panel muestra el respaldo estadistico real, claramente etiquetado:
 

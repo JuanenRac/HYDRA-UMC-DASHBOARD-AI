@@ -6,7 +6,7 @@
 // This project's own "Smart Summaries" README claim, honestly scoped for
 // v0: real min/max/average/latest/trend statistics computed from real
 // HYDRA-UMC-DATALAKE history - not an LLM-generated summary (that's
-// future work, tracked in mejoras_futuras.txt), but a genuinely real,
+// future work), but a genuinely real,
 // correct computation over real data, in ascending-timestamp order.
 
 import type { DatalakePoint } from '../api/datalakeClient'

@@ -36,6 +36,19 @@ describe('fetchDetectorStats', () => {
     const stats = await fetchDetectorStats(baseUrl)
     expect(stats.fitted).toBe(true)
   })
+
+  it('rejects a malformed fitted flag instead of treating it as truthy', async () => {
+    const baseUrl = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ fitted: 'yes' }))
+    })
+
+    await expect(fetchDetectorStats(baseUrl)).rejects.toThrow(/fitted.*boolean/i)
+  })
+
+  it('rejects a browser-visible service URL with embedded credentials', async () => {
+    await expect(fetchDetectorStats('https://operator:secret@example.test')).rejects.toThrow(/must not contain credentials/i)
+  })
 })
 
 describe('detectAnomaly', () => {
@@ -72,5 +85,14 @@ describe('detectAnomaly', () => {
 
   it('rejects an empty window before making any real request', async () => {
     await expect(detectAnomaly('http://127.0.0.1:1', [])).rejects.toThrow(AnomalyApiError)
+  })
+
+  it('rejects malformed verdict values before a panel calls toFixed on them', async () => {
+    const baseUrl = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ score: 'high', anomalous: false, worstBinFreqHz: 120.5 }))
+    })
+
+    await expect(detectAnomaly(baseUrl, [1, 2, 3])).rejects.toThrow(/score.*finite number/i)
   })
 })

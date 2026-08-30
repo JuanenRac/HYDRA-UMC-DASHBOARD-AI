@@ -25,6 +25,7 @@ Trasforma i dati grezzi di telemetria in informazioni utilizzabili, offrendo agl
 ### Caratteristiche Principali:
 * 🧠 **Riepiloghi Intelligenti (v0)** — statistiche reali di minimo/massimo/media/ultimo valore/tendenza calcolate dallo storico reale di HYDRA-UMC-DATALAKE. *(implementato come statistiche reali, non ancora un riepilogo generato dall'IA — vedi COMPILAZIONE ED ESECUZIONE sotto)*
 * 🔒 **Verifica del Fornitore IA (v0)** — validazione reale dello schema di input/output per la futura narrazione basata su LLM, più un fallback statistico reale ed etichettato onestamente usato ogni volta che nessun fornitore IA è configurato o uno fallisce/restituisce output non strutturato. *(implementato e collegato al pannello Riepilogo Tendenza oggi; un vero fornitore basato su LLM è pianificato)*
+* 🛡️ **Protezione del Contratto Esterno (v0)** — convalida ogni risposta di Datalake e del servizio anomalie prima che un pannello la elabori o la mostri; numeri, flag, identificatori sovradimensionati e caratteri di controllo non sicuri malformati vengono rifiutati. *(implementato; vedi [`docs/SECURITY.md`](docs/SECURITY.md))*
 * 📈 **Previsione delle Tendenze** — un vero modello di previsione, oltre l'indicatore di direzione reale-ma-semplice di v0. *(pianificato)*
 * 🚨 **Evidenziazione delle Anomalie (v0)** — verifica i campioni reali più recenti rispetto a una baseline reale già calibrata di HYDRA-UMC-ANOMALY-DETECTOR. *(implementato come un vero pannello testuale; sovrapporlo alla vista 3D di STUDIO è pianificato)*
 * 🛠️ **Suggerimenti di Ottimizzazione** — suggerisce modifiche ai parametri per migliorare il tempo di ciclo o la durata dei motori. *(pianificato)*
@@ -79,7 +80,8 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── tests/                   # Veri test: round-trip HTTP + test dei componenti
 ├── scripts/
 │   └── bump-version.mjs    # Incremento versione stile contachilometri (eseguito dal build)
-├── docs/                   # Documentazione e guida all'integrazione
+├── docs/
+│   └── SECURITY.md          # Contratto pubblico di sicurezza per contenuto esterno e deployment
 ├── build/                  # Riservato agli artefatti di release (dist/ è ignorato da git)
 ├── images/                 # Media e diagrammi
 ├── index.html              # HTML di ingresso di Vite
@@ -109,6 +111,8 @@ build.bat
 `npm run build` concatena `node scripts/bump-version.mjs && tsc --noEmit && vite build` — l'incremento di versione avviene solo dopo che il controllo rigoroso di TypeScript è già passato, cosicché un build rotto non pubblica mai un numero di versione incrementato. `npm run dev` avvia Vite sulla porta `5174` (separata dalla `5173` propria di HYDRA-UMC-STUDIO, cosi entrambi possono girare insieme). `npm test` esegue direttamente la vera suite Vitest.
 
 Per impostazione predefinita i due veri pannelli puntano a `http://localhost:8095` (HYDRA-UMC-DATALAKE) e `http://localhost:8097` (HYDRA-UMC-ANOMALY-DETECTOR) - sovrascrivibile con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (definite prima di `vite build`/`vite dev`, Vite le incorpora in fase di build) per puntare a un deployment diverso.
+
+Leggi [`docs/SECURITY.md`](docs/SECURITY.md) prima di configurare questi URL visibili nel browser o collegare un vero fornitore IA; definisce la convalida delle risposte, la sicurezza del contenuto, il comportamento in caso di errore e la regola di non includere segreti.
 
 Ogni vero fetch del Riepilogo Tendenza esegue anche la vera verifica del fornitore IA. Senza un vero fornitore configurato (il default onesto di v0), il pannello mostra il vero fallback statistico, chiaramente etichettato:
 

@@ -10,8 +10,8 @@
 // rebuild to point at a different deployment; both default to the two
 // services' own documented default ports for local development.
 //
-// What this deliberately does NOT do yet (see mejoras_futuras.txt): an
-// LLM-generated natural-language summary, or overlaying anomaly markers
+// What this deliberately does NOT do yet: an LLM-generated natural-language
+// summary, or overlaying anomaly markers
 // on top of HYDRA-UMC-STUDIO's own 3D/telemetry views - both real,
 // bigger pieces of future work this v0 doesn't pretend to already cover.
 
