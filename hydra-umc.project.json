@@ -14,7 +14,7 @@
   "family": "Complementary Tools",
   "parent": null,
   "build": "npm install && npm run build.",
-  "notes": "Established v0: Smart Summaries (min/max/average/latest/direction stats from real HYDRA-UMC-DATALAKE history) and Anomaly Highlighting (real check against a real, already-fitted HYDRA-UMC-ANOMALY-DETECTOR baseline), each a real text panel, verified against live sibling services. Real AI-provider gate (aiProvider.ts): input/output schema validation, real rejection of unstructured provider output, and an honest statistical fallback for when no real AI provider is configured - wired into the Trend Summary panel. 39 tests. An actual LLM-backed provider, Trend Prediction (real forecasting), and embedding the panels inside STUDIO itself are future work.",
+  "notes": "Established v0: Smart Summaries (min/max/average/latest/direction stats from real HYDRA-UMC-DATALAKE history) and Anomaly Highlighting (real check against a real, already-fitted HYDRA-UMC-ANOMALY-DETECTOR baseline), each a real text panel, verified against live sibling services. Real AI-provider gate (aiProvider.ts): input/output schema validation, real rejection of unstructured provider output, and an honest statistical fallback for when no real AI provider is configured - wired into the Trend Summary panel. 47 tests. An actual LLM-backed provider, Trend Prediction (real forecasting), and embedding the panels inside STUDIO itself are future work.",
   "native_version": {
     "file": "package.json",
     "pattern": "\"version\":\\s*\"(\\d+)\\.(\\d+)\\.(\\d+)\""
