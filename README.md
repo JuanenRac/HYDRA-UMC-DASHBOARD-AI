@@ -94,7 +94,7 @@ HYDRA-UMC-DASHBOARD-AI/
 
 ---
 
-## 4. ⚙️ BUILD & RUN
+## 4. ⚙️ BUILD & RUN GUIDE
 
 Requires Node.js >= 20.
 
