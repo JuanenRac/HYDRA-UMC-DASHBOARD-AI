@@ -38,6 +38,32 @@ when a change is actually worth summarizing for a human.
 - **Public safety contract:** added [`docs/SECURITY.md`](docs/SECURITY.md),
   including deployment boundaries, failure behaviour, and test coverage.
 
+## [0.0.6] - Real static-serving on the CM5 (own port, no Node runtime needed once built)
+
+- **`scripts/serve_static.py`** (new) - real gap found auditing the
+  ecosystem against actual CM5 hardware: this project builds a real,
+  deployable static SPA (`npm run build` -> `dist/`), but nothing on the
+  CM5 ever served it. Deliberately plain stdlib `http.server`, not a
+  second Node runtime on the CM5 just to serve pre-built static files.
+  No SPA client-side routing exists in this app (checked against
+  `src/App.tsx`/`package.json` before writing this, not assumed), so
+  this is a plain static file server, not a SPA-fallback-to-index.html
+  server - a request for a path with no matching file is a real 404.
+- **`scripts/test_serve_static.py`** (new) - real end-to-end tests
+  (stdlib `unittest`, not pytest, so this otherwise-pure-JS/TS repo gets
+  no new toolchain requirement) against a real `ThreadingHTTPServer`.
+- **`systemd/hydra-umc-dashboard-ai.service`** (new) - unit for
+  `HYDRA-UMC-OS/provisioning/install_dashboard_ai.sh` (new, that repo).
+  Own port (8115)/service, deliberately NOT folded into
+  `HYDRA-UMC-SERVER`'s own `public/` the way `HYDRA-UMC-STUDIO` is - this
+  dashboard already talks straight to `HYDRA-UMC-DATALAKE`/
+  `HYDRA-UMC-ANOMALY-DETECTOR` by their own configured base URLs (see
+  `vite.config.ts`'s own comment), so it never needed `SERVER`'s own
+  backend, and two independent SPAs sharing one origin risks route/asset
+  collisions. Verified end-to-end: a real `npm run build` output served
+  by `serve_static.py` returns the real `index.html` and a real hashed
+  asset file.
+
 ## [0.0.5] - Real AI-provider gate: input/output schema validation and honest fallback
 
 - **`src/lib/aiProvider.ts`** (new) - the real, honest v0 contract an eventual LLM-based "Smart Summary" narrative will have to satisfy. `validateNarrativeRequest()` schema-checks what would be sent to a provider; `validateNarrativeResponse()` schema-checks whatever a provider returns - catching the real "unstructured output" failure mode (a missing/empty/non-string narrative, an absurdly long one, an unrecognized `generatedBy` tag) before it ever reaches the UI. `NO_PROVIDER_CONFIGURED` is the real default provider for v0: no LLM backend exists yet, so it builds its narrative directly from the already-real statistics in `summary.ts`, honestly labeled `statistical-fallback` rather than passed off as AI-generated. `safeGenerateNarrative()` is the real safe entry point: validates the request, calls a provider, validates its response, and falls back to the same real statistical narrative for every real failure mode - a thrown error, or a provider returning malformed/unstructured output - rather than ever showing a broken or empty panel.
