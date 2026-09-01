@@ -18,5 +18,8 @@
   "native_version": {
     "file": "package.json",
     "pattern": "\"version\":\\s*\"(\\d+)\\.(\\d+)\\.(\\d+)\""
+  },
+  "service": {
+    "systemd_unit": "hydra-umc-dashboard-ai.service"
   }
 }
