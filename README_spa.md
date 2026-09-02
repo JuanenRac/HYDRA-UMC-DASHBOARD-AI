@@ -79,7 +79,14 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # Tipado de VITE_DATALAKE_URL / VITE_ANOMALY_URL
 ├── tests/                   # Tests reales: round-trips HTTP + tests de componentes
 ├── scripts/
-│   └── bump-version.mjs    # Incremento de versión estilo cuentakilómetros (ejecutado por build)
+│   ├── bump-version.mjs    # Incremento de versión estilo cuentakilómetros (ejecutado por build)
+│   ├── serve_static.py     # Servidor real de archivos estáticos para el SPA compilado en dist/ (hueco de despliegue en la CM5 encontrado en vivo)
+│   └── test_serve_static.py # Tests reales para serve_static.py
+├── systemd/
+│   └── hydra-umc-dashboard-ai.service # Unidad systemd del servidor estático local en la CM5
+├── tools/
+│   ├── build_test.py       # Comprobación de compilación sin versionado
+│   └── ci_validate.py      # Validación de manifiesto/CHANGELOG/docs usada por CI
 ├── docs/
 │   └── SECURITY.md          # Contrato público de seguridad de contenido externo y despliegue
 ├── build/                  # Reservado para artefactos de release (dist/ está ignorado por git)
@@ -87,6 +94,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── index.html              # HTML de entrada de Vite
 ├── vite.config.ts          # Configuración del bundler Vite + Vitest
 ├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
+├── bump_manifest_version.py # Sincroniza la versión de hydra-umc.project.json con la de package.json (--sync)
 ├── dev.sh / dev.bat        # Servidor de desarrollo real: instala deps + vite
 ├── build.sh / build.bat    # Build real: instala deps + suite de tests real + incrementa versión + tsc + vite build
 └── package.json

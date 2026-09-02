@@ -79,7 +79,14 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL typing
 ├── tests/                   # Real tests: HTTP round-trips + component tests
 ├── scripts/
-│   └── bump-version.mjs    # Odometer-style version bump (run by build)
+│   ├── bump-version.mjs    # Odometer-style version bump (run by build)
+│   ├── serve_static.py     # Real static-file server for the built dist/ SPA (CM5 deploy gap found live)
+│   └── test_serve_static.py # Real tests for serve_static.py
+├── systemd/
+│   └── hydra-umc-dashboard-ai.service # Local CM5 static-serve systemd unit
+├── tools/
+│   ├── build_test.py       # Non-versioning build/compile check
+│   └── ci_validate.py      # Manifest/CHANGELOG/docs validation used by CI
 ├── docs/
 │   └── SECURITY.md          # Public external-content and deployment safety contract
 ├── build/                  # Reserved for release artifacts (dist/ itself is gitignored)
@@ -87,6 +94,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── index.html              # Vite entry HTML
 ├── vite.config.ts          # Vite bundler + Vitest configuration
 ├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
+├── bump_manifest_version.py # Syncs hydra-umc.project.json's version to package.json's (--sync)
 ├── dev.sh / dev.bat        # Real dev server: install deps + vite
 ├── build.sh / build.bat    # Real build: install deps + real test suite + bump version + tsc + vite build
 └── package.json

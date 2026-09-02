@@ -84,7 +84,14 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义
 ├── tests/                   # 真实测试：HTTP 往返 + 组件测试
 ├── scripts/
-│   └── bump-version.mjs    # 里程表式版本递增（由构建运行）
+│   ├── bump-version.mjs    # 里程表式版本递增（由构建运行）
+│   ├── serve_static.py     # 面向已构建 dist/ SPA 的真实静态文件服务器（实测发现的 CM5 部署缺口）
+│   └── test_serve_static.py # serve_static.py 的真实测试
+├── systemd/
+│   └── hydra-umc-dashboard-ai.service # 本地 CM5 静态服务的 systemd 单元
+├── tools/
+│   ├── build_test.py       # 不递增版本号的构建检查
+│   └── ci_validate.py      # CI 使用的清单/CHANGELOG/文档校验
 ├── docs/
 │   └── SECURITY.md          # 外部内容与部署的公开安全契约
 ├── build/                  # 预留给发布产物（dist/ 本身已被 gitignore）
@@ -92,6 +99,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── index.html              # Vite 入口 HTML
 ├── vite.config.ts          # Vite 打包器 + Vitest 配置
 ├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
+├── bump_manifest_version.py # 将 hydra-umc.project.json 的版本与 package.json 同步(--sync)
 ├── dev.sh / dev.bat        # 真实开发服务器：安装依赖 + vite
 ├── build.sh / build.bat    # 真实构建：安装依赖 + 真实测试套件 + 版本递增 + tsc + vite build
 └── package.json
