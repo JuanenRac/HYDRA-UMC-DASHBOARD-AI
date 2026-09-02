@@ -136,6 +136,8 @@ Questo progetto fa parte di un ecosistema robotico più ampio dello stesso autor
 
 - **[HYDRA-UMC-STUDIO](https://github.com/JuanenRac/HYDRA-UMC-STUDIO)** — la dashboard che questo progetto estende direttamente.
 - **[HYDRA-UMC-COGNITIVE-NODE](https://github.com/JuanenRac/HYDRA-UMC-COGNITIVE-NODE)** — il backend IA che alimenta questa dashboard.
+- **[HYDRA-UMC-DATALAKE](https://github.com/JuanenRac/HYDRA-UMC-DATALAKE)** — la vera cronologia da cui il pannello Riepiloghi Intelligenti calcola le sue statistiche.
+- **[HYDRA-UMC-ANOMALY-DETECTOR](https://github.com/JuanenRac/HYDRA-UMC-ANOMALY-DETECTOR)** — la baseline calibrata rispetto a cui il pannello di Evidenziazione delle Anomalie valuta i campioni recenti.
 
 ### Resto dell'Ecosistema
 

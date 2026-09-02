@@ -136,6 +136,8 @@ Ce projet fait partie d'un écosystème robotique plus large du même auteur (Ju
 
 - **[HYDRA-UMC-STUDIO](https://github.com/JuanenRac/HYDRA-UMC-STUDIO)** — le tableau de bord que ce projet étend directement.
 - **[HYDRA-UMC-COGNITIVE-NODE](https://github.com/JuanenRac/HYDRA-UMC-COGNITIVE-NODE)** — le backend IA qui alimente ce tableau de bord.
+- **[HYDRA-UMC-DATALAKE](https://github.com/JuanenRac/HYDRA-UMC-DATALAKE)** — le véritable historique à partir duquel le panneau Résumés Intelligents calcule ses statistiques.
+- **[HYDRA-UMC-ANOMALY-DETECTOR](https://github.com/JuanenRac/HYDRA-UMC-ANOMALY-DETECTOR)** — la ligne de base ajustée par rapport à laquelle le panneau de Mise en Évidence des Anomalies note les échantillons récents.
 
 ### Reste de l'Écosystème
 

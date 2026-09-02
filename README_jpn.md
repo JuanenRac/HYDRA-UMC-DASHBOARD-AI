@@ -166,6 +166,8 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 
 - **[HYDRA-UMC-STUDIO](https://github.com/JuanenRac/HYDRA-UMC-STUDIO)** —— 本プロジェクトが直接拡張するダッシュボード。
 - **[HYDRA-UMC-COGNITIVE-NODE](https://github.com/JuanenRac/HYDRA-UMC-COGNITIVE-NODE)** —— 本ダッシュボードにデータを供給する AI バックエンド。
+- **[HYDRA-UMC-DATALAKE](https://github.com/JuanenRac/HYDRA-UMC-DATALAKE)** —— スマートサマリーパネルが統計を計算する元になる、実際の履歴データ。
+- **[HYDRA-UMC-ANOMALY-DETECTOR](https://github.com/JuanenRac/HYDRA-UMC-ANOMALY-DETECTOR)** —— 異常ハイライトパネルが最近のサンプルを照合する際の基準となる、適合済みのベースライン。
 
 ### エコシステムのその他のプロジェクト
 
