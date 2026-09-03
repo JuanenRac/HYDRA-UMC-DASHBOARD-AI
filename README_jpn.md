@@ -251,6 +251,7 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** —— プルリクエストのための技術スタックとコーディング指針。
 - **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** —— このコミュニティで期待される行動規範。
+- **[SECURITY.md](SECURITY.md)** —— 脆弱性の報告方法。本プロジェクト自身の外部コンテンツ・デプロイ安全契約については代わりに [`docs/SECURITY.md`](docs/SECURITY.md) を参照。
 - **[SUPPORT.md](SUPPORT.md)** —— 質問の投稿先とバグの報告先。
 - **[LICENSE.md](LICENSE.md)** —— このプロジェクト自身のライセンス。
 

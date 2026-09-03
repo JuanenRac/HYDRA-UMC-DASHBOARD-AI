@@ -225,6 +225,7 @@ This project is part of the HYDRA-UMC robotics ecosystem by the same author (Jua
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** — tech stack and coding guidelines for a pull request.
 - **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** — the standards of behavior expected in this community.
+- **[SECURITY.md](SECURITY.md)** — how to report a vulnerability; see [`docs/SECURITY.md`](docs/SECURITY.md) instead for this project's own external-content and deployment safety contract.
 - **[SUPPORT.md](SUPPORT.md)** — where to ask questions and report bugs.
 - **[LICENSE.md](LICENSE.md)** — this project's own license.
 

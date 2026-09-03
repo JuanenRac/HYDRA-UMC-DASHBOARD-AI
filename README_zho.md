@@ -243,6 +243,7 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** —— 提交 Pull Request 所需的技术栈和编码规范。
 - **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** —— 本社区所期望的行为准则。
+- **[SECURITY.md](SECURITY.md)** —— 如何报告漏洞;本项目自身的外部内容与部署安全契约请改为参见 [`docs/SECURITY.md`](docs/SECURITY.md)。
 - **[SUPPORT.md](SUPPORT.md)** —— 在哪里提问和报告缺陷。
 - **[LICENSE.md](LICENSE.md)** —— 本项目自身的许可证。
 
