@@ -38,6 +38,23 @@ when a change is actually worth summarizing for a human.
 - **Public safety contract:** added [`docs/SECURITY.md`](docs/SECURITY.md),
   including deployment boundaries, failure behaviour, and test coverage.
 
+---
+
+## [0.0.7] - Fixed a real silent-truncation bug in `queryDatalake`
+
+- Found by an ecosystem-wide bug audit: DATALAKE's own `GET /query`
+  returns points oldest-first, capped at a `limit` that defaults to 1000.
+  Both `TrendSummaryPanel` and `AnomalyCheckPanel` query a wide time
+  range and treat the tail of the result as "the most recent samples" -
+  but a source producing more real samples than that limit within the
+  requested range would have been silently truncated to its OLDEST
+  samples, not its newest, so "latest"/"most recent window" could
+  actually be stale data instead of what the panel claimed it was.
+  `queryDatalake` now requests a much larger default limit when a caller
+  does not specify one, and fails with a clear `DatalakeApiError` instead
+  of silently returning a truncated window whenever the response hits
+  exactly the requested limit.
+
 ## [0.0.6] - Real static-serving on the CM5 (own port, no Node runtime needed once built)
 
 - **`scripts/serve_static.py`** (new) - real gap found auditing the

@@ -93,4 +93,44 @@ describe('queryDatalake', () => {
   it('rejects a browser-visible service URL with embedded credentials', async () => {
     await expect(queryDatalake('https://operator:secret@example.test', {})).rejects.toThrow(/must not contain credentials/i)
   })
+
+  it('requests a generous default limit when the caller does not specify one', async () => {
+    baseUrl = await listen((req, res) => {
+      lastRequestUrl = req.url
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end('[]')
+    })
+
+    await queryDatalake(baseUrl, { sourceId: 'robot-1' })
+    expect(lastRequestUrl).toContain('limit=5000')
+  })
+
+  it('honors an explicit caller-supplied limit instead of overriding it', async () => {
+    baseUrl = await listen((req, res) => {
+      lastRequestUrl = req.url
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end('[]')
+    })
+
+    await queryDatalake(baseUrl, { sourceId: 'robot-1', limit: 10 })
+    expect(lastRequestUrl).toContain('limit=10')
+  })
+
+  it('fails honestly instead of silently returning a truncated, stale window', async () => {
+    // A real, confirmed bug found by an ecosystem-wide audit: DATALAKE's
+    // own /query returns points oldest-first, capped at `limit` - a
+    // response with exactly that many points means real, more-recent
+    // samples may have been silently cut off. Every caller in this
+    // codebase treats the tail of the array as "the most recent sample",
+    // so this must fail loudly rather than hand back stale data.
+    baseUrl = await listen((req, res) => {
+      lastRequestUrl = req.url
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify([{ sourceId: 'robot-1', kind: 'motor_temp', field: 'value', timestamp: 1, value: 1 }]))
+    })
+
+    await expect(queryDatalake(baseUrl, { sourceId: 'robot-1', limit: 1 })).rejects.toThrow(
+      /exactly the requested limit/i,
+    )
+  })
 })

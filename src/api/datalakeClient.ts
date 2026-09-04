@@ -78,6 +78,21 @@ export function validateDatalakePoint(value: unknown, index = 0): DatalakePoint 
   }
 }
 
+// DATALAKE's own /query defaults to `limit=1000` and returns points
+// oldest-first up to that limit (see its own store.py docstring: "Real
+// range query, oldest first"). A real, confirmed bug found by an
+// ecosystem-wide audit: every caller in this codebase (TrendSummaryPanel,
+// AnomalyCheckPanel) queries a wide time range and then treats the tail of
+// the returned array as "the most recent samples" - but a source producing
+// more than 1000 real samples within that range would be silently
+// truncated to its OLDEST 1000, not its newest, so "the tail" would
+// actually be stale data from wherever that cutoff landed, not the real
+// latest reading. Requesting a much larger default limit narrows how often
+// that can happen in practice; hitting it is still detected and surfaced
+// as an honest error below rather than silently trusted, for a caller that
+// did not explicitly ask for a smaller, bounded page itself.
+const DEFAULT_QUERY_LIMIT = 5000
+
 function queryUrl(baseUrl: string): URL {
   let url: URL
   try {
@@ -95,8 +110,14 @@ function queryUrl(baseUrl: string): URL {
  * DatalakeApiError on any failure (network, non-2xx, malformed JSON) -
  * never returns a silently-empty array to mask a real failure. */
 export async function queryDatalake(baseUrl: string, params: QueryParams): Promise<DatalakePoint[]> {
+  // Only defaulted when the caller did not ask for a specific page size
+  // itself - a caller explicitly paginating with its own `limit` (oldest-
+  // first, by design) is left alone; see DEFAULT_QUERY_LIMIT's own comment.
+  const effectiveLimit = params.limit ?? DEFAULT_QUERY_LIMIT
+  const effectiveParams: QueryParams = { ...params, limit: effectiveLimit }
+
   const url = queryUrl(baseUrl)
-  for (const [key, value] of Object.entries(params)) {
+  for (const [key, value] of Object.entries(effectiveParams)) {
     if (value !== undefined) {
       url.searchParams.set(key, String(value))
     }
@@ -125,5 +146,20 @@ export async function queryDatalake(baseUrl: string, params: QueryParams): Promi
     throw new DatalakeApiError('DATALAKE returned a non-array /query response')
   }
 
-  return data.map((point, index) => validateDatalakePoint(point, index))
+  const points = data.map((point, index) => validateDatalakePoint(point, index))
+
+  // DATALAKE's own /query returns points oldest-first, capped at `limit` -
+  // a response with exactly that many points means more real samples may
+  // exist in range, silently cut off at the newest end. See
+  // DEFAULT_QUERY_LIMIT's own comment for why this cannot be trusted as
+  // "the most recent" data and must fail honestly instead.
+  if (points.length === effectiveLimit) {
+    throw new DatalakeApiError(
+      `DATALAKE returned exactly the requested limit (${effectiveLimit}) of /query results - more real ` +
+        'samples may exist in this range, and the oldest ones would be silently kept instead of the ' +
+        'most recent. Narrow the time range, or pass an explicit, larger "limit".',
+    )
+  }
+
+  return points
 }
