@@ -1,0 +1,33 @@
+# =============================================================================
+# HYDRA-UMC-DASHBOARD-AI - Local CM5 static SPA server systemd unit
+# Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
+# GPL-3.0-or-later - see LICENSE
+# =============================================================================
+# Own port/service, deliberately NOT folded into HYDRA-UMC-SERVER's own
+# public/ the way HYDRA-UMC-STUDIO is - two independent SPAs sharing one
+# origin risks route/asset collisions, and this dashboard already talks
+# straight to HYDRA-UMC-DATALAKE/HYDRA-UMC-ANOMALY-DETECTOR by their own
+# configured base URLs (see vite.config.ts's own comment), so it never
+# needed SERVER's own backend to begin with.
+[Unit]
+Description=HYDRA-UMC-DASHBOARD-AI real static SPA server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hydra-umc-dashboard-ai
+Group=hydra-umc-dashboard-ai
+WorkingDirectory=/opt/hydra-umc/dashboard-ai
+ExecStart=/usr/bin/python3 /opt/hydra-umc/dashboard-ai/serve_static.py --addr 127.0.0.1 --port 8115 --dir /opt/hydra-umc/dashboard-ai/dist
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target
