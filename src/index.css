@@ -1,0 +1,146 @@
+/* =============================================================================
+   HYDRA-UMC-DASHBOARD-AI - Base stylesheet: index.css
+   Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
+   GPL-3.0 - see LICENSE
+   ============================================================================= */
+
+:root {
+  color-scheme: dark;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --surface: #131a22;
+  --border: #263140;
+  --accent: #38bdf8;
+  --dim: #8b98a5;
+  --bad: #fb7185;
+  --good: #34d399;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #0b0f14;
+  color: #e6edf3;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+}
+
+.app-role {
+  color: var(--dim);
+  max-width: 42rem;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 60rem;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.panel h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.panel-subtitle {
+  color: var(--dim);
+  font-size: 0.85rem;
+  margin: 0 0 1rem;
+}
+
+.panel-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.panel-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--dim);
+}
+
+.panel-form input {
+  background: #0b0f14;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: inherit;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.panel-form button {
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  color: #04121b;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  grid-column: 1 / -1;
+}
+
+.panel-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.panel-error {
+  color: var(--bad);
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.panel-warning {
+  color: #fbbf24;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+}
+
+.summary-grid dt {
+  color: var(--dim);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-grid dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.verdict-good {
+  color: var(--good);
+}
+
+.verdict-bad {
+  color: var(--bad);
+}
