@@ -16,6 +16,10 @@
 
 ---
 
+> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫，以及真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`）都是真实的，并由 50 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 4 个通过的 pytest 测试。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
+
+---
+
 ## 1. 🛠️ 技术概述
 
 **HYDRA-UMC-DASHBOARD-AI** 是 STUDIO Web 界面的分析插件。它通过实时 AI

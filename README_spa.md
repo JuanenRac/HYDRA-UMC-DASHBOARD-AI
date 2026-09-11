@@ -16,6 +16,10 @@
 
 ---
 
+> **Comprobación de honestidad - qué funciona realmente hoy:** las estadísticas de resumen de tendencia (`lib/summary.ts`), la puerta de proveedor de IA y su fallback estadístico honesto (`lib/aiProvider.ts`), el guardián de contrato externo, y los clientes HTTP reales (`api/datalakeClient.ts`, `api/anomalyClient.ts`) son reales y están cubiertos por 50 tests de Vitest que pasan (`npm test` - `summary.test.ts`, `aiProvider.test.ts`, `anomalyClient.test.ts`, `datalakeClient.test.ts`, `TrendSummaryPanel.test.tsx`); el servidor de archivos estáticos para la CM5 (`scripts/serve_static.py`) tiene sus propios 4 tests de pytest que pasan. No existe ningún proveedor de IA real basado en LLM en todo este repositorio - la puerta de `aiProvider.ts` es real, pero toda narrativa mostrada hoy es el fallback estadístico `NO_PROVIDER_CONFIGURED`, claramente etiquetado como tal. La Predicción de Tendencia (un modelo de pronóstico real) y los Consejos de Optimización son ambos completamente aspiracionales - todavía no existe código para ninguno de los dos. El Resaltado de Anomalías solo comprueba la línea base ya ajustada de HYDRA-UMC-ANOMALY-DETECTOR; nunca ajusta una por sí mismo. Ver `CHANGELOG.md` para lo que se ha entregado exactamente hasta ahora.
+
+---
+
 ## 1. 🛠️ VISIÓN TÉCNICA GENERAL
 
 **HYDRA-UMC-DASHBOARD-AI** es el plugin analítico para la interfaz web de STUDIO. Mejora el dashboard estándar con insights de IA en tiempo real, análisis predictivo de tendencias y resaltado automático de anomalías.

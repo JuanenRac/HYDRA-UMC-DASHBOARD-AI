@@ -16,6 +16,10 @@
 
 ---
 
+> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、および本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）は本物であり、50件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の4件の通過する pytest テストがある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
+
+---
+
 ## 1. 🛠️ 技術概要
 
 **HYDRA-UMC-DASHBOARD-AI** は、STUDIO Web インターフェースの分析用

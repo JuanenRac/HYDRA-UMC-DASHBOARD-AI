@@ -16,6 +16,10 @@
 
 ---
 
+> **Honesty check - what actually runs today:** the trend-summary statistics (`lib/summary.ts`), the AI-provider gate and its honest statistical fallback (`lib/aiProvider.ts`), the external contract guard, and the real HTTP clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) are real and covered by 50 passing Vitest tests (`npm test` - `summary.test.ts`, `aiProvider.test.ts`, `anomalyClient.test.ts`, `datalakeClient.test.ts`, `TrendSummaryPanel.test.tsx`); the CM5 static-file server (`scripts/serve_static.py`) has its own 4 passing pytest tests. There is no real LLM-backed AI provider anywhere in this repo - `aiProvider.ts`'s gate is real, but every narrative shown today is the `NO_PROVIDER_CONFIGURED` statistical fallback, clearly labeled as such. Trend Prediction (a real forecast model) and Optimization Tips are both fully aspirational - no code exists for either yet. Anomaly Highlighting only checks HYDRA-UMC-ANOMALY-DETECTOR's own already-fitted baseline; it never fits one itself. See `CHANGELOG.md` for exactly what has shipped so far.
+
+---
+
 ## 1. 🛠️ TECHNICAL OVERVIEW
 
 **HYDRA-UMC-DASHBOARD-AI** is the analytical plugin for the STUDIO web interface. It enhances the standard dashboard with real-time AI insights, predictive trend analysis, and automated anomaly highlights.
