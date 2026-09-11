@@ -80,8 +80,8 @@ export function validateDatalakePoint(value: unknown, index = 0): DatalakePoint 
 
 // DATALAKE's own /query defaults to `limit=1000` and returns points
 // oldest-first up to that limit (see its own store.py docstring: "Real
-// range query, oldest first"). A real, confirmed bug found by an
-// ecosystem-wide audit: every caller in this codebase (TrendSummaryPanel,
+// range query, oldest first"). A real, confirmed bug found
+// while auditing the code: every caller in this codebase (TrendSummaryPanel,
 // AnomalyCheckPanel) queries a wide time range and then treats the tail of
 // the returned array as "the most recent samples" - but a source producing
 // more than 1000 real samples within that range would be silently
