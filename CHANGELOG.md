@@ -42,7 +42,7 @@ when a change is actually worth summarizing for a human.
 
 ## [0.0.7] - Fixed a real silent-truncation bug in `queryDatalake`
 
-- Found by an ecosystem-wide bug audit: DATALAKE's own `GET /query`
+- Found while auditing the code: DATALAKE's own `GET /query`
   returns points oldest-first, capped at a `limit` that defaults to 1000.
   Both `TrendSummaryPanel` and `AnomalyCheckPanel` query a wide time
   range and treat the tail of the result as "the most recent samples" -
