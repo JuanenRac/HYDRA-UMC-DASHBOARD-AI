@@ -117,7 +117,7 @@ describe('queryDatalake', () => {
   })
 
   it('fails honestly instead of silently returning a truncated, stale window', async () => {
-    // A real, confirmed bug found by an ecosystem-wide audit: DATALAKE's
+    // A real, confirmed bug found while auditing the code: DATALAKE's
     // own /query returns points oldest-first, capped at `limit` - a
     // response with exactly that many points means real, more-recent
     // samples may have been silently cut off. Every caller in this
