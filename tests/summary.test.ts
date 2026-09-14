@@ -53,5 +53,37 @@ describe('summarize', () => {
     expect(summary.max).toBe(7)
     expect(summary.average).toBe(7)
     expect(summary.direction).toBe('flat')
+    expect(summary.minTimestamp).toBe(0)
+    expect(summary.maxTimestamp).toBe(0)
+    expect(summary.latestTimestamp).toBe(0)
+  })
+
+  // I28: a min/max/latest number with no link back to which real
+  // observation produced it cannot be investigated further against
+  // DATALAKE's own history - these prove that link is real.
+  it('links min/max/latest back to the real observation timestamp that produced each one', () => {
+    const points = [point(0, 20), point(1000, 5), point(2000, 50), point(3000, 30)]
+    const summary = summarize(points)
+    expect(summary.min).toBe(5)
+    expect(summary.minTimestamp).toBe(1000)
+    expect(summary.max).toBe(50)
+    expect(summary.maxTimestamp).toBe(2000)
+    expect(summary.latest).toBe(30)
+    expect(summary.latestTimestamp).toBe(3000)
+  })
+
+  it('links min/max even when the series is supplied out of timestamp order', () => {
+    const points = [point(3000, 30), point(1000, 5), point(0, 20), point(2000, 50)]
+    const summary = summarize(points)
+    expect(summary.minTimestamp).toBe(1000)
+    expect(summary.maxTimestamp).toBe(2000)
+    expect(summary.latestTimestamp).toBe(3000)
+  })
+
+  it('keeps the earliest occurrence when the same extreme value repeats', () => {
+    const points = [point(0, 10), point(1000, 10), point(2000, 5)]
+    const summary = summarize(points)
+    expect(summary.max).toBe(10)
+    expect(summary.maxTimestamp).toBe(0)
   })
 })

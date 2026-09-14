@@ -40,6 +40,18 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.0.8]
+
+- **I28: `summarize()` links min/max/latest back to the real observation
+  they came from.** `TrendSummary` previously reported bare
+  min/max/average/latest numbers with no way to check them against
+  DATALAKE's own history - a min/max value nobody could trace back to
+  when it happened. Added `minTimestamp`/`maxTimestamp`/`latestTimestamp`,
+  computed in a single ascending pass over the real, sorted series (ties
+  keep the earliest occurrence). `TrendSummaryPanel` now shows a real
+  local timestamp under each of Min/Max/Latest. 4 new tests (53/53
+  passing).
+
 ## [0.0.7] - Fixed a real silent-truncation bug in `queryDatalake`
 
 - Found while auditing the code: DATALAKE's own `GET /query`
