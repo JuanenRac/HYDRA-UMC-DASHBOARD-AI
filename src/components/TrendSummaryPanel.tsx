@@ -23,6 +23,14 @@ const DIRECTION_LABEL: Record<TrendSummary['direction'], string> = {
   flat: '→ flat',
 }
 
+// I28: min/max/latest are now traceable back to the real observation that
+// produced them - shown as a real local timestamp under each value instead
+// of only ever being a bare number nobody could check against DATALAKE's
+// own history.
+function formatObservedAt(timestampMs: number): string {
+  return new Date(timestampMs).toLocaleString()
+}
+
 export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
   const [sourceId, setSourceId] = useState('robot-1')
   const [kind, setKind] = useState('motor_temp')
@@ -114,11 +122,17 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
           </div>
           <div>
             <dt>Min</dt>
-            <dd>{summary.min.toFixed(2)}</dd>
+            <dd>
+              <span>{summary.min.toFixed(2)}</span>
+              <span className="summary-observed-at">at {formatObservedAt(summary.minTimestamp)}</span>
+            </dd>
           </div>
           <div>
             <dt>Max</dt>
-            <dd>{summary.max.toFixed(2)}</dd>
+            <dd>
+              <span>{summary.max.toFixed(2)}</span>
+              <span className="summary-observed-at">at {formatObservedAt(summary.maxTimestamp)}</span>
+            </dd>
           </div>
           <div>
             <dt>Average</dt>
@@ -126,7 +140,10 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
           </div>
           <div>
             <dt>Latest</dt>
-            <dd>{summary.latest.toFixed(2)}</dd>
+            <dd>
+              <span>{summary.latest.toFixed(2)}</span>
+              <span className="summary-observed-at">at {formatObservedAt(summary.latestTimestamp)}</span>
+            </dd>
           </div>
           <div>
             <dt>Direction</dt>
