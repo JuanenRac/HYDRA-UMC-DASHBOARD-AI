@@ -27,6 +27,12 @@ when a change is actually worth summarizing for a human.
 
 ## [Unreleased]
 
+- **Real request timeouts on both HTTP clients:** `datalakeClient.ts` and `anomalyClient.ts` used to
+  call `fetch()` directly with no `AbortController` and no timeout at all - a slow or hung DATALAKE/
+  ANOMALY-DETECTOR instance (network partition, an overloaded process that accepted the connection but
+  never writes a response) left a panel waiting indefinitely. Both now route every request through a
+  new shared `fetchWithTimeout()` (5-second default), reported back as a clear, distinguishable
+  timeout error instead of a request that simply never resolves.
 - **External-content contract validation:** Datalake points and anomaly
   verdicts are now structurally validated at the HTTP client boundary before
   panels calculate with or render them. Malformed numeric values no longer
@@ -39,6 +45,10 @@ when a change is actually worth summarizing for a human.
   including deployment boundaries, failure behaviour, and test coverage.
 
 ---
+
+## [0.0.9]
+
+- Build version synchronized with `hydra-umc.project.json` and the repository-native version source.
 
 ## [0.0.8]
 

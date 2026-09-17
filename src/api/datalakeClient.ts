@@ -10,6 +10,8 @@
 // down, malformed response) and callers are expected to handle
 // DatalakeApiError rather than getting an unhandled rejection.
 
+import { fetchWithTimeout, FetchTimeoutError } from './fetchWithTimeout'
+
 export interface DatalakePoint {
   sourceId: string
   kind: string
@@ -125,8 +127,11 @@ export async function queryDatalake(baseUrl: string, params: QueryParams): Promi
 
   let response: Response
   try {
-    response = await fetch(url.toString())
+    response = await fetchWithTimeout(url.toString())
   } catch (err) {
+    if (err instanceof FetchTimeoutError) {
+      throw new DatalakeApiError(`DATALAKE at ${baseUrl} did not respond in time (${err.timeoutMs}ms)`, err)
+    }
     throw new DatalakeApiError(`could not reach DATALAKE at ${baseUrl}`, err)
   }
 
