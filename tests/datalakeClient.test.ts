@@ -3,6 +3,12 @@
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
 // GPL-3.0 - see LICENSE
 // =============================================================================
+// @vitest-environment node
+//
+// No DOM needed here - see fetchWithTimeout.test.ts's own header comment
+// for why this file deliberately overrides this project's default jsdom
+// test environment.
+//
 // Real HTTP round-trips: a real node:http server standing in for
 // HYDRA-UMC-DATALAKE's own GET /query contract, hit with the real
 // `fetch` this project's own datalakeClient.ts uses - not a mocked

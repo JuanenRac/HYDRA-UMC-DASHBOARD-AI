@@ -12,6 +12,8 @@
 // client offers is real, honest, read-only use of what's already fitted:
 // check /stats, and score a window if it is.
 
+import { fetchWithTimeout, FetchTimeoutError } from './fetchWithTimeout'
+
 export class AnomalyApiError extends Error {
   constructor(
     message: string,
@@ -101,10 +103,13 @@ async function readJsonOrThrow(response: Response, context: string): Promise<unk
 export async function fetchDetectorStats(baseUrl: string): Promise<DetectorStats> {
   let response: Response
   try {
-    response = await fetch(serviceUrl(baseUrl, '/stats').toString())
+    response = await fetchWithTimeout(serviceUrl(baseUrl, '/stats').toString())
   } catch (err) {
     if (err instanceof AnomalyApiError) {
       throw err
+    }
+    if (err instanceof FetchTimeoutError) {
+      throw new AnomalyApiError(`HYDRA-UMC-ANOMALY-DETECTOR at ${baseUrl} did not respond in time (${err.timeoutMs}ms)`, undefined, err)
     }
     throw new AnomalyApiError(`could not reach HYDRA-UMC-ANOMALY-DETECTOR at ${baseUrl}`, undefined, err)
   }
@@ -122,7 +127,7 @@ export async function detectAnomaly(baseUrl: string, window: number[]): Promise<
 
   let response: Response
   try {
-    response = await fetch(serviceUrl(baseUrl, '/detect').toString(), {
+    response = await fetchWithTimeout(serviceUrl(baseUrl, '/detect').toString(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ window }),
@@ -130,6 +135,9 @@ export async function detectAnomaly(baseUrl: string, window: number[]): Promise<
   } catch (err) {
     if (err instanceof AnomalyApiError) {
       throw err
+    }
+    if (err instanceof FetchTimeoutError) {
+      throw new AnomalyApiError(`HYDRA-UMC-ANOMALY-DETECTOR at ${baseUrl} did not respond in time (${err.timeoutMs}ms)`, undefined, err)
     }
     throw new AnomalyApiError(`could not reach HYDRA-UMC-ANOMALY-DETECTOR at ${baseUrl}`, undefined, err)
   }
