@@ -17,6 +17,7 @@
 
 import { TrendSummaryPanel } from './components/TrendSummaryPanel'
 import { AnomalyCheckPanel } from './components/AnomalyCheckPanel'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 const DATALAKE_BASE_URL = import.meta.env.VITE_DATALAKE_URL ?? 'http://localhost:8095'
 const ANOMALY_BASE_URL = import.meta.env.VITE_ANOMALY_URL ?? 'http://localhost:8097'
@@ -32,8 +33,12 @@ function App() {
       </p>
 
       <div className="panels">
-        <TrendSummaryPanel datalakeBaseUrl={DATALAKE_BASE_URL} />
-        <AnomalyCheckPanel datalakeBaseUrl={DATALAKE_BASE_URL} anomalyBaseUrl={ANOMALY_BASE_URL} />
+        <ErrorBoundary panelName="Trend Summary">
+          <TrendSummaryPanel datalakeBaseUrl={DATALAKE_BASE_URL} />
+        </ErrorBoundary>
+        <ErrorBoundary panelName="Anomaly Check">
+          <AnomalyCheckPanel datalakeBaseUrl={DATALAKE_BASE_URL} anomalyBaseUrl={ANOMALY_BASE_URL} />
+        </ErrorBoundary>
       </div>
     </main>
   )

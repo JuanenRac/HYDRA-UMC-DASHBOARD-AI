@@ -25,8 +25,18 @@ when a change is actually worth summarizing for a human.
 
 ---
 
-## [Unreleased]
+## [0.1.0] - Per-panel render-failure isolation, request timeouts, and content validation
 
+- **Per-panel render-failure isolation:** neither panel had an error
+  boundary before this - a render-time exception in one (a malformed
+  DATALAKE/ANOMALY-DETECTOR response reaching a component that didn't
+  expect its exact shape, for instance) would unmount the entire app,
+  since React discards everything above the nearest error boundary on an
+  uncaught render error, and there wasn't one. `App.tsx` now wraps each
+  panel in its own `ErrorBoundary` (new `components/ErrorBoundary.tsx`),
+  so a crash stays contained to that panel's own fallback card while the
+  other keeps working. 3 new tests prove the isolation directly (one
+  panel throwing, the sibling still rendering normally).
 - **Real request timeouts on both HTTP clients:** `datalakeClient.ts` and `anomalyClient.ts` used to
   call `fetch()` directly with no `AbortController` and no timeout at all - a slow or hung DATALAKE/
   ANOMALY-DETECTOR instance (network partition, an overloaded process that accepted the connection but
