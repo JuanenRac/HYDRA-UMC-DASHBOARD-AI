@@ -25,6 +25,14 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.1.1] - Dedicated AnomalyCheckPanel test suite
+
+- Added a real render/interaction Vitest suite for `AnomalyCheckPanel`,
+  covering the "not fitted yet" operational state, a scored verdict from
+  a fitted detector, and the "not enough samples" error - following the
+  same real-`node:http`-server, unmocked-fetch pattern already used by
+  `TrendSummaryPanel.test.tsx`.
+
 ## [0.1.0] - Per-panel render-failure isolation, request timeouts, and content validation
 
 - **Per-panel render-failure isolation:** neither panel had an error
