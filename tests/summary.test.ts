@@ -58,7 +58,7 @@ describe('summarize', () => {
     expect(summary.latestTimestamp).toBe(0)
   })
 
-  // I28: a min/max/latest number with no link back to which real
+  // a min/max/latest number with no link back to which real
   // observation produced it cannot be investigated further against
   // DATALAKE's own history - these prove that link is real.
   it('links min/max/latest back to the real observation timestamp that produced each one', () => {

@@ -14,7 +14,7 @@ import type { DatalakePoint } from '../api/datalakeClient'
 export interface TrendSummary {
   count: number
   min: number
-  /** I28: the timestamp of the real observation that produced [min] - a
+  /** the timestamp of the real observation that produced [min] - a
    * min/max/latest number with no link back to which sample it came from
    * cannot be checked against DATALAKE's own history or investigated
    * further. Ties (an equal value repeated in the series) keep the
@@ -23,11 +23,11 @@ export interface TrendSummary {
    * `<`/`>` improvement. */
   minTimestamp: number
   max: number
-  /** I28: see [minTimestamp] - the same real link for [max]. */
+  /** see [minTimestamp] - the same real link for [max]. */
   maxTimestamp: number
   average: number
   latest: number
-  /** I28: the timestamp of the observation [latest] came from - not
+  /** the timestamp of the observation [latest] came from - not
    * necessarily "now"; it is DATALAKE's own most recent sample in the
    * queried window. */
   latestTimestamp: number
@@ -50,7 +50,7 @@ export function summarize(points: DatalakePoint[]): TrendSummary {
   const sorted = [...points].sort((a, b) => a.timestamp - b.timestamp)
 
   // Single ascending pass so min/max stay linked to the real observation
-  // that produced them (I28), instead of Math.min/Math.max over a bare
+  // that produced them, instead of Math.min/Math.max over a bare
   // value array that this module used to discard the timestamp from.
   let min = sorted[0].value
   let minTimestamp = sorted[0].timestamp
