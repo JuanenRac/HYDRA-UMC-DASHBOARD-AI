@@ -23,7 +23,7 @@ const DIRECTION_LABEL: Record<TrendSummary['direction'], string> = {
   flat: '→ flat',
 }
 
-// I28: min/max/latest are now traceable back to the real observation that
+// min/max/latest are now traceable back to the real observation that
 // produced them - shown as a real local timestamp under each value instead
 // of only ever being a bare number nobody could check against DATALAKE's
 // own history.
