@@ -82,7 +82,7 @@ when a change is actually worth summarizing for a human.
 
 ## [0.0.7] - Fixed a real silent-truncation bug in `queryDatalake`
 
-- Found while auditing the code: DATALAKE's own `GET /query`
+- Found on code review: DATALAKE's own `GET /query`
   returns points oldest-first, capped at a `limit` that defaults to 1000.
   Both `TrendSummaryPanel` and `AnomalyCheckPanel` query a wide time
   range and treat the tail of the result as "the most recent samples" -
@@ -97,8 +97,7 @@ when a change is actually worth summarizing for a human.
 
 ## [0.0.6] - Real static-serving on the CM5 (own port, no Node runtime needed once built)
 
-- **`scripts/serve_static.py`** (new) - real gap found auditing the
-  ecosystem against actual CM5 hardware: this project builds a real,
+- **`scripts/serve_static.py`** (new) - real gap found checking the ecosystem against actual CM5 hardware: this project builds a real,
   deployable static SPA (`npm run build` -> `dist/`), but nothing on the
   CM5 ever served it. Deliberately plain stdlib `http.server`, not a
   second Node runtime on the CM5 just to serve pre-built static files.
