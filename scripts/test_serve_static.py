@@ -88,6 +88,45 @@ class ServeStaticTests(unittest.TestCase):
         self.assertEqual(status, 404)
         self.assertNotIn("real dashboard", body)
 
+    def test_a_directory_without_an_index_is_not_listed(self) -> None:
+        # the built assets/ folder has no index.html: it used to be listed file by file
+        (self.directory / "assets").mkdir()
+        (self.directory / "assets" / "secret-name.js").write_text("x", encoding="utf-8")
+        status, body = self._get("/assets/")
+        self.assertEqual(status, 404)
+        self.assertNotIn("secret-name.js", body)
+        # the file itself is still served
+        self.assertEqual(self._get("/assets/secret-name.js")[0], 200)
+
+    def test_responses_carry_the_hardening_headers(self) -> None:
+        with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/", timeout=5) as resp:
+            self.assertEqual(resp.headers.get("X-Content-Type-Options"), "nosniff")
+            self.assertEqual(resp.headers.get("X-Frame-Options"), "DENY")
+            self.assertEqual(resp.headers.get("Referrer-Policy"), "no-referrer")
+
+    def test_a_path_outside_the_served_directory_is_never_served(self) -> None:
+        outside = Path(self._tmpdir.name).parent / "outside-the-root.txt"
+        outside.write_text("do not serve", encoding="utf-8")
+        self.addCleanup(lambda: outside.unlink(missing_ok=True))
+        for path in ("/../outside-the-root.txt", "/%2e%2e/outside-the-root.txt", "/..%2foutside-the-root.txt"):
+            status, body = self._get(path)
+            self.assertNotEqual(status, 200, path)
+            self.assertNotIn("do not serve", body, path)
+
+    def test_a_client_that_sends_nothing_is_dropped_instead_of_holding_a_thread(self) -> None:
+        import socket
+        import time
+
+        from serve_static import QuietHandler
+
+        original = QuietHandler.timeout
+        QuietHandler.timeout = 0.3
+        self.addCleanup(lambda: setattr(QuietHandler, "timeout", original))
+        with socket.create_connection(("127.0.0.1", self.port), timeout=5) as client:
+            started = time.monotonic()
+            self.assertEqual(client.recv(1), b"")  # sends nothing; the server closes by itself
+            self.assertLess(time.monotonic() - started, 3)
+
     def test_refuses_to_serve_a_directory_with_no_index_html(self) -> None:
         empty_dir = Path(self._tmpdir.name) / "empty"
         empty_dir.mkdir()

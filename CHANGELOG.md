@@ -25,6 +25,13 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.1.2] - Static server hardening, Portuguese README
+
+- **Directory listings are off:** the static file server (`scripts/serve_static.py`, used to serve the built SPA on the CM5) is the stdlib `SimpleHTTPRequestHandler`, which lists a directory that has no `index.html` file by file; the built `assets/` folder was browsable. A directory without an index is now a 404 (the files in it are still served).
+- **Hardening headers and an idle timeout:** every response now carries `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: no-referrer` (nothing in the ecosystem frames this page), and a client that connects and sends nothing is dropped after 15 seconds instead of holding a handler thread forever.
+- **Tests:** the static server's tests grow from 4 to 8 (no listing, the hardening headers, path traversal never serves a file outside the root, the dropped idle connection); the Vitest suite is 62.
+- **Docs:** the README test counts were out of date (59 Vitest and 4 pytest) and are corrected, and a README in Portuguese (`README_por.md`) joins the other translations.
+
 ## [0.1.1] - Dedicated AnomalyCheckPanel test suite
 
 - Added a real render/interaction Vitest suite for `AnomalyCheckPanel`,

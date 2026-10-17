@@ -30,8 +30,26 @@ from pathlib import Path
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
+    # Seconds a client may stay silent before its connection is dropped, so a
+    # client that connects and sends nothing cannot hold a handler thread forever.
+    timeout = 15.0
+
     def log_message(self, format: str, *args: object) -> None:  # noqa: A002
         pass  # quiet by default, same reasoning as this ecosystem's other services
+
+    def end_headers(self) -> None:
+        # the dashboard is only ever a page of its own: no sniffing of a file's type,
+        # no framing by another site, no referrer sent to the services it calls
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "no-referrer")
+        super().end_headers()
+
+    def list_directory(self, path):  # noqa: ANN001, ANN201
+        # a directory without an index.html (the built assets/ folder) used to be
+        # listed file by file; the dashboard has no use for that
+        self.send_error(404, "File not found")
+        return None
 
 
 def serve(directory: Path, addr: str, port: int) -> None:

@@ -4,7 +4,7 @@
 
 # 🧠 HYDRA-UMC-DASHBOARD-AI
 
-<p align="center"><a href="README.md">🇺🇸 English</a> | <a href="README_spa.md">🇪🇸 Español</a> | <a href="README_fra.md">🇫🇷 Français</a> | <a href="README_ita.md">🇮🇹 Italiano</a> | <a href="README_deu.md">🇩🇪 Deutsch</a> | 🇨🇳 <b>简体中文</b> | <a href="README_jpn.md">🇯🇵 日本語</a></p>
+<p align="center"><a href="README.md">🇺🇸 English</a> | <a href="README_spa.md">🇪🇸 Español</a> | <a href="README_fra.md">🇫🇷 Français</a> | <a href="README_ita.md">🇮🇹 Italiano</a> | <a href="README_deu.md">🇩🇪 Deutsch</a> | 🇨🇳 <b>简体中文</b> | <a href="README_jpn.md">🇯🇵 日本語</a> | <a href="README_por.md">🇵🇹 Português</a></p>
 
 ### 📈 面向 STUDIO Web 仪表盘的 AI 驱动分析扩展
 
@@ -16,7 +16,7 @@
 
 ---
 
-> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 59 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 4 个通过的 pytest 测试。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
+> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 62 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 8 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
 
 ---
 

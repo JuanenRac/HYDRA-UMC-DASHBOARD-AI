@@ -4,7 +4,7 @@
 
 # 🧠 HYDRA-UMC-DASHBOARD-AI
 
-<p align="center"><a href="README.md">🇺🇸 English</a> | <a href="README_spa.md">🇪🇸 Español</a> | <a href="README_fra.md">🇫🇷 Français</a> | <a href="README_ita.md">🇮🇹 Italiano</a> | <a href="README_deu.md">🇩🇪 Deutsch</a> | <a href="README_zho.md">🇨🇳 简体中文</a> | 🇯🇵 <b>日本語</b></p>
+<p align="center"><a href="README.md">🇺🇸 English</a> | <a href="README_spa.md">🇪🇸 Español</a> | <a href="README_fra.md">🇫🇷 Français</a> | <a href="README_ita.md">🇮🇹 Italiano</a> | <a href="README_deu.md">🇩🇪 Deutsch</a> | <a href="README_zho.md">🇨🇳 简体中文</a> | 🇯🇵 <b>日本語</b> | <a href="README_por.md">🇵🇹 Português</a></p>
 
 ### 📈 STUDIO Web ダッシュボード向けの AI 駆動分析拡張機能
 
@@ -16,7 +16,7 @@
 
 ---
 
-> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、59件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の4件の通過する pytest テストがある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
+> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、62件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の8件の通過する `unittest` テスト（ディレクトリ一覧なし、堅牢化ヘッダー、アイドル接続のタイムアウト、パストラバーサルなし）がある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
 
 ---
 

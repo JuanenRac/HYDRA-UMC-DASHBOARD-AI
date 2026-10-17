@@ -4,7 +4,7 @@
 
 # 🧠 HYDRA-UMC-DASHBOARD-AI
 
-<p align="center">🇺🇸 <b>English</b> | <a href="README_spa.md">🇪🇸 Español</a> | <a href="README_fra.md">🇫🇷 Français</a> | <a href="README_ita.md">🇮🇹 Italiano</a> | <a href="README_deu.md">🇩🇪 Deutsch</a> | <a href="README_zho.md">🇨🇳 简体中文</a> | <a href="README_jpn.md">🇯🇵 日本語</a></p>
+<p align="center">🇺🇸 <b>English</b> | <a href="README_spa.md">🇪🇸 Español</a> | <a href="README_fra.md">🇫🇷 Français</a> | <a href="README_ita.md">🇮🇹 Italiano</a> | <a href="README_deu.md">🇩🇪 Deutsch</a> | <a href="README_zho.md">🇨🇳 简体中文</a> | <a href="README_jpn.md">🇯🇵 日本語</a> | <a href="README_por.md">🇵🇹 Português</a></p>
 
 ### 📈 AI-Powered Analytical Extension for the STUDIO Web Dashboard
 
@@ -16,7 +16,7 @@
 
 ---
 
-> **Honesty check - what actually runs today:** the trend-summary statistics (`lib/summary.ts`), the AI-provider gate and its honest statistical fallback (`lib/aiProvider.ts`), the external contract guard, the real HTTP clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`), and per-panel render-failure isolation (`components/ErrorBoundary.tsx` - a crash in one panel's render stays contained to that panel's own card instead of unmounting the whole app) are real and covered by 59 passing Vitest tests (`npm test` - `summary.test.ts`, `aiProvider.test.ts`, `anomalyClient.test.ts`, `datalakeClient.test.ts`, `TrendSummaryPanel.test.tsx`, `ErrorBoundary.test.tsx`); the CM5 static-file server (`scripts/serve_static.py`) has its own 4 passing pytest tests. There is no real LLM-backed AI provider anywhere in this repo - `aiProvider.ts`'s gate is real, but every narrative shown today is the `NO_PROVIDER_CONFIGURED` statistical fallback, clearly labeled as such. Trend Prediction (a real forecast model) and Optimization Tips are both fully aspirational - no code exists for either yet. Anomaly Highlighting only checks HYDRA-UMC-ANOMALY-DETECTOR's own already-fitted baseline; it never fits one itself. See `CHANGELOG.md` for exactly what has shipped so far.
+> **Honesty check - what actually runs today:** the trend-summary statistics (`lib/summary.ts`), the AI-provider gate and its honest statistical fallback (`lib/aiProvider.ts`), the external contract guard, the real HTTP clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`), and per-panel render-failure isolation (`components/ErrorBoundary.tsx` - a crash in one panel's render stays contained to that panel's own card instead of unmounting the whole app) are real and covered by 62 passing Vitest tests (`npm test` - `summary.test.ts`, `aiProvider.test.ts`, `anomalyClient.test.ts`, `datalakeClient.test.ts`, `TrendSummaryPanel.test.tsx`, `ErrorBoundary.test.tsx`); the CM5 static-file server (`scripts/serve_static.py`) has its own 8 passing `unittest` tests (no directory listing, hardening headers, an idle-connection timeout, no path traversal). There is no real LLM-backed AI provider anywhere in this repo - `aiProvider.ts`'s gate is real, but every narrative shown today is the `NO_PROVIDER_CONFIGURED` statistical fallback, clearly labeled as such. Trend Prediction (a real forecast model) and Optimization Tips are both fully aspirational - no code exists for either yet. Anomaly Highlighting only checks HYDRA-UMC-ANOMALY-DETECTOR's own already-fitted baseline; it never fits one itself. See `CHANGELOG.md` for exactly what has shipped so far.
 
 ---
 
