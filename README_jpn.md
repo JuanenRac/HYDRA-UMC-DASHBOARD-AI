@@ -16,7 +16,7 @@
 
 ---
 
-> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、62件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の8件の通過する `unittest` テスト（ディレクトリ一覧なし、堅牢化ヘッダー、アイドル接続のタイムアウト、パストラバーサルなし）がある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
+> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、70件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の11件の通過する `unittest` テスト（ディレクトリ一覧なし、堅牢化ヘッダー、アイドル接続のタイムアウト、パストラバーサルなし）がある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
 
 ---
 
@@ -138,9 +138,12 @@ TypeScript チェックが既に通過した後にのみ発生するため、壊
 とは別のポートのため、両方を同時に並行して実行できます）。`npm test`
 は実際の Vitest スイートを直接実行します。
 
-デフォルトでは、2つの実際のパネルは `http://localhost:8095`
-（HYDRA-UMC-DATALAKE）と `http://localhost:8097`
-（HYDRA-UMC-ANOMALY-DETECTOR）を指しています——`VITE_DATALAKE_URL`/
+デフォルトでは、2つの実際のパネルは同一オリジンのパス `/api/datalake` と
+`/api/anomaly` を呼び出します。`scripts/serve_static.py`（および Vite 開発
+サーバー）がこれらを `127.0.0.1:8095` の HYDRA-UMC-DATALAKE と
+`127.0.0.1:8097` の HYDRA-UMC-ANOMALY-DETECTOR に転送します（どちらの
+サービスも CORS ヘッダーを送らないため、ブラウザから直接は呼び出せません）
+——`VITE_DATALAKE_URL`/
 `VITE_ANOMALY_URL`（`vite build`/`vite dev` の前に設定、Vite がビルド時
 にインライン化します）で上書きして、別のデプロイ先を指すことができます。
 

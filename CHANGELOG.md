@@ -25,6 +25,16 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.1.3] - The deployed dashboard can reach its services, and the type check checks
+
+- **Deployment:** the panels called DATALAKE and the anomaly detector on other ports, which neither service allows from a browser (no CORS headers), and `localhost` meant the visitor's own computer. The static server now forwards `/api/datalake/*` and `/api/anomaly/*` to the two loopback services (GET and POST only, bounded sizes, 502 when a service is down; `--datalake` and `--anomaly` choose the upstreams), the app calls those same-origin paths by default, and the Vite dev server proxies the same two paths. A base URL with a path is now joined correctly.
+- **Type check:** `npm run typecheck` ran `tsc` on a project with no files and always passed. It now checks the app and the Vite config, the four constructors that the strict settings rejected are fixed, and Vitest moved to 4.x so its types match Vite 8; `npm run build` runs the same check first.
+- **Build scripts:** `build.sh`/`build.bat` called `npm install-scripts approve --all`, which older npm versions do not have, and aborted after the version had already been bumped; they now use `npm ci`.
+- **Narrative gate:** the "AI"/"Statistical fallback" label is decided by the code path, never by what a provider claims; a failing provider is logged instead of being hidden; and the source, kind and field names must be plain identifiers before they can reach a future language-model prompt.
+- **Trend direction:** it is now the slope of the fitted line over the whole series with a noise-aware threshold, so one spike at the end or noise around zero no longer reads as rising or falling.
+- **Anomaly check:** it defaults to the vibration kind, and both panels validate the window size and the minutes before sending.
+- **Docs:** the base-URL comment no longer claims a rebuild is not needed, the page title has no stale version, the README, manifest and test counts (70 Vitest and 11 unittest tests) are current.
+
 ## [0.1.2] - Static server hardening, Portuguese README
 
 - **Directory listings are off:** the static file server (`scripts/serve_static.py`, used to serve the built SPA on the CM5) is the stdlib `SimpleHTTPRequestHandler`, which lists a directory that has no `index.html` file by file; the built `assets/` folder was browsable. A directory without an index is now a 404 (the files in it are still served).

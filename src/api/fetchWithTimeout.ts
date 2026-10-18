@@ -22,8 +22,10 @@ export const DEFAULT_FETCH_TIMEOUT_MS = 5000
  * produces, so a caller's catch block sees one recognizable timeout
  * shape regardless of which browser/runtime is running this. */
 export class FetchTimeoutError extends Error {
-  constructor(public readonly timeoutMs: number) {
+  readonly timeoutMs: number
+  constructor(timeoutMs: number) {
     super(`request timed out after ${timeoutMs}ms`)
+    this.timeoutMs = timeoutMs
     this.name = 'FetchTimeoutError'
   }
 }

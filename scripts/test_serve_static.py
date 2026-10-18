@@ -134,5 +134,91 @@ class ServeStaticTests(unittest.TestCase):
             serve(empty_dir, "127.0.0.1", 0)
 
 
+class ProxyTests(unittest.TestCase):
+    """The two same-origin prefixes reach their upstream; nothing else does."""
+
+    def setUp(self) -> None:
+        import functools
+        import json
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+        from serve_static import QuietHandler
+
+        seen: list[tuple[str, str, bytes]] = []
+        self.seen = seen
+
+        class Upstream(BaseHTTPRequestHandler):
+            def log_message(self, format, *args):  # noqa: A002, ANN001, ANN002
+                pass
+
+            def _reply(self, body: bytes = b"") -> None:
+                seen.append((self.command, self.path, body))
+                payload = json.dumps({"path": self.path}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+
+            def do_GET(self) -> None:  # noqa: N802
+                self._reply()
+
+            def do_POST(self) -> None:  # noqa: N802
+                self._reply(self.rfile.read(int(self.headers.get("Content-Length", "0"))))
+
+        self.upstream = ThreadingHTTPServer(("127.0.0.1", 0), Upstream)
+        threading.Thread(target=self.upstream.serve_forever, daemon=True).start()
+        upstream_url = f"http://127.0.0.1:{self.upstream.server_address[1]}"
+
+        self._tmpdir = tempfile.TemporaryDirectory()
+        (Path(self._tmpdir.name) / "index.html").write_text("<html></html>", encoding="utf-8")
+        handler_class = type(
+            "TestProxyingHandler",
+            (QuietHandler,),
+            {"proxy_routes": {"/api/datalake": upstream_url, "/api/anomaly": upstream_url}},
+        )
+        self.httpd = ThreadingHTTPServer(
+            ("127.0.0.1", 0), functools.partial(handler_class, directory=self._tmpdir.name)
+        )
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+        self.base = f"http://127.0.0.1:{self.httpd.server_address[1]}"
+
+    def tearDown(self) -> None:
+        for server in (self.httpd, self.upstream):
+            server.shutdown()
+            server.server_close()
+        self._tmpdir.cleanup()
+
+    def test_get_is_forwarded_without_the_prefix(self) -> None:
+        with urllib.request.urlopen(f"{self.base}/api/datalake/query?sourceId=a&limit=5") as response:
+            self.assertEqual(response.status, 200)
+        self.assertEqual(self.seen[0][:2], ("GET", "/query?sourceId=a&limit=5"))
+
+    def test_post_body_is_forwarded(self) -> None:
+        request = urllib.request.Request(
+            f"{self.base}/api/anomaly/detect", data=b'{"window":[1,2]}', method="POST",
+            headers={"Content-Type": "application/json"},
+        )
+        with urllib.request.urlopen(request) as response:
+            self.assertEqual(response.status, 200)
+        self.assertEqual(self.seen[0], ("POST", "/detect", b'{"window":[1,2]}'))
+
+    def test_post_elsewhere_is_refused_and_a_dead_upstream_is_a_502(self) -> None:
+        request = urllib.request.Request(f"{self.base}/other", data=b"{}", method="POST")
+        with self.assertRaises(urllib.error.HTTPError) as caught:
+            urllib.request.urlopen(request)
+        self.assertEqual(caught.exception.code, 405)
+        self.assertEqual(self.seen, [])
+
+        self.upstream.shutdown()
+        self.upstream.server_close()
+        with self.assertRaises(urllib.error.HTTPError) as caught:
+            urllib.request.urlopen(f"{self.base}/api/datalake/stats")
+        self.assertEqual(caught.exception.code, 502)
+        # tearDown shuts it down again: serve_forever has ended, so restart-proof it
+        self.upstream.shutdown = lambda: None  # type: ignore[method-assign]
+        self.upstream.server_close = lambda: None  # type: ignore[method-assign]
+
+
 if __name__ == "__main__":
     unittest.main()

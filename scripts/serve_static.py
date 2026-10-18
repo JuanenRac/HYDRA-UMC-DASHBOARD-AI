@@ -7,10 +7,12 @@
 """Real gap found auditing the ecosystem against actual CM5 hardware: this
 project builds a real, deployable static SPA (`npm run build` -> dist/),
 but nothing on the CM5 ever served it - unlike HYDRA-UMC-STUDIO, which
-gets folded into HYDRA-UMC-SERVER's own public/, this dashboard talks
-directly to HYDRA-UMC-DATALAKE/HYDRA-UMC-ANOMALY-DETECTOR by their own
-configured base URLs (see vite.config.ts's own comment) - it needs no
-backend of its own, just a real static file server on its own port.
+gets folded into HYDRA-UMC-SERVER's own public/, this dashboard calls
+HYDRA-UMC-DATALAKE and HYDRA-UMC-ANOMALY-DETECTOR from the browser, and
+neither service sends CORS headers, so this server also forwards two
+same-origin path prefixes to them: /api/datalake/* to the DATALAKE and
+/api/anomaly/* to the ANOMALY-DETECTOR (loopback by default). Only GET and POST
+are forwarded, only to those two fixed upstreams, and nothing else is proxied.
 
 Deliberately plain stdlib (`http.server`), not a second Node runtime on
 the CM5 just to serve pre-built static files - same "prefer stdlib"
@@ -25,8 +27,13 @@ from __future__ import annotations
 
 import argparse
 import functools
+import urllib.error
+import urllib.request
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+
+MAX_PROXY_BODY_BYTES = 4 * 1024 * 1024
+UPSTREAM_TIMEOUT_SECONDS = 10.0
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -36,6 +43,59 @@ class QuietHandler(SimpleHTTPRequestHandler):
 
     def log_message(self, format: str, *args: object) -> None:  # noqa: A002
         pass  # quiet by default, same reasoning as this ecosystem's other services
+
+    # prefix -> upstream base URL; set per server by serve()
+    proxy_routes: dict[str, str] = {}
+
+    def _proxy_target(self) -> str | None:
+        for prefix, upstream in self.proxy_routes.items():
+            if self.path == prefix or self.path.startswith(prefix + "/") or self.path.startswith(prefix + "?"):
+                return upstream.rstrip("/") + (self.path[len(prefix):] or "/")
+        return None
+
+    def _forward(self, target: str, body: bytes | None) -> None:
+        request = urllib.request.Request(target, data=body, method=self.command)
+        content_type = self.headers.get("Content-Type")
+        if content_type:
+            request.add_header("Content-Type", content_type)
+        try:
+            with urllib.request.urlopen(request, timeout=UPSTREAM_TIMEOUT_SECONDS) as response:  # noqa: S310
+                status, payload, upstream_type = response.status, response.read(MAX_PROXY_BODY_BYTES + 1), response.headers.get("Content-Type")
+        except urllib.error.HTTPError as err:
+            status, payload, upstream_type = err.code, err.read(MAX_PROXY_BODY_BYTES + 1), err.headers.get("Content-Type")
+        except (urllib.error.URLError, TimeoutError, OSError):
+            self.send_error(502, "Upstream service unavailable")
+            return
+        if len(payload) > MAX_PROXY_BODY_BYTES:
+            self.send_error(502, "Upstream response too large")
+            return
+        self.send_response(status)
+        self.send_header("Content-Type", upstream_type or "application/json")
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def do_GET(self) -> None:  # noqa: N802
+        target = self._proxy_target()
+        if target is None:
+            super().do_GET()
+            return
+        self._forward(target, None)
+
+    def do_POST(self) -> None:  # noqa: N802
+        target = self._proxy_target()
+        if target is None:
+            self.send_error(405, "Method not allowed")
+            return
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            length = -1
+        if length < 0 or length > MAX_PROXY_BODY_BYTES:
+            self.send_error(413, "Request body too large")
+            return
+        self._forward(target, self.rfile.read(length))
 
     def end_headers(self) -> None:
         # the dashboard is only ever a page of its own: no sniffing of a file's type,
@@ -52,13 +112,24 @@ class QuietHandler(SimpleHTTPRequestHandler):
         return None
 
 
-def serve(directory: Path, addr: str, port: int) -> None:
+def serve(
+    directory: Path,
+    addr: str,
+    port: int,
+    datalake: str = "http://127.0.0.1:8095",
+    anomaly: str = "http://127.0.0.1:8097",
+) -> None:
     if not (directory / "index.html").is_file():
         raise SystemExit(
             f"error: {directory} has no index.html - run 'npm run build' first "
             "(or point --dir at the real dist/ output)."
         )
-    handler = functools.partial(QuietHandler, directory=str(directory))
+    handler_class = type(
+        "ProxyingHandler",
+        (QuietHandler,),
+        {"proxy_routes": {"/api/datalake": datalake, "/api/anomaly": anomaly}},
+    )
+    handler = functools.partial(handler_class, directory=str(directory))
     server = ThreadingHTTPServer((addr, port), handler)
     print(f"[dashboard-ai] serving {directory} on http://{addr}:{port}")
     try:
@@ -76,9 +147,13 @@ def main() -> int:
                          help="Directory to serve (default: <repo>/dist, the real 'npm run build' output).")
     parser.add_argument("--addr", default="127.0.0.1", help="Address to bind (default: 127.0.0.1).")
     parser.add_argument("--port", type=int, default=8115, help="Port to bind (default: 8115).")
+    parser.add_argument("--datalake", default="http://127.0.0.1:8095",
+                         help="HYDRA-UMC-DATALAKE base URL behind /api/datalake (default: http://127.0.0.1:8095).")
+    parser.add_argument("--anomaly", default="http://127.0.0.1:8097",
+                         help="HYDRA-UMC-ANOMALY-DETECTOR base URL behind /api/anomaly (default: http://127.0.0.1:8097).")
     args = parser.parse_args()
 
-    serve(args.dir.resolve(), args.addr, args.port)
+    serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly)
     return 0
 
 

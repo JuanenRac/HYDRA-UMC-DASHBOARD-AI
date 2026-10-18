@@ -38,6 +38,7 @@ export interface AiProvider {
 
 const MAX_NARRATIVE_LENGTH = 2000
 const DIRECTIONS: ReadonlyArray<TrendSummary['direction']> = ['up', 'down', 'flat']
+const SAFE_IDENTIFIER = /^[A-Za-z0-9_.:-]{1,128}$/
 const UNSAFE_NARRATIVE_CHARACTERS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u202A-\u202E\u2066-\u2069]/
 
 function isFiniteNumber(value: unknown): value is number {
@@ -56,6 +57,12 @@ export function validateNarrativeRequest(value: unknown): NarrativeRequest {
   for (const field of ['sourceId', 'kind', 'field'] as const) {
     if (typeof v[field] !== 'string' || (v[field] as string).length === 0) {
       throw new AiProviderError(`narrative request field "${field}" must be a non-empty string`)
+    }
+    // These identifiers end up in a prompt once a language-model provider
+    // exists, and any telemetry producer chooses them: only plain identifier
+    // characters are allowed, never free text.
+    if (!SAFE_IDENTIFIER.test(v[field] as string)) {
+      throw new AiProviderError(`narrative request field "${field}" may only contain letters, digits, "_", "-", "." and ":" (up to 128 characters)`)
     }
   }
 
@@ -138,8 +145,15 @@ export async function safeGenerateNarrative(
 
   try {
     const raw = await provider.generateNarrative(request)
-    return validateNarrativeResponse(raw)
-  } catch {
+    const checked = validateNarrativeResponse(raw)
+    // the label comes from the path taken here, never from the provider's own
+    // claim: only the built-in statistical provider is labeled statistical
+    return {
+      narrative: checked.narrative,
+      generatedBy: provider === NO_PROVIDER_CONFIGURED ? 'statistical-fallback' : 'ai',
+    }
+  } catch (err) {
+    console.warn('narrative provider unavailable, using the statistical summary:', err)
     return NO_PROVIDER_CONFIGURED.generateNarrative(request)
   }
 }

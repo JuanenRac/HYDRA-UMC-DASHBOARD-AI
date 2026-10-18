@@ -11,6 +11,7 @@
 // DatalakeApiError rather than getting an unhandled rejection.
 
 import { fetchWithTimeout, FetchTimeoutError } from './fetchWithTimeout'
+import { joinServiceUrl } from './joinServiceUrl'
 
 export interface DatalakePoint {
   sourceId: string
@@ -21,8 +22,10 @@ export interface DatalakePoint {
 }
 
 export class DatalakeApiError extends Error {
-  constructor(message: string, public readonly cause?: unknown) {
+  readonly cause?: unknown
+  constructor(message: string, cause?: unknown) {
     super(message)
+    this.cause = cause
     this.name = 'DatalakeApiError'
   }
 }
@@ -98,7 +101,7 @@ const DEFAULT_QUERY_LIMIT = 5000
 function queryUrl(baseUrl: string): URL {
   let url: URL
   try {
-    url = new URL('/query', baseUrl)
+    url = joinServiceUrl(baseUrl, '/query')
   } catch (err) {
     throw new DatalakeApiError('DATALAKE base URL is invalid', err)
   }

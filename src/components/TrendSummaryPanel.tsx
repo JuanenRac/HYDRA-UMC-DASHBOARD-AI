@@ -44,6 +44,10 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
+    if (!Number.isFinite(minutesBack) || minutesBack <= 0) {
+      setError('Minutes back must be a number greater than 0.')
+      return
+    }
     setLoading(true)
     setError(null)
     setSummary(null)

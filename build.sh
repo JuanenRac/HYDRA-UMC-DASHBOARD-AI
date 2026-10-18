@@ -46,8 +46,7 @@ cd "$(dirname "$0")"
 # alike, but only prompts when stdin is actually a terminal (never in
 # CI/piped/non-interactive runs).
 trap '[ -t 0 ] && read -r -p "Press Enter to close..." _' EXIT
-npm install
-npm install-scripts approve --all
+npm ci
 
 echo "========================================"
 echo " Running the real test suite (vitest)... "

@@ -5,10 +5,11 @@
 // =============================================================================
 // Real v0: two panels, both real HTTP clients against real running
 // HYDRA-UMC-DATALAKE / HYDRA-UMC-ANOMALY-DETECTOR instances (see
-// src/api/*.ts) - no mock data path. Base URLs are configurable via Vite
-// env vars (VITE_DATALAKE_URL / VITE_ANOMALY_URL) so this doesn't need a
-// rebuild to point at a different deployment; both default to the two
-// services' own documented default ports for local development.
+// src/api/*.ts) - no mock data path. The base URLs default to the same-origin
+// paths /api/datalake and /api/anomaly, which scripts/serve_static.py (and the
+// Vite dev server) proxy to the two loopback services, because neither service
+// sends CORS headers. VITE_DATALAKE_URL / VITE_ANOMALY_URL replace them, but
+// Vite inlines them at BUILD time, so changing them needs a rebuild.
 //
 // What this deliberately does NOT do yet: an LLM-generated natural-language
 // summary, or overlaying anomaly markers
@@ -19,8 +20,8 @@ import { TrendSummaryPanel } from './components/TrendSummaryPanel'
 import { AnomalyCheckPanel } from './components/AnomalyCheckPanel'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
-const DATALAKE_BASE_URL = import.meta.env.VITE_DATALAKE_URL ?? 'http://localhost:8095'
-const ANOMALY_BASE_URL = import.meta.env.VITE_ANOMALY_URL ?? 'http://localhost:8097'
+const DATALAKE_BASE_URL = import.meta.env.VITE_DATALAKE_URL ?? '/api/datalake'
+const ANOMALY_BASE_URL = import.meta.env.VITE_ANOMALY_URL ?? '/api/anomaly'
 
 function App() {
   return (

@@ -5,10 +5,9 @@
 # =============================================================================
 # Own port/service, deliberately NOT folded into HYDRA-UMC-SERVER's own
 # public/ the way HYDRA-UMC-STUDIO is - two independent SPAs sharing one
-# origin risks route/asset collisions, and this dashboard already talks
-# straight to HYDRA-UMC-DATALAKE/HYDRA-UMC-ANOMALY-DETECTOR by their own
-# configured base URLs (see vite.config.ts's own comment), so it never
-# needed SERVER's own backend to begin with.
+# origin risks route/asset collisions. The static server also forwards
+# /api/datalake and /api/anomaly to the two loopback services (they send no
+# CORS headers), so it never needed SERVER's own backend to begin with.
 [Unit]
 Description=HYDRA-UMC-DASHBOARD-AI real static SPA server
 After=network-online.target

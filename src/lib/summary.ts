@@ -74,11 +74,30 @@ export function summarize(points: DatalakePoint[]): TrendSummary {
   const latest = latestPoint.value
   const latestTimestamp = latestPoint.timestamp
 
-  const delta = latest - first
-  // A tiny relative threshold (0.5% of the average magnitude, floored at
-  // a small absolute epsilon) keeps floating-point noise on an otherwise
-  // flat signal from reporting a misleading "up"/"down".
-  const threshold = Math.max(Math.abs(average) * 0.005, 1e-9)
+  // The direction is the change of the least-squares line over the whole
+  // series, not first-vs-last: one spike at either end no longer decides it.
+  // The threshold is the larger of 0.5% of the average magnitude (floating
+  // point noise on a flat signal) and twice the standard error of the fitted
+  // change, so a signal whose average is near zero (vibration, signed
+  // deviations) is not called "rising"/"falling" because of noise.
+  const n = sorted.length
+  let sumSquares = 0
+  let covariance = 0
+  const meanIndex = (n - 1) / 2
+  for (let i = 0; i < n; i += 1) {
+    const centred = sorted[i].value - average
+    sumSquares += centred * centred
+    covariance += (i - meanIndex) * centred
+  }
+  const indexVariance = n > 1 ? (n * (n * n - 1)) / 12 : 0
+  const delta = n > 1 ? (covariance / indexVariance) * (n - 1) : latest - first
+  let noiseOfFit = 0
+  if (n > 2) {
+    const residualSquares = Math.max(sumSquares - (covariance * covariance) / indexVariance, 0)
+    const residualDeviation = Math.sqrt(residualSquares / (n - 2))
+    noiseOfFit = (residualDeviation * (n - 1)) / Math.sqrt(indexVariance)
+  }
+  const threshold = Math.max(Math.abs(average) * 0.005, 2 * noiseOfFit, 1e-9)
   const direction: TrendSummary['direction'] = delta > threshold ? 'up' : delta < -threshold ? 'down' : 'flat'
 
   return {

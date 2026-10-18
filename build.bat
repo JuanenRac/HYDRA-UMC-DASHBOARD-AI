@@ -44,8 +44,7 @@ echo * Project manifest has been synchronised by the project build flow.
 echo *****************************************************************************
 echo.
 echo.
-call npm install
-call npm install-scripts approve --all
+call npm ci
 
 echo ========================================
 echo  Running the real test suite (vitest)...

@@ -13,14 +13,15 @@
 // check /stats, and score a window if it is.
 
 import { fetchWithTimeout, FetchTimeoutError } from './fetchWithTimeout'
+import { joinServiceUrl } from './joinServiceUrl'
 
 export class AnomalyApiError extends Error {
-  constructor(
-    message: string,
-    public readonly status?: number,
-    public readonly cause?: unknown,
-  ) {
+  readonly status?: number
+  readonly cause?: unknown
+  constructor(message: string, status?: number, cause?: unknown) {
     super(message)
+    this.status = status
+    this.cause = cause
     this.name = 'AnomalyApiError'
   }
 }
@@ -72,7 +73,7 @@ function validateDetectVerdict(value: unknown): DetectVerdict {
 function serviceUrl(baseUrl: string, path: string): URL {
   let url: URL
   try {
-    url = new URL(path, baseUrl)
+    url = joinServiceUrl(baseUrl, path)
   } catch (err) {
     throw new AnomalyApiError('HYDRA-UMC-ANOMALY-DETECTOR base URL is invalid', undefined, err)
   }

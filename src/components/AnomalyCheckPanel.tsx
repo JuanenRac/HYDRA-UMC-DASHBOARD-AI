@@ -22,7 +22,7 @@ interface Props {
 
 export function AnomalyCheckPanel({ datalakeBaseUrl, anomalyBaseUrl }: Props) {
   const [sourceId, setSourceId] = useState('robot-1')
-  const [kind, setKind] = useState('motor_temp')
+  const [kind, setKind] = useState('vibration')
   const [field, setField] = useState('value')
   const [windowSize, setWindowSize] = useState(64)
 
@@ -33,6 +33,10 @@ export function AnomalyCheckPanel({ datalakeBaseUrl, anomalyBaseUrl }: Props) {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
+    if (!Number.isInteger(windowSize) || windowSize < 1) {
+      setError('Window size must be a whole number of at least 1.')
+      return
+    }
     setLoading(true)
     setError(null)
     setNotFitted(false)
