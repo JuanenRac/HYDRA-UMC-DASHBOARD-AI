@@ -25,6 +25,11 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.1.5] - A cancelled request is not sent
+
+- **Requests:** `fetchWithTimeout` ignored a caller `AbortSignal` that was already cancelled when the call started (the abort event never fires again), so the request still went out and only stopped at the timeout. It now cancels at once without sending anything.
+- 70 new tests (140 in all): hostile or broken answers from DATALAKE and the anomaly detector (non-array, HTML pages, bad points, JSON `null` errors), service address handling, narrative gate limits and control characters, and trend-summary edge cases.
+
 ## [0.1.4]
 
 - Build version synchronized with `hydra-umc.project.json` and the repository-native version source.

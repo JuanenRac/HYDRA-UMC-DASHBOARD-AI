@@ -49,6 +49,11 @@ export async function fetchWithTimeout(
   const callerSignal = init.signal
   const onCallerAbort = () => controller.abort()
   callerSignal?.addEventListener('abort', onCallerAbort)
+  // A signal that was cancelled before this call never fires its event again,
+  // so the request would go out and only stop at the timeout.
+  if (callerSignal?.aborted) {
+    controller.abort()
+  }
 
   try {
     try {
