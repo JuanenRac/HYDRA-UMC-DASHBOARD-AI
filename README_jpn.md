@@ -20,6 +20,17 @@
 
 ---
 
+## 📋 ひと目で
+
+| | |
+|---|---|
+| バージョン | `0.1.4` |
+| 成熟度 | 確立 |
+| テスト | 70 (`npm test`) |
+| 技術 | TypeScript/React / Vite |
+| 対象 | HYDRA-UMC セルの Raspberry Pi CM5 |
+| 実機での確認 | まだです：このバージョンについて実機での動作記録はありません |
+
 ## 1. 🛠️ 技術概要
 
 **HYDRA-UMC-DASHBOARD-AI** は、STUDIO Web インターフェースの分析用

@@ -20,6 +20,17 @@
 
 ---
 
+## 📋 De un vistazo
+
+| | |
+|---|---|
+| Versión | `0.1.4` |
+| Madurez | Establecido |
+| Tests | 70 (`npm test`) |
+| Tecnología | TypeScript/React / Vite |
+| Destino | La Raspberry Pi CM5 de una celda HYDRA-UMC |
+| En hardware real | Todavía no: no consta ninguna ejecución en hardware real para esta versión |
+
 ## 1. 🛠️ VISIÓN TÉCNICA GENERAL
 
 **HYDRA-UMC-DASHBOARD-AI** es el plugin analítico para la interfaz web de STUDIO. Mejora el dashboard estándar con insights de IA en tiempo real, análisis predictivo de tendencias y resaltado automático de anomalías.
