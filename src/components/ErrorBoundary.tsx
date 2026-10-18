@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Panel-level render failure isolation: ErrorBoundary.tsx
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 //
 // Real gap this closes: neither panel had any error boundary, so a
 // render-time exception in either TrendSummaryPanel or AnomalyCheckPanel

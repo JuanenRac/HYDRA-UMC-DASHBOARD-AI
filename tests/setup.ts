@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - tests/setup.ts
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // Loaded once per test file (see vite.config.ts's own test.setupFiles) -
 // adds the real jest-dom matchers (toBeInTheDocument, etc.) that the

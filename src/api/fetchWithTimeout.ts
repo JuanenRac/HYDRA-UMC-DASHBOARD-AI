@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Shared fetch timeout wrapper: fetchWithTimeout.ts
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // datalakeClient.ts/anomalyClient.ts both used to call the browser's own
 // fetch() directly with no AbortController and no timeout at all - a

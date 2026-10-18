@@ -2,7 +2,7 @@
 # =============================================================================
 # HYDRA-UMC-DASHBOARD-AI - scripts/serve_static.py
 # Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-# GPL-3.0 - see LICENSE
+# GPL-3.0-or-later - see LICENSE
 # =============================================================================
 """Real gap found auditing the ecosystem against actual CM5 hardware: this
 project builds a real, deployable static SPA (`npm run build` -> dist/),

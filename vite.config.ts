@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Vite Bundler Configuration: vite.config.ts
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // Same base config as sibling repo HYDRA-UMC-STUDIO's own vite.config.ts
 // (same React/Vite stack), plus a `test` block for the Vitest suite under

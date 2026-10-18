@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Real HTTP client for HYDRA-UMC-ANOMALY-DETECTOR: anomalyClient.ts
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // Talks to a real, running HYDRA-UMC-ANOMALY-DETECTOR instance. That
 // service is a stateless scorer over ONE shared, in-memory-fitted

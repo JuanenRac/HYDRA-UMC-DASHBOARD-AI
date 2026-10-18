@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Root Component: App.tsx
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // Real v0: two panels, both real HTTP clients against real running
 // HYDRA-UMC-DATALAKE / HYDRA-UMC-ANOMALY-DETECTOR instances (see

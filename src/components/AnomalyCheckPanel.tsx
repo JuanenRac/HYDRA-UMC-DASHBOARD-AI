@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Real anomaly check panel: AnomalyCheckPanel.tsx
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // Pulls the most recent N samples for a source/kind/field from a real
 // HYDRA-UMC-DATALAKE instance and scores them for real against a real

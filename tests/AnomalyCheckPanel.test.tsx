@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - tests/AnomalyCheckPanel.test.tsx
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // A real end-to-end render: mounts the real AnomalyCheckPanel component,
 // drives it with real user-event clicks (@testing-library), and has it

@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - tests/ErrorBoundary.test.tsx
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // Real regression this locks in: before ErrorBoundary existed, a render
 // exception in one panel unmounted the WHOLE app (React discards

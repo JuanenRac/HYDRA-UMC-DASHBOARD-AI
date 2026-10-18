@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - tests/TrendSummaryPanel.test.tsx
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // A real end-to-end render: mounts the real TrendSummaryPanel component,
 // drives it with real user-event clicks/typing (@testing-library), and

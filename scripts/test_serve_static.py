@@ -2,7 +2,7 @@
 # =============================================================================
 # HYDRA-UMC-DASHBOARD-AI - scripts/test_serve_static.py
 # Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-# GPL-3.0 - see LICENSE
+# GPL-3.0-or-later - see LICENSE
 # =============================================================================
 """Real end-to-end tests for serve_static.py's real ThreadingHTTPServer,
 using stdlib `unittest` (not pytest) deliberately - this is otherwise a

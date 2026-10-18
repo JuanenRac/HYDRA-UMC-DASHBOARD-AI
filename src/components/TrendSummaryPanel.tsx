@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Real trend summary panel: TrendSummaryPanel.tsx
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // A real, working panel: queries a real HYDRA-UMC-DATALAKE instance for a
 // source/kind/field's recent history and shows real min/max/average/

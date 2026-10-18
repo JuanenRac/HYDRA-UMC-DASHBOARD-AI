@@ -1,7 +1,7 @@
 // =============================================================================
 // HYDRA-UMC-DASHBOARD-AI - Real HTTP client for HYDRA-UMC-DATALAKE: datalakeClient.ts
 // Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
-// GPL-3.0 - see LICENSE
+// GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // Talks to a real, running HYDRA-UMC-DATALAKE instance's GET /query over
 // plain HTTP - the same real API HYDRA-UMC-PRODUCTION-REPORTS's own

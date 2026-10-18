@@ -25,6 +25,11 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.1.4]
+
+- Build version synchronized with `hydra-umc.project.json` and the repository-native version source.
+- The licence is written as GPL-3.0-or-later in every header and in the package metadata.
+
 ## [0.1.3] - The deployed dashboard can reach its services, and the type check checks
 
 - **Deployment:** the panels called DATALAKE and the anomaly detector on other ports, which neither service allows from a browser (no CORS headers), and `localhost` meant the visitor's own computer. The static server now forwards `/api/datalake/*` and `/api/anomaly/*` to the two loopback services (GET and POST only, bounded sizes, 502 when a service is down; `--datalake` and `--anomaly` choose the upstreams), the app calls those same-origin paths by default, and the Vite dev server proxies the same two paths. A base URL with a path is now joined correctly.
