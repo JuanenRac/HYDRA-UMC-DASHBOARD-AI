@@ -25,6 +25,11 @@ when a change is actually worth summarizing for a human.
 
 ---
 
+## [0.1.6]
+
+- Maturity is functional: nothing here has been verified on real hardware yet.
+- The READMEs say, in the eight languages, what is planned and what has only been tested against fakes, emulators or fixtures, and carry a short safety and security status note.
+
 ## [0.1.5] - A cancelled request is not sent
 
 - **Requests:** `fetchWithTimeout` ignored a caller `AbortSignal` that was already cancelled when the call started (the abort event never fires again), so the request still went out and only stopped at the timeout. It now cancels at once without sending anything.
