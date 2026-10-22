@@ -1,29 +1,6 @@
 # Changelog
 
-All notable public work on **HYDRA-UMC-DASHBOARD-AI** is summarized here,
-newest first. This changelog intentionally omits calendar dates and internal
-work-session detail.
-
-## Versioning scheme
-
-`package.json`'s `version` field bumps via `bump_manifest_version.py`
-(bare invocation - this repo is a "single owner" of its own version, no
-separate `--sync` step), run by `build.bat`/`build.sh` BEFORE `npm run
-build` itself - `npm run build` (`vite build`) is deliberately
-compilation-only, same convention as sibling repo HYDRA-UMC-STUDIO.
-`scripts/bump-version.mjs` is a legacy native-only helper kept for
-reference; nothing in this repo's real build path calls it. It follows a
-simple base-10 "odometer" rule rather than semantic-versioning judgment
-calls:
-
-- `patch` +1 on every build
-- when `patch` would exceed 9, it resets to 0 and `minor` +1 instead (e.g. `0.0.9` -> `0.1.0`, never `0.0.10`)
-- the same carry cascades into `major` if `minor` would exceed 9
-
-This file itself is *not* auto-generated per build; it's updated by hand
-when a change is actually worth summarizing for a human.
-
----
+All notable changes to this project are documented here.
 
 ## [Unreleased]
 
