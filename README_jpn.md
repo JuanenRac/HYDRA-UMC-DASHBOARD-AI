@@ -99,7 +99,7 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL の型定義
 ├── tests/                   # 実際のテスト：HTTP ラウンドトリップ + コンポーネントテスト
 ├── scripts/
-│   ├── bump-version.mjs    # オドメーター式バージョンインクリメント（ビルドが実行）
+│   ├── bump-version.mjs    # オドメーター式バージョンインクリメント（明示的な `bump` コマンドのみが実行）
 │   ├── serve_static.py     # ビルド済みdist/ SPA向けの実際の静的ファイルサーバー(実運用で発見されたCM5デプロイの穴)
 │   └── test_serve_static.py # serve_static.pyの実際のテスト
 ├── systemd/
@@ -116,7 +116,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
 ├── bump_manifest_version.py # hydra-umc.project.json のバージョンを package.json と同期(--sync)
 ├── dev.sh / dev.bat        # 実際の開発サーバー：依存関係のインストール + vite
-├── build.sh / build.bat    # 実際のビルド：依存関係のインストール + 実際のテストスイート + バージョンインクリメント + tsc + vite build
+├── build.sh / build.bat    # 実際のビルド：依存関係のインストール + 実際のテストスイート + tsc + vite build
 └── package.json
 ```
 
@@ -136,10 +136,7 @@ dev.bat
 build.bat
 ```
 
-`npm run build` は `node scripts/bump-version.mjs && tsc --noEmit &&
-vite build` を連鎖的に実行します——バージョンのインクリメントは、厳格な
-TypeScript チェックが既に通過した後にのみ発生するため、壊れたビルドが
-増加したバージョン番号を出荷することは決してありません。`npm run dev`
+`npm run build` は `tsc --noEmit && vite build` を連鎖的に実行します——バージョンを変更することはないため、壊れたビルドが増加したバージョン番号を出荷することは決してありません。`npm run dev`
 はポート `5174` で Vite を起動します（HYDRA-UMC-STUDIO 自身の `5173`
 とは別のポートのため、両方を同時に並行して実行できます）。`npm test`
 は実際の Vitest スイートを直接実行します。

@@ -98,7 +98,7 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义
 ├── tests/                   # 真实测试：HTTP 往返 + 组件测试
 ├── scripts/
-│   ├── bump-version.mjs    # 里程表式版本递增（由构建运行）
+│   ├── bump-version.mjs    # 里程表式版本递增（仅由显式 `bump` 命令运行）
 │   ├── serve_static.py     # 面向已构建 dist/ SPA 的真实静态文件服务器（实测发现的 CM5 部署缺口）
 │   └── test_serve_static.py # serve_static.py 的真实测试
 ├── systemd/
@@ -115,7 +115,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
 ├── bump_manifest_version.py # 将 hydra-umc.project.json 的版本与 package.json 同步(--sync)
 ├── dev.sh / dev.bat        # 真实开发服务器：安装依赖 + vite
-├── build.sh / build.bat    # 真实构建：安装依赖 + 真实测试套件 + 版本递增 + tsc + vite build
+├── build.sh / build.bat    # 真实构建：安装依赖 + 真实测试套件 + tsc + vite build
 └── package.json
 ```
 
@@ -128,16 +128,14 @@ HYDRA-UMC-DASHBOARD-AI/
 ```bash
 # Linux/macOS
 ./dev.sh      # 安装依赖，在 :5174 启动 Vite 开发服务器
-./build.sh    # 安装依赖，运行真实测试套件，递增版本号，进行类型检查，构建 dist/
+./build.sh    # 安装依赖，运行真实测试套件，进行类型检查，构建 dist/
 
 # Windows
 dev.bat
 build.bat
 ```
 
-`npm run build` 会依次执行 `node scripts/bump-version.mjs && tsc
---noEmit && vite build`——版本递增只会在严格的 TypeScript 检查已经通过
-之后才会发生，因此一次损坏的构建永远不会发布一个已递增的版本号。
+`npm run build` 会依次执行 `tsc --noEmit && vite build`——它不会更改版本号，因此损坏的构建永远不会发布一个已递增的版本号。
 `npm run dev` 在端口 `5174` 上启动 Vite（与 HYDRA-UMC-STUDIO 自身的
 `5173` 端口区分开，以便两者可以同时并行运行）。`npm test` 直接运行真实的
 Vitest 测试套件。

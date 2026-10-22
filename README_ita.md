@@ -97,7 +97,7 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # Tipizzazione di VITE_DATALAKE_URL / VITE_ANOMALY_URL
 ├── tests/                   # Veri test: round-trip HTTP + test dei componenti
 ├── scripts/
-│   ├── bump-version.mjs    # Incremento versione stile contachilometri (eseguito dal build)
+│   ├── bump-version.mjs    # Incremento di versione stile contachilometri (eseguito solo dal comando `bump` esplicito)
 │   ├── serve_static.py     # Vero server di file statici per la SPA compilata in dist/ (gap di deployment sulla CM5 trovato dal vivo)
 │   └── test_serve_static.py # Test reali per serve_static.py
 ├── systemd/
@@ -114,7 +114,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
 ├── bump_manifest_version.py # Sincronizza la versione di hydra-umc.project.json con quella di package.json (--sync)
 ├── dev.sh / dev.bat        # Server di sviluppo reale: installa le dipendenze + vite
-├── build.sh / build.bat    # Build reale: installa le dipendenze + vera suite di test + incrementa la versione + tsc + vite build
+├── build.sh / build.bat    # Valida e compila (compilare non cambia mai la versione)
 └── package.json
 ```
 
@@ -127,14 +127,14 @@ Richiede Node.js >= 20.
 ```bash
 # Linux/macOS
 ./dev.sh      # installa le dipendenze, avvia il server Vite sulla porta :5174
-./build.sh    # installa le dipendenze, esegue la vera suite di test, incrementa la versione, verifica i tipi, compila dist/
+./build.sh    # installa le dipendenze, esegue la vera suite di test, verifica i tipi, compila dist/
 
 # Windows
 dev.bat
 build.bat
 ```
 
-`npm run build` concatena `node scripts/bump-version.mjs && tsc --noEmit && vite build` — l'incremento di versione avviene solo dopo che il controllo rigoroso di TypeScript è già passato, cosicché un build rotto non pubblica mai un numero di versione incrementato. `npm run dev` avvia Vite sulla porta `5174` (separata dalla `5173` propria di HYDRA-UMC-STUDIO, così entrambi possono girare insieme). `npm test` esegue direttamente la vera suite Vitest.
+`npm run build` concatena `tsc --noEmit && vite build`; non cambia mai la versione, quindi un build rotto non pubblica mai un numero di versione incrementato. `npm run dev` avvia Vite sulla porta `5174` (separata dalla `5173` propria di HYDRA-UMC-STUDIO, così entrambi possono girare insieme). `npm test` esegue direttamente la vera suite Vitest.
 
 Per impostazione predefinita i due veri pannelli chiamano i percorsi della stessa origine `/api/datalake` e `/api/anomaly`, che `scripts/serve_static.py` (e il server di sviluppo Vite) inoltrano a HYDRA-UMC-DATALAKE su `127.0.0.1:8095` e a HYDRA-UMC-ANOMALY-DETECTOR su `127.0.0.1:8097` (nessuno dei servizi invia intestazioni CORS, il browser non potrebbe chiamarli direttamente) - sovrascrivibile con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (definite prima di `vite build`/`vite dev`, Vite le incorpora in fase di build) per puntare a un deployment diverso.
 
