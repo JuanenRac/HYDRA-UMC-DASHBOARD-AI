@@ -150,6 +150,8 @@ build.bat
 `VITE_ANOMALY_URL`（`vite build`/`vite dev` の前に設定、Vite がビルド時
 にインライン化します）で上書きして、別のデプロイ先を指すことができます。
 
+`scripts/serve_static.py` はすべての応答に Content-Security-Policy を付けます。スクリプトはページ自身からのみ(インラインスクリプトとプラグインは不可)、フレームへの埋め込みは不可、接続先はページ自身のオリジンのみです。`VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` を使うビルドでは、呼び出すオリジンを `--connect-src オリジン`(複数指定可)で追加します。`--csp off`(または `HYDRA_DASHBOARD_CSP=off`)はポリシーを送らず、前段のプロキシが設定する場合向けです。それ以外の `--csp` の値は完全なポリシーとしてそのまま使われます。`npm run lint` は ESLint(推奨ルール、typescript-eslint、React フックのルール)を実行し、CI では型チェックとテストと並んで実行されます。
+
 これらのブラウザから見える URL を設定する前、または実際の AI プロバイダーを
 接続する前に、[`docs/SECURITY.md`](docs/SECURITY.md) を読んでください。レスポンス
 検証、コンテンツ安全性、失敗時の動作、および秘密情報を含めないルールを定義しています。

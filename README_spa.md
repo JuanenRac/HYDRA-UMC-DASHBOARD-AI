@@ -138,6 +138,8 @@ build.bat
 
 Por defecto los dos paneles reales llaman a las rutas del mismo origen `/api/datalake` y `/api/anomaly`, que `scripts/serve_static.py` (y el servidor de desarrollo de Vite) reenvían a HYDRA-UMC-DATALAKE en `127.0.0.1:8095` y a HYDRA-UMC-ANOMALY-DETECTOR en `127.0.0.1:8097` (ninguno de los servicios envía cabeceras CORS, el navegador no podría llamarlos directamente) - sobreescribible con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (definidas antes de `vite build`/`vite dev`, Vite las inserta en tiempo de build) para apuntar a un despliegue distinto.
 
+`scripts/serve_static.py` envía una Content-Security-Policy con cada respuesta: scripts solo de la propia página (sin scripts en línea ni plugins), sin incrustación en marcos y conexiones solo al origen de la propia página. Una compilación con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` añade los orígenes a los que llama con `--connect-src ORIGEN` (repetible); `--csp off` (o `HYDRA_DASHBOARD_CSP=off`) no envía ninguna, para un proxy delantero que la fije, y cualquier otro valor de `--csp` se usa como política completa. `npm run lint` ejecuta ESLint (reglas recomendadas, typescript-eslint y las reglas de los hooks de React); la CI lo ejecuta junto con la comprobación de tipos y las pruebas.
+
 Lee [`docs/SECURITY.md`](docs/SECURITY.md) antes de configurar esas URL visibles en el navegador o conectar un proveedor de IA real; define la validación de respuestas, seguridad de contenido, comportamiento ante fallos y la regla de no incluir secretos.
 
 Cada fetch real de Resumen de Tendencia también corre la verja real de proveedor de IA. Sin proveedor real configurado (el default honesto de v0), el panel muestra el respaldo estadístico real, claramente etiquetado:

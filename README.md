@@ -138,6 +138,8 @@ build.bat
 
 By default the two real panels call the same-origin paths `/api/datalake` and `/api/anomaly`, which `scripts/serve_static.py` (and the Vite dev server) forward to HYDRA-UMC-DATALAKE on `127.0.0.1:8095` and HYDRA-UMC-ANOMALY-DETECTOR on `127.0.0.1:8097` (neither service sends CORS headers, so the browser could not call them directly) - override with `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (set before `vite build`/`vite dev`, Vite inlines them at build time) to point at a different deployment.
 
+`scripts/serve_static.py` sends a Content-Security-Policy with every answer: scripts only from the page itself (no inline scripts, no plugins), no framing, and connections only to the page's own origin. A build with `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` adds the origins it calls with `--connect-src ORIGIN` (repeatable); `--csp off` (or `HYDRA_DASHBOARD_CSP=off`) sends none, for a front proxy that sets it, and any other `--csp` value is used as the complete policy. `npm run lint` runs ESLint (recommended rules, typescript-eslint and the rules of React hooks); CI runs it next to the type check and the tests.
+
 Read [`docs/SECURITY.md`](docs/SECURITY.md) before configuring those browser-visible URLs or connecting a real AI provider; it defines the response validation, content safety, failure behaviour, and no-secrets deployment rule.
 
 Every real Trend Summary fetch also runs the real AI-provider gate. With no real provider configured (v0's honest default), the panel shows the real statistical fallback, clearly labeled:

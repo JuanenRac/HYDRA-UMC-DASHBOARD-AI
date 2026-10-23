@@ -138,6 +138,8 @@ build.bat
 
 Standardmäßig rufen die beiden echten Panels die gleich-originalen Pfade `/api/datalake` und `/api/anomaly` auf, die `scripts/serve_static.py` (und der Vite-Dev-Server) an HYDRA-UMC-DATALAKE auf `127.0.0.1:8095` und HYDRA-UMC-ANOMALY-DETECTOR auf `127.0.0.1:8097` weiterleiten (keiner der Dienste sendet CORS-Header, der Browser könnte sie nicht direkt aufrufen) - überschreibbar mit `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (vor `vite build`/`vite dev` gesetzt, Vite bindet sie zur Build-Zeit ein), um auf ein anderes Deployment zu zeigen.
 
+`scripts/serve_static.py` sendet mit jeder Antwort eine Content-Security-Policy: Skripte nur von der Seite selbst (keine Inline-Skripte, keine Plugins), kein Einbetten in Frames und Verbindungen nur zum eigenen Ursprung der Seite. Ein Build mit `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` fügt die Ursprünge, die er aufruft, mit `--connect-src URSPRUNG` hinzu (wiederholbar); `--csp off` (oder `HYDRA_DASHBOARD_CSP=off`) sendet keine, für einen vorgeschalteten Proxy, der sie setzt, und jeder andere `--csp`-Wert wird als vollständige Richtlinie verwendet. `npm run lint` führt ESLint aus (empfohlene Regeln, typescript-eslint und die Regeln der React-Hooks); die CI führt es neben der Typprüfung und den Tests aus.
+
 Lies [`docs/SECURITY.md`](docs/SECURITY.md), bevor du diese im Browser sichtbaren URLs konfigurierst oder einen echten KI-Anbieter verbindest; es definiert Antwortvalidierung, Inhaltssicherheit, Fehlerverhalten und die Regel, keine Geheimnisse einzubinden.
 
 Jeder echte Trend-Summary-Abruf durchläuft auch das echte KI-Anbieter-Gate. Ohne konfigurierten echten Anbieter (v0s ehrlicher Standard) zeigt das Panel den echten statistischen Fallback, klar beschriftet:

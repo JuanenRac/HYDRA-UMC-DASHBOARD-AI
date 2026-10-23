@@ -40,6 +40,7 @@ export interface QueryParams {
 }
 
 const MAX_IDENTIFIER_LENGTH = 128
+// eslint-disable-next-line no-control-regex -- the control characters are exactly what is being refused
 const UNSAFE_IDENTIFIER_CHARACTERS = /[\u0000-\u001F\u007F-\u009F]/
 
 function requireSafeIdentifier(value: unknown, field: string, index: number): string {

@@ -14,7 +14,7 @@
 // `fetch` this project's own datalakeClient.ts uses - not a mocked
 // fetch, a real socket.
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { createServer, type Server } from 'node:http'
 import { queryDatalake, DatalakeApiError } from '../src/api/datalakeClient'
 

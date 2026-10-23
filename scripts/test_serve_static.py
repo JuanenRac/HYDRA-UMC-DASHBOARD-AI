@@ -220,5 +220,68 @@ class ProxyTests(unittest.TestCase):
         self.upstream.server_close = lambda: None  # type: ignore[method-assign]
 
 
+class ContentSecurityPolicyTests(unittest.TestCase):
+    def test_the_default_policy_allows_only_the_page_itself(self) -> None:
+        from serve_static import build_csp
+
+        policy = build_csp()
+        self.assertIn("script-src 'self'", policy)
+        self.assertNotIn("unsafe-inline", policy.split("style-src")[0])  # no inline script
+        self.assertIn("connect-src 'self';", policy)
+        self.assertIn("object-src 'none'", policy)
+        self.assertIn("frame-ancestors 'none'", policy)
+        self.assertIn("base-uri 'self'", policy)
+
+    def test_extra_origins_go_only_into_connect_src(self) -> None:
+        from serve_static import build_csp
+
+        policy = build_csp("default", ("http://127.0.0.1:8095", "https://data.example.org"))
+        self.assertIn("connect-src 'self' http://127.0.0.1:8095 https://data.example.org;", policy)
+        self.assertEqual(policy.count("http://127.0.0.1:8095"), 1)
+
+    def test_off_custom_and_bad_origins(self) -> None:
+        from serve_static import build_csp
+
+        self.assertIsNone(build_csp("off"))
+        self.assertEqual(build_csp("default-src 'none'"), "default-src 'none'")
+        for bad in ("data.example.org", "http://a; script-src *", "http://a b"):
+            with self.subTest(bad), self.assertRaises(ValueError):
+                build_csp("default", (bad,))
+
+    def _serve(self, **options):  # starts serve() on a free port in a thread and returns (url, stop)
+        import functools
+        from http.server import ThreadingHTTPServer
+
+        from serve_static import QuietHandler, build_csp
+
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        (Path(tmp.name) / "index.html").write_text("<html></html>", encoding="utf-8")
+        handler_class = type("H", (QuietHandler,), {"csp_policy": build_csp(**options)})
+        httpd = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(handler_class, directory=tmp.name))
+        thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+        thread.start()
+
+        def stop() -> None:
+            httpd.shutdown()
+            thread.join(timeout=2)
+            httpd.server_close()
+
+        self.addCleanup(stop)
+        return f"http://127.0.0.1:{httpd.server_address[1]}"
+
+    def test_every_answer_carries_the_policy_and_off_sends_none(self) -> None:
+        url = self._serve(setting="default", connect_origins=("http://127.0.0.1:8095",))
+        with urllib.request.urlopen(url + "/", timeout=5) as response:
+            self.assertIn("http://127.0.0.1:8095", response.headers.get("Content-Security-Policy"))
+        with self.assertRaises(urllib.error.HTTPError) as caught:  # an error answer carries it too
+            urllib.request.urlopen(url + "/missing", timeout=5)
+        self.assertIsNotNone(caught.exception.headers.get("Content-Security-Policy"))
+        caught.exception.close()
+        off = self._serve(setting="off")
+        with urllib.request.urlopen(off + "/", timeout=5) as response:
+            self.assertIsNone(response.headers.get("Content-Security-Policy"))
+
+
 if __name__ == "__main__":
     unittest.main()

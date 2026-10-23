@@ -27,12 +27,46 @@ from __future__ import annotations
 
 import argparse
 import functools
+import os
 import urllib.error
 import urllib.request
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 MAX_PROXY_BODY_BYTES = 4 * 1024 * 1024
+
+# The Content-Security-Policy of the dashboard page. The page loads its own scripts only (no inline script, no
+# plugin), keeps inline styles because the UI sets style attributes, and may call only its own origin (the two
+# same-origin proxy prefixes) plus the origins the deployment adds with --connect-src for VITE_DATALAKE_URL /
+# VITE_ANOMALY_URL. `--csp off` sends no policy (a front proxy that sets it itself); any other value is used as
+# the complete policy.
+CSP_DIRECTIVES = (
+    ("default-src", ("'self'",)),
+    ("script-src", ("'self'",)),
+    ("style-src", ("'self'", "'unsafe-inline'")),
+    ("img-src", ("'self'", "data:")),
+    ("font-src", ("'self'", "data:")),
+    ("object-src", ("'none'",)),
+    ("base-uri", ("'self'",)),
+    ("form-action", ("'self'",)),
+    ("frame-ancestors", ("'none'",)),
+)
+
+
+def build_csp(setting: str = "default", connect_origins: tuple[str, ...] = ()) -> str | None:
+    """The policy header value for a --csp setting: None for "off", the setting itself when it is a custom
+    policy, else the default with connect-src limited to this origin and the given ones."""
+    value = (setting or "default").strip()
+    if value.lower() == "off":
+        return None
+    if value.lower() != "default":
+        return value
+    for origin in connect_origins:
+        if not origin or any(ch in origin for ch in " ;,'\"") or "://" not in origin:
+            raise ValueError(f"--connect-src needs plain origins such as http://127.0.0.1:8095, got {origin!r}")
+    directives = [f"{name} {' '.join(sources)}" for name, sources in CSP_DIRECTIVES]
+    directives.insert(5, "connect-src " + " ".join(("'self'", *connect_origins)))
+    return "; ".join(directives)
 UPSTREAM_TIMEOUT_SECONDS = 10.0
 
 
@@ -46,6 +80,8 @@ class QuietHandler(SimpleHTTPRequestHandler):
 
     # prefix -> upstream base URL; set per server by serve()
     proxy_routes: dict[str, str] = {}
+    # the Content-Security-Policy sent with every answer; None sends none. serve() sets it from --csp.
+    csp_policy: str | None = build_csp()
 
     def _proxy_target(self) -> str | None:
         for prefix, upstream in self.proxy_routes.items():
@@ -103,6 +139,8 @@ class QuietHandler(SimpleHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "DENY")
         self.send_header("Referrer-Policy", "no-referrer")
+        if self.csp_policy:
+            self.send_header("Content-Security-Policy", self.csp_policy)
         super().end_headers()
 
     def list_directory(self, path):  # noqa: ANN001, ANN201
@@ -118,6 +156,8 @@ def serve(
     port: int,
     datalake: str = "http://127.0.0.1:8095",
     anomaly: str = "http://127.0.0.1:8097",
+    csp: str | None = "default",
+    connect_origins: tuple[str, ...] = (),
 ) -> None:
     if not (directory / "index.html").is_file():
         raise SystemExit(
@@ -127,7 +167,10 @@ def serve(
     handler_class = type(
         "ProxyingHandler",
         (QuietHandler,),
-        {"proxy_routes": {"/api/datalake": datalake, "/api/anomaly": anomaly}},
+        {
+            "proxy_routes": {"/api/datalake": datalake, "/api/anomaly": anomaly},
+            "csp_policy": build_csp(csp or "default", connect_origins),
+        },
     )
     handler = functools.partial(handler_class, directory=str(directory))
     server = ThreadingHTTPServer((addr, port), handler)
@@ -151,9 +194,18 @@ def main() -> int:
                          help="HYDRA-UMC-DATALAKE base URL behind /api/datalake (default: http://127.0.0.1:8095).")
     parser.add_argument("--anomaly", default="http://127.0.0.1:8097",
                          help="HYDRA-UMC-ANOMALY-DETECTOR base URL behind /api/anomaly (default: http://127.0.0.1:8097).")
+    parser.add_argument("--csp", default=os.environ.get("HYDRA_DASHBOARD_CSP", "default"),
+                         help='Content-Security-Policy: "default" (own scripts only, connections to this origin), "off" for none '
+                              "(or HYDRA_DASHBOARD_CSP), or a complete policy used as given.")
+    parser.add_argument("--connect-src", action="append", default=[], metavar="ORIGIN",
+                         help="An extra origin the page may call (repeatable), for a build with VITE_DATALAKE_URL / VITE_ANOMALY_URL.")
     args = parser.parse_args()
 
-    serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly)
+    try:
+        build_csp(args.csp, tuple(args.connect_src))
+    except ValueError as error:
+        parser.error(str(error))
+    serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly, args.csp, tuple(args.connect_src))
     return 0
 
 
