@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [0.1.7] - The standalone server presents the Bearer tokens of the services and the Anomaly Check scores the newest samples of a fa
 
 - **The standalone server presents the Bearer tokens of the services.** The anomaly detector can ask for a token even to score a window, and the data lake for its reads; `scripts/serve_static.py` now presents `HYDRA_UMC_DATALAKE_READ_TOKEN` (else `HYDRA_UMC_DATALAKE_TOKEN`) and `HYDRA_UMC_ANOMALY_TOKEN` (each also as `..._FILE`) on the calls the dashboard makes and on no other, so the page never holds them and the proxy cannot be used to fit the baseline or write to the data lake. A server bound to an address other than loopback refuses to start with tokens unless `--allow-tokens-off-loopback` is given. 8 new tests of the script.
 - **The Anomaly Check scores the newest samples of a fast source.** It asked the data lake for the last 24 hours with a limit of 5000, which failed with "exactly the requested limit" for any source faster than 0.06 Hz, the very signals the detector exists for. `recentSamples` now reads the catalogue (`GET /series`), derives the length of the window from the rate the series has, widens it when the source slowed down at the end, narrows it when a burst does not fit one answer, and takes the newest N (`before` is the exclusive end of the window). A source with fewer samples than the window says how many it has.

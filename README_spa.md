@@ -26,7 +26,7 @@
 
 | | |
 |---|---|
-| Versión | `0.1.6` |
+| Versión | `0.1.7` |
 | Madurez | Funcional |
 | Tests | 164 (`npm test`) |
 | Tecnología | TypeScript/React / Vite |
