@@ -107,7 +107,8 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   ├── Sparkline.tsx         # El gráfico pequeño de una serie y sus muestras marcadas
-│   │   └── AnomalyCheckPanel.tsx
+│   │   ├── AnomalyCheckPanel.tsx
+│   │   └── ErrorBoundary.tsx     # Aislamiento de fallos de renderizado por panel (un panel roto no tumba al otro)
 │   ├── main.tsx              # Punto de entrada de la aplicación
 │   ├── App.tsx                # Componente raíz - monta ambos paneles reales
 │   ├── index.css              # Hoja de estilos base
@@ -120,7 +121,10 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── hydra-umc-dashboard-ai.service # Unidad systemd del servidor estático local en la CM5
 ├── tools/
 │   ├── build_test.py       # Comprobación de compilación sin versionado
-│   └── ci_validate.py      # Validación de manifiesto/CHANGELOG/docs usada por CI
+│   ├── ci_validate.py      # Validación de manifiesto/CHANGELOG/docs usada por CI
+│   ├── _doc_policy.py      # Reglas de documentación compartidas por la familia (copia de la de HYDRA-UMC-SDK, mantenida en sincronía)
+│   ├── _readme_parity.py   # Comprobación de que los ocho README comparten estructura (copia de la de HYDRA-UMC-SDK, mantenida en sincronía)
+│   └── hydra_project_tool.py # Los mismos comandos en todos los repositorios: validate, test, ci, version, status, bump
 ├── docs/
 │   └── SECURITY.md          # Contrato público de seguridad de contenido externo y despliegue
 ├── build/                  # Reservado para artefactos de release (dist/ está ignorado por git)

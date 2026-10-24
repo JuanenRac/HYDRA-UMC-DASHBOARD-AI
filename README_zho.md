@@ -108,7 +108,8 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   ├── Sparkline.tsx         # 序列的小图及其标记的样本
-│   │   └── AnomalyCheckPanel.tsx
+│   │   ├── AnomalyCheckPanel.tsx
+│   │   └── ErrorBoundary.tsx     # 按面板隔离渲染故障 (一个面板出错不会拖垮另一个)
 │   ├── main.tsx              # 应用程序入口点
 │   ├── App.tsx                # 根组件——挂载两个真实面板
 │   ├── index.css              # 基础样式表
@@ -121,7 +122,10 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── hydra-umc-dashboard-ai.service # 本地 CM5 静态服务的 systemd 单元
 ├── tools/
 │   ├── build_test.py       # 不递增版本号的构建检查
-│   └── ci_validate.py      # CI 使用的清单/CHANGELOG/文档校验
+│   ├── ci_validate.py      # CI 使用的清单/CHANGELOG/文档校验
+│   ├── _doc_policy.py      # 家族共享的文档规则 (HYDRA-UMC-SDK 的副本,保持同步)
+│   ├── _readme_parity.py   # 检查八个 README 结构一致 (HYDRA-UMC-SDK 的副本,保持同步)
+│   └── hydra_project_tool.py # 每个仓库相同的命令: validate、test、ci、version、status、bump
 ├── docs/
 │   └── SECURITY.md          # 外部内容与部署的公开安全契约
 ├── build/                  # 预留给发布产物（dist/ 本身已被 gitignore）
