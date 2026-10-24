@@ -28,7 +28,7 @@
 |---|---|
 | Version | `0.1.6` |
 | Reifegrad | Funktionsfähig |
-| Tests | 149 (`npm test`) |
+| Tests | 164 (`npm test`) |
 | Technik | TypeScript/React / Vite |
 | Ziel | Der Raspberry Pi CM5 einer HYDRA-UMC-Zelle |
 | Auf echter Hardware | Noch nicht: für diese Version ist kein Lauf auf echter Hardware vermerkt |
@@ -87,11 +87,13 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # Echte Trendzusammenfassungs-Statistiken
+│   │   ├── sparkline.ts      # Die Geometrie des kleinen Diagramms einer Reihe
 │   │   ├── aiProvider.ts     # Echtes KI-Anbieter-Gate: Schema-Validierung + ehrlicher Fallback
 │   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
 │   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
+│   │   ├── Sparkline.tsx         # Das kleine Diagramm einer Reihe und seine markierten Werte
 │   │   └── AnomalyCheckPanel.tsx
 │   ├── main.tsx              # Einstiegspunkt der Anwendung
 │   ├── App.tsx                # Wurzelkomponente - bindet beide echten Panels ein
@@ -99,7 +101,6 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL
 ├── tests/                   # Echte Tests: HTTP-Round-Trips + Komponententests
 ├── scripts/
-│   ├── bump-version.mjs    # Versionserhöhung im Kilometerzähler-Stil (nur vom expliziten `bump`-Befehl ausgeführt)
 │   ├── serve_static.py     # Echter statischer Dateiserver für das gebaute dist/-SPA (live gefundene CM5-Deployment-Lücke)
 │   └── test_serve_static.py # Echte Tests für serve_static.py
 ├── systemd/

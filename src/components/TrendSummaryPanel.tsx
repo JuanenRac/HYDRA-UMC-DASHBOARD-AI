@@ -10,6 +10,7 @@
 
 import { useState } from 'react'
 import { queryDatalake, DatalakeApiError } from '../api/datalakeClient'
+import { Sparkline } from './Sparkline'
 import { summarize, SummaryError, type TrendSummary } from '../lib/summary'
 import { NO_PROVIDER_CONFIGURED, safeGenerateNarrative, type NarrativeResponse } from '../lib/aiProvider'
 
@@ -40,6 +41,7 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [summary, setSummary] = useState<TrendSummary | null>(null)
+  const [series, setSeries] = useState<{ values: number[]; minIndex: number; maxIndex: number }>({ values: [], minIndex: -1, maxIndex: -1 })
   const [narrative, setNarrative] = useState<NarrativeResponse | null>(null)
 
   async function handleSubmit(event: React.FormEvent) {
@@ -51,6 +53,7 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
     setLoading(true)
     setError(null)
     setSummary(null)
+    setSeries({ values: [], minIndex: -1, maxIndex: -1 })
     setNarrative(null)
 
     const end = Date.now()
@@ -60,6 +63,12 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
       const points = await queryDatalake(datalakeBaseUrl, { sourceId, kind, field, start, end })
       const computed = summarize(points)
       setSummary(computed)
+      const ordered = [...points].sort((a, b) => a.timestamp - b.timestamp)
+      setSeries({
+        values: ordered.map((p) => p.value),
+        minIndex: ordered.findIndex((p) => p.timestamp === computed.minTimestamp),
+        maxIndex: ordered.findIndex((p) => p.timestamp === computed.maxTimestamp),
+      })
       // No real AI provider is configured for v0 - safeGenerateNarrative
       // still runs the real request/response validation gate and returns
       // the real, honestly-labeled statistical fallback rather than
@@ -116,6 +125,18 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
         <p role="alert" className="panel-error">
           {error}
         </p>
+      )}
+
+      {summary && series.values.length > 1 && (
+        <Sparkline
+          values={series.values}
+          caption="Series"
+          testId="trend-sparkline"
+          marks={[
+            { index: series.minIndex, label: `Min ${summary.min.toFixed(2)}`, tone: 'neutral' },
+            { index: series.maxIndex, label: `Max ${summary.max.toFixed(2)}`, tone: 'neutral' },
+          ]}
+        />
       )}
 
       {summary && (

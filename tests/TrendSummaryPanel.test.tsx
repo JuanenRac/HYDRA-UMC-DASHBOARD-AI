@@ -64,6 +64,10 @@ describe('TrendSummaryPanel', () => {
     expect(screen.getByText('29.00')).toBeInTheDocument() // average: (10+50+20+36)/4
     expect(screen.getByText('36.00')).toBeInTheDocument() // latest
 
+    // the series is drawn, with its lowest and highest samples marked
+    expect(screen.getByTestId('trend-sparkline')).toHaveTextContent('Series: 4 samples, 10.00 - 50.00')
+    expect(screen.getAllByTestId('sparkline-mark')).toHaveLength(2)
+
     // No real AI provider is configured for v0 - the panel must show the
     // real, honestly-labeled statistical fallback narrative, not silently
     // omit it.

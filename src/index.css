@@ -149,6 +149,41 @@ body {
   color: var(--good);
 }
 
+.sparkline {
+  margin: 0.75rem auto;
+  max-width: 240px;
+}
+
+.sparkline svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sparkline-line {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.sparkline-dot,
+.sparkline-mark-neutral {
+  fill: var(--accent);
+}
+
+.sparkline-mark-bad {
+  fill: var(--bad);
+}
+
+.sparkline-mark-good {
+  fill: var(--good);
+}
+
+.sparkline-caption {
+  color: var(--dim);
+  font-size: 0.75rem;
+}
+
 .verdict-bad {
   color: var(--bad);
 }

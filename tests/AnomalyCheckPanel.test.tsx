@@ -59,6 +59,17 @@ function makePoints(count: number) {
   }))
 }
 
+/** A DATALAKE that holds `count` samples of robot-1 (one per second): GET /series says so and GET /query serves them. */
+function datalakeWith(count: number) {
+  return (req: any, res: any) => {
+    if (String(req.url).startsWith('/series')) {
+      jsonResponse(res, 200, [{ sourceId: 'robot-1', kind: 'vibration', field: 'value', count, firstTimestamp: 0, lastTimestamp: Math.max(0, count - 1) * 1000 }])
+      return
+    }
+    jsonResponse(res, 200, makePoints(count))
+  }
+}
+
 describe('AnomalyCheckPanel', () => {
   it('shows the real "not fitted yet" state instead of an error when the detector has no baseline', async () => {
     const anomalyBaseUrl = await listenOn(
@@ -105,7 +116,7 @@ describe('AnomalyCheckPanel', () => {
     )
     const datalakeBaseUrl = await listenOn(
       (s) => (datalakeServer = s),
-      (_req, res) => jsonResponse(res, 200, makePoints(64)),
+      datalakeWith(64),
     )
 
     render(<AnomalyCheckPanel datalakeBaseUrl={datalakeBaseUrl} anomalyBaseUrl={anomalyBaseUrl} />)
@@ -120,6 +131,26 @@ describe('AnomalyCheckPanel', () => {
     expect(screen.getByText('0.125')).toBeInTheDocument()
     expect(screen.getByText('Yes')).toBeInTheDocument()
     expect(screen.getByText('3.50 Hz')).toBeInTheDocument()
+    // the scored window is drawn, with the sample that deviates most marked because the verdict is anomalous
+    expect(screen.getByTestId('anomaly-sparkline')).toHaveTextContent(/Scored window: 64 samples/)
+    expect(screen.getAllByTestId('sparkline-mark')).toHaveLength(1)
+  })
+
+  it('draws the window without a mark when the verdict is normal', async () => {
+    const anomalyBaseUrl = await listenOn(
+      (s) => (anomalyServer = s),
+      (req, res) => {
+        if (req.url === '/stats') return jsonResponse(res, 200, { fitted: true })
+        if (req.url === '/detect') return jsonResponse(res, 200, { score: 0.01, anomalous: false, worstBinFreqHz: 1 })
+        return jsonResponse(res, 404, { error: 'not found' })
+      },
+    )
+    const datalakeBaseUrl = await listenOn((s) => (datalakeServer = s), datalakeWith(64))
+    render(<AnomalyCheckPanel datalakeBaseUrl={datalakeBaseUrl} anomalyBaseUrl={anomalyBaseUrl} />)
+    await userEvent.setup().click(screen.getByRole('button', { name: /check for anomalies/i }))
+    await waitFor(() => expect(screen.getByTestId('anomaly-verdict')).toBeInTheDocument())
+    expect(screen.getByTestId('anomaly-sparkline')).toBeInTheDocument()
+    expect(screen.queryByTestId('sparkline-mark')).not.toBeInTheDocument()
   })
 
   it('shows a real error when there are fewer real samples than the requested window size', async () => {
@@ -135,7 +166,7 @@ describe('AnomalyCheckPanel', () => {
     )
     const datalakeBaseUrl = await listenOn(
       (s) => (datalakeServer = s),
-      (_req, res) => jsonResponse(res, 200, makePoints(3)),
+      datalakeWith(3),
     )
 
     render(<AnomalyCheckPanel datalakeBaseUrl={datalakeBaseUrl} anomalyBaseUrl={anomalyBaseUrl} />)
@@ -144,7 +175,7 @@ describe('AnomalyCheckPanel', () => {
     await user.click(screen.getByRole('button', { name: /check for anomalies/i }))
 
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent(/only 3 real sample\(s\) available/i)
+      expect(screen.getByRole('alert')).toHaveTextContent(/only 3 real sample\(s\) stored/i)
     })
     expect(screen.queryByTestId('anomaly-verdict')).not.toBeInTheDocument()
   })

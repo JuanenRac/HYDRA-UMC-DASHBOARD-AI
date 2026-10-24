@@ -28,7 +28,7 @@
 |---|---|
 | Versione | `0.1.6` |
 | Maturità | Funzionale |
-| Test | 149 (`npm test`) |
+| Test | 164 (`npm test`) |
 | Tecnologia | TypeScript/React / Vite |
 | Destinazione | Il Raspberry Pi CM5 di una cella HYDRA-UMC |
 | Su hardware reale | Non ancora: per questa versione non risulta alcuna esecuzione su hardware reale |
@@ -87,11 +87,13 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # Veri client HTTP: datalakeClient.ts, anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # Vere statistiche di riepilogo delle tendenze
+│   │   ├── sparkline.ts      # La geometria del piccolo grafico di una serie
 │   │   ├── aiProvider.ts     # Vera verifica del fornitore IA: validazione schema + fallback onesto
 │   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
 │   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
+│   │   ├── Sparkline.tsx         # Il piccolo grafico di una serie e i suoi campioni segnati
 │   │   └── AnomalyCheckPanel.tsx
 │   ├── main.tsx              # Punto di ingresso dell'applicazione
 │   ├── App.tsx                # Componente radice - monta entrambi i veri pannelli
@@ -99,7 +101,6 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # Tipizzazione di VITE_DATALAKE_URL / VITE_ANOMALY_URL
 ├── tests/                   # Veri test: round-trip HTTP + test dei componenti
 ├── scripts/
-│   ├── bump-version.mjs    # Incremento di versione stile contachilometri (eseguito solo dal comando `bump` esplicito)
 │   ├── serve_static.py     # Vero server di file statici per la SPA compilata in dist/ (gap di deployment sulla CM5 trovato dal vivo)
 │   └── test_serve_static.py # Test reali per serve_static.py
 ├── systemd/

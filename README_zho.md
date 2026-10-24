@@ -28,7 +28,7 @@
 |---|---|
 | 版本 | `0.1.6` |
 | 成熟度 | 可用 |
-| 测试 | 149 (`npm test`) |
+| 测试 | 164 (`npm test`) |
 | 技术栈 | TypeScript/React / Vite |
 | 目标 | HYDRA-UMC 工作单元的 Raspberry Pi CM5 |
 | 真实硬件 | 尚未：此版本没有在真实硬件上运行的记录 |
@@ -88,11 +88,13 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # 真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # 真实的趋势摘要统计
+│   │   ├── sparkline.ts      # 序列小图的几何计算
 │   │   ├── aiProvider.ts     # 真实的 AI 提供方关卡：模式校验 + 诚实的回退
 │   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
 │   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
+│   │   ├── Sparkline.tsx         # 序列的小图及其标记的样本
 │   │   └── AnomalyCheckPanel.tsx
 │   ├── main.tsx              # 应用程序入口点
 │   ├── App.tsx                # 根组件——挂载两个真实面板
@@ -100,7 +102,6 @@ HYDRA-UMC-DASHBOARD-AI/
 │   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义
 ├── tests/                   # 真实测试：HTTP 往返 + 组件测试
 ├── scripts/
-│   ├── bump-version.mjs    # 里程表式版本递增（仅由显式 `bump` 命令运行）
 │   ├── serve_static.py     # 面向已构建 dist/ SPA 的真实静态文件服务器（实测发现的 CM5 部署缺口）
 │   └── test_serve_static.py # serve_static.py 的真实测试
 ├── systemd/

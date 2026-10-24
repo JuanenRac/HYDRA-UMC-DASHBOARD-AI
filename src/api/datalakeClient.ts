@@ -24,9 +24,12 @@ export interface DatalakePoint {
 
 export class DatalakeApiError extends Error {
   readonly cause?: unknown
-  constructor(message: string, cause?: unknown) {
+  /** 'limit' when the answer had exactly the requested number of points, so more may exist in the range. */
+  readonly reason?: 'limit'
+  constructor(message: string, cause?: unknown, reason?: 'limit') {
     super(message)
     this.cause = cause
+    this.reason = reason
     this.name = 'DatalakeApiError'
   }
 }
@@ -36,7 +39,10 @@ export interface QueryParams {
   kind?: string
   field?: string
   start?: number
+  /** Inclusive end of the window. */
   end?: number
+  /** Exclusive end of the window: [start, before). Send `end` or `before`, not both. */
+  before?: number
   limit?: number
 }
 
@@ -169,8 +175,112 @@ export async function queryDatalake(baseUrl: string, params: QueryParams): Promi
       `DATALAKE returned exactly the requested limit (${effectiveLimit}) of /query results - more real ` +
         'samples may exist in this range, and the oldest ones would be silently kept instead of the ' +
         'most recent. Narrow the time range, or pass an explicit, larger "limit".',
+      undefined,
+      'limit',
     )
   }
 
   return points
+}
+
+/** One stored series, as GET /series lists it. */
+export interface SeriesEntry {
+  sourceId: string
+  kind: string
+  field: string
+  count: number
+  firstTimestamp: number
+  lastTimestamp: number
+}
+
+function isSeriesEntry(value: unknown): value is SeriesEntry {
+  if (typeof value !== 'object' || value === null) return false
+  const entry = value as Record<string, unknown>
+  return (
+    typeof entry.sourceId === 'string' &&
+    typeof entry.kind === 'string' &&
+    typeof entry.field === 'string' &&
+    Number.isSafeInteger(entry.count) &&
+    Number.isSafeInteger(entry.firstTimestamp) &&
+    Number.isSafeInteger(entry.lastTimestamp)
+  )
+}
+
+/** Real GET /series: what the store holds, one entry per (source, kind, field). Entries that are not well formed are dropped. */
+export async function fetchSeries(baseUrl: string, kind?: string): Promise<SeriesEntry[]> {
+  let url: URL
+  try {
+    url = joinServiceUrl(baseUrl, '/series')
+  } catch (err) {
+    throw new DatalakeApiError('DATALAKE base URL is invalid', err)
+  }
+  if (kind) url.searchParams.set('kind', kind)
+  let response: Response
+  try {
+    response = await fetchWithTimeout(url.toString(), { headers: authHeaders(baseUrl) })
+  } catch (err) {
+    if (err instanceof FetchTimeoutError) {
+      throw new DatalakeApiError(`DATALAKE at ${baseUrl} did not respond in time (${err.timeoutMs}ms)`, err)
+    }
+    throw new DatalakeApiError(`could not reach DATALAKE at ${baseUrl}`, err)
+  }
+  if (!response.ok) {
+    const hint = sessionHint(response.status)
+    throw new DatalakeApiError(`DATALAKE returned HTTP ${response.status} for ${url.pathname}${hint ? ` (${hint})` : ''}`)
+  }
+  let data: unknown
+  try {
+    data = await response.json()
+  } catch (err) {
+    throw new DatalakeApiError('DATALAKE returned a response that was not valid JSON', err)
+  }
+  if (!Array.isArray(data)) throw new DatalakeApiError('DATALAKE returned a non-array /series response')
+  return data.filter(isSeriesEntry)
+}
+
+const MAX_WINDOW_ATTEMPTS = 12
+const MIN_WINDOW_MS = 1000
+const MAX_RECENT_LIMIT = 100_000
+
+/**
+ * The newest `count` samples of one series, oldest first, whatever the sampling rate. /query answers oldest-first, so
+ * "the last N" cannot be asked for directly: the length of the window is derived from the rate the series has (its
+ * count over the span between its first and last sample) instead of a fixed day, and is widened when it held too
+ * few samples or narrowed when it held more than one answer can carry. Returns fewer than `count` only when the
+ * series holds fewer, and an empty array when it does not exist.
+ */
+export async function recentSamples(
+  baseUrl: string,
+  series: { sourceId: string; kind: string; field: string },
+  count: number,
+): Promise<DatalakePoint[]> {
+  if (!Number.isInteger(count) || count < 1) throw new DatalakeApiError('the number of samples must be a whole number of at least 1')
+  const catalogue = await fetchSeries(baseUrl, series.kind)
+  const entry = catalogue.find((item) => item.sourceId === series.sourceId && item.kind === series.kind && item.field === series.field)
+  if (!entry || entry.count < 1) return []
+  const before = entry.lastTimestamp + 1
+  const span = entry.lastTimestamp - entry.firstTimestamp
+  const perMs = entry.count > 1 && span > 0 ? (entry.count - 1) / span : 0
+  let windowMs = perMs > 0 ? Math.max(MIN_WINDOW_MS, Math.ceil((count * 1.5) / perMs)) : Math.max(MIN_WINDOW_MS, span + 1)
+  const limit = Math.min(MAX_RECENT_LIMIT, Math.max(count * 10, 5000))
+  let best: DatalakePoint[] = []
+  for (let attempt = 0; attempt < MAX_WINDOW_ATTEMPTS; attempt += 1) {
+    const start = Math.max(entry.firstTimestamp, before - windowMs)
+    let points: DatalakePoint[]
+    try {
+      points = await queryDatalake(baseUrl, { ...series, start, before, limit })
+    } catch (err) {
+      // More points than one answer can carry (a burst): look at a shorter window ending at the newest sample.
+      if (err instanceof DatalakeApiError && err.reason === 'limit' && windowMs > MIN_WINDOW_MS) {
+        windowMs = Math.max(MIN_WINDOW_MS, Math.floor(windowMs / 4))
+        continue
+      }
+      throw err
+    }
+    if (points.length > best.length) best = points
+    if (points.length >= count || start <= entry.firstTimestamp) break
+    windowMs *= 4
+  }
+  const sorted = [...best].sort((a, b) => a.timestamp - b.timestamp)
+  return sorted.slice(-count)
 }

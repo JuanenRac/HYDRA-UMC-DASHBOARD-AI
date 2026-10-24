@@ -12,7 +12,9 @@
 // here.
 
 import { useState } from 'react'
-import { queryDatalake, DatalakeApiError } from '../api/datalakeClient'
+import { recentSamples, DatalakeApiError } from '../api/datalakeClient'
+import { Sparkline } from './Sparkline'
+import { farthestFromMean } from '../lib/sparkline'
 import { detectAnomaly, fetchDetectorStats, AnomalyApiError, type DetectVerdict } from '../api/anomalyClient'
 
 interface Props {
@@ -30,6 +32,7 @@ export function AnomalyCheckPanel({ datalakeBaseUrl, anomalyBaseUrl }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [notFitted, setNotFitted] = useState(false)
   const [verdict, setVerdict] = useState<DetectVerdict | null>(null)
+  const [scored, setScored] = useState<number[]>([])
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -41,6 +44,7 @@ export function AnomalyCheckPanel({ datalakeBaseUrl, anomalyBaseUrl }: Props) {
     setError(null)
     setNotFitted(false)
     setVerdict(null)
+    setScored([])
 
     try {
       const stats = await fetchDetectorStats(anomalyBaseUrl)
@@ -49,24 +53,18 @@ export function AnomalyCheckPanel({ datalakeBaseUrl, anomalyBaseUrl }: Props) {
         return
       }
 
-      // Real most-recent-N: query a wide-enough window and keep the tail,
-      // since DATALAKE's own /query takes a time range, not a sample
-      // count. 24h back is generous enough for any real telemetry rate
-      // this ecosystem's collectors run at.
-      const end = Date.now()
-      const start = end - 24 * 60 * 60_000
-      const points = await queryDatalake(datalakeBaseUrl, { sourceId, kind, field, start, end })
-
-      if (points.length < windowSize) {
+      // The newest N samples whatever the sampling rate: the window is derived from the rate the series has.
+      const recent = await recentSamples(datalakeBaseUrl, { sourceId, kind, field }, windowSize)
+      if (recent.length < windowSize) {
         setError(
-          `Only ${points.length} real sample(s) available for this source/kind/field in the last 24h - need at least ${windowSize} to score a window.`,
+          `Only ${recent.length} real sample(s) stored for this source/kind/field - need at least ${windowSize} to score a window.`,
         )
         return
       }
-
-      const sorted = [...points].sort((a, b) => a.timestamp - b.timestamp)
-      const window = sorted.slice(-windowSize).map((p) => p.value)
-      setVerdict(await detectAnomaly(anomalyBaseUrl, window))
+      const window = recent.map((p) => p.value)
+      const result = await detectAnomaly(anomalyBaseUrl, window)
+      setScored(window)
+      setVerdict(result)
     } catch (err) {
       if (err instanceof DatalakeApiError || err instanceof AnomalyApiError) {
         setError(err.message)
@@ -125,6 +123,15 @@ export function AnomalyCheckPanel({ datalakeBaseUrl, anomalyBaseUrl }: Props) {
           The anomaly detector at {anomalyBaseUrl} has no baseline fitted yet - real result, not
           an error: nothing can be scored until it is.
         </p>
+      )}
+
+      {verdict && scored.length > 0 && (
+        <Sparkline
+          values={scored}
+          caption="Scored window"
+          testId="anomaly-sparkline"
+          marks={verdict.anomalous ? [{ index: farthestFromMean(scored), label: 'Sample farthest from the mean of the window', tone: 'bad' }] : []}
+        />
       )}
 
       {verdict && (
