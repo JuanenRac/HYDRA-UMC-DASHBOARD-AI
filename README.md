@@ -16,7 +16,7 @@
 
 ---
 
-> **Honesty check - what actually runs today:** the trend-summary statistics (`lib/summary.ts`), the AI-provider gate and its honest statistical fallback (`lib/aiProvider.ts`), the external contract guard, the real HTTP clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`), and per-panel render-failure isolation (`components/ErrorBoundary.tsx` - a crash in one panel's render stays contained to that panel's own card instead of unmounting the whole app) are real and covered by 140 passing Vitest tests (`npm test` - `tests/*.test.ts(x)`); the CM5 static-file server (`scripts/serve_static.py`) has its own 11 passing `unittest` tests (no directory listing, hardening headers, an idle-connection timeout, no path traversal). There is no real LLM-backed AI provider anywhere in this repo - `aiProvider.ts`'s gate is real, but every narrative shown today is the `NO_PROVIDER_CONFIGURED` statistical fallback, clearly labeled as such. Trend Prediction (a real forecast model) and Optimization Tips are both fully aspirational - no code exists for either yet. Anomaly Highlighting only checks HYDRA-UMC-ANOMALY-DETECTOR's own already-fitted baseline; it never fits one itself. See `CHANGELOG.md` for exactly what has shipped so far.
+> **Honesty check - what actually runs today:** the trend-summary statistics (`lib/summary.ts`), the AI-provider gate and its honest statistical fallback (`lib/aiProvider.ts`), the external contract guard, the real HTTP clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`), and per-panel render-failure isolation (`components/ErrorBoundary.tsx` - a crash in one panel's render stays contained to that panel's own card instead of unmounting the whole app) are real and covered by 149 passing Vitest tests (`npm test` - `tests/*.test.ts(x)`); the CM5 static-file server (`scripts/serve_static.py`) has its own 11 passing `unittest` tests (no directory listing, hardening headers, an idle-connection timeout, no path traversal). There is no real LLM-backed AI provider anywhere in this repo - `aiProvider.ts`'s gate is real, but every narrative shown today is the `NO_PROVIDER_CONFIGURED` statistical fallback, clearly labeled as such. Trend Prediction (a real forecast model) and Optimization Tips are both fully aspirational - no code exists for either yet. Anomaly Highlighting only checks HYDRA-UMC-ANOMALY-DETECTOR's own already-fitted baseline; it never fits one itself. See `CHANGELOG.md` for exactly what has shipped so far.
 
 ---
 
@@ -28,7 +28,7 @@
 |---|---|
 | Version | `0.1.6` |
 | Maturity | Functional |
-| Tests | 70 (`npm test`) |
+| Tests | 149 (`npm test`) |
 | Stack | TypeScript/React / Vite |
 | Target | The Raspberry Pi CM5 of a HYDRA-UMC cell |
 | On real hardware | Not yet: no run on real hardware is recorded for this version |
@@ -87,7 +87,9 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # Real HTTP clients: datalakeClient.ts, anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # Real trend-summary statistics
-│   │   └── aiProvider.ts     # Real AI-provider gate: schema validation + honest fallback
+│   │   ├── aiProvider.ts     # Real AI-provider gate: schema validation + honest fallback
+│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
+│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -137,6 +139,8 @@ build.bat
 `npm run build` chains `tsc --noEmit && vite build`; it never changes the version, so a broken build can never ship a bumped version number. `npm run dev` starts Vite on port `5174` (separate from HYDRA-UMC-STUDIO's own `5173`, so both can run side by side). `npm test` runs the real Vitest suite directly.
 
 By default the two real panels call the same-origin paths `/api/datalake` and `/api/anomaly`, which `scripts/serve_static.py` (and the Vite dev server) forward to HYDRA-UMC-DATALAKE on `127.0.0.1:8095` and HYDRA-UMC-ANOMALY-DETECTOR on `127.0.0.1:8097` (neither service sends CORS headers, so the browser could not call them directly) - override with `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (set before `vite build`/`vite dev`, Vite inlines them at build time) to point at a different deployment.
+
+Behind HYDRA-UMC-SERVER the page is served at `/dashboard-ai` (HYDRA-UMC-SERVER's `build-frontend` builds and copies it when this repository is checked out next to it). There it reads through the relay of that server, `/api/ai/datalake` (read-only) and `/api/ai/anomaly-detector`, with the access token of the person who signed in to HYDRA-UMC-STUDIO in the same browser (the token is only ever sent to same-origin addresses), so the roles of the server apply and the services keep their own Bearer tokens private to the server. A refused session says so on the panel (sign in through STUDIO; an administrator or an operator is needed). With the dashboard there, HYDRA-UMC-ANOMALY-DETECTOR can be started with `HYDRA_UMC_ANOMALY_PROTECT_READS=1`.
 
 `scripts/serve_static.py` sends a Content-Security-Policy with every answer: scripts only from the page itself (no inline scripts, no plugins), no framing, and connections only to the page's own origin. A build with `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` adds the origins it calls with `--connect-src ORIGIN` (repeatable); `--csp off` (or `HYDRA_DASHBOARD_CSP=off`) sends none, for a front proxy that sets it, and any other `--csp` value is used as the complete policy. `npm run lint` runs ESLint (recommended rules, typescript-eslint and the rules of React hooks); CI runs it next to the type check and the tests.
 

@@ -16,7 +16,7 @@
 
 ---
 
-> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 140 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
+> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 149 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
 
 ---
 
@@ -28,7 +28,7 @@
 |---|---|
 | 版本 | `0.1.6` |
 | 成熟度 | 可用 |
-| 测试 | 70 (`npm test`) |
+| 测试 | 149 (`npm test`) |
 | 技术栈 | TypeScript/React / Vite |
 | 目标 | HYDRA-UMC 工作单元的 Raspberry Pi CM5 |
 | 真实硬件 | 尚未：此版本没有在真实硬件上运行的记录 |
@@ -88,7 +88,9 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # 真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # 真实的趋势摘要统计
-│   │   └── aiProvider.ts     # 真实的 AI 提供方关卡：模式校验 + 诚实的回退
+│   │   ├── aiProvider.ts     # 真实的 AI 提供方关卡：模式校验 + 诚实的回退
+│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
+│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -146,6 +148,8 @@ Vitest 测试套件。
 （两个服务都不发送 CORS 头，浏览器无法直接调用）——可通过 `VITE_DATALAKE_URL`/
 `VITE_ANOMALY_URL`（在 `vite build`/`vite dev` 之前设置，Vite 会在构建
 时内联它们）覆盖，以指向不同的部署环境。
+
+在 HYDRA-UMC-SERVER 之后，该页面在 `/dashboard-ai` 提供（当本仓库与 HYDRA-UMC-SERVER 并列检出时，其 `build-frontend` 会构建并复制它）。在那里，页面通过该服务器的中继 `/api/ai/datalake`（只读）和 `/api/ai/anomaly-detector` 读取，使用在同一浏览器中登录 HYDRA-UMC-STUDIO 的用户的访问令牌（令牌只会发送到同源地址），因此适用服务器的角色，而各服务的 Bearer 令牌只保留在服务器上。被拒绝的会话会在面板上提示（请通过 STUDIO 登录；需要管理员或操作员）。仪表板放在那里后，HYDRA-UMC-ANOMALY-DETECTOR 就可以用 `HYDRA_UMC_ANOMALY_PROTECT_READS=1` 启动。
 
 `scripts/serve_static.py` 会在每个响应中发送 Content-Security-Policy:脚本只能来自页面自身(不允许内联脚本和插件),不允许被嵌入框架,连接只限页面自身的源。使用 `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` 的构建可用 `--connect-src 源`(可重复)添加它所调用的源;`--csp off`(或 `HYDRA_DASHBOARD_CSP=off`)不发送任何策略,适用于由前端代理设置策略的情况,`--csp` 的其他取值会被当作完整策略原样使用。`npm run lint` 运行 ESLint(推荐规则、typescript-eslint 和 React hooks 规则);CI 会与类型检查和测试一起运行它。
 

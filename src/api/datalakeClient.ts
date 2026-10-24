@@ -12,6 +12,7 @@
 
 import { fetchWithTimeout, FetchTimeoutError } from './fetchWithTimeout'
 import { joinServiceUrl } from './joinServiceUrl'
+import { authHeaders, sessionHint } from '../lib/session'
 
 export interface DatalakePoint {
   sourceId: string
@@ -131,7 +132,7 @@ export async function queryDatalake(baseUrl: string, params: QueryParams): Promi
 
   let response: Response
   try {
-    response = await fetchWithTimeout(url.toString())
+    response = await fetchWithTimeout(url.toString(), { headers: authHeaders(baseUrl) })
   } catch (err) {
     if (err instanceof FetchTimeoutError) {
       throw new DatalakeApiError(`DATALAKE at ${baseUrl} did not respond in time (${err.timeoutMs}ms)`, err)
@@ -141,7 +142,8 @@ export async function queryDatalake(baseUrl: string, params: QueryParams): Promi
 
   if (!response.ok) {
     const body = await response.text().catch(() => '')
-    throw new DatalakeApiError(`DATALAKE returned HTTP ${response.status} for ${url.pathname}: ${body}`)
+    const hint = sessionHint(response.status)
+    throw new DatalakeApiError(`DATALAKE returned HTTP ${response.status} for ${url.pathname}: ${body}${hint ? ` (${hint})` : ''}`)
   }
 
   let data: unknown

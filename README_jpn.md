@@ -16,7 +16,7 @@
 
 ---
 
-> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、70件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の11件の通過する `unittest` テスト（ディレクトリ一覧なし、堅牢化ヘッダー、アイドル接続のタイムアウト、パストラバーサルなし）がある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
+> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、149件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の11件の通過する `unittest` テスト（ディレクトリ一覧なし、堅牢化ヘッダー、アイドル接続のタイムアウト、パストラバーサルなし）がある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
 
 ---
 
@@ -28,7 +28,7 @@
 |---|---|
 | バージョン | `0.1.6` |
 | 成熟度 | 機能する |
-| テスト | 70 (`npm test`) |
+| テスト | 149 (`npm test`) |
 | 技術 | TypeScript/React / Vite |
 | 対象 | HYDRA-UMC セルの Raspberry Pi CM5 |
 | 実機での確認 | まだです：このバージョンについて実機での動作記録はありません |
@@ -89,7 +89,9 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # 実際の HTTP クライアント：datalakeClient.ts、anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # 実際のトレンドサマリー統計
-│   │   └── aiProvider.ts     # 実際の AI プロバイダーゲート：スキーマ検証 + 正直なフォールバック
+│   │   ├── aiProvider.ts     # 実際の AI プロバイダーゲート：スキーマ検証 + 正直なフォールバック
+│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
+│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -149,6 +151,8 @@ build.bat
 ——`VITE_DATALAKE_URL`/
 `VITE_ANOMALY_URL`（`vite build`/`vite dev` の前に設定、Vite がビルド時
 にインライン化します）で上書きして、別のデプロイ先を指すことができます。
+
+HYDRA-UMC-SERVER の背後では、このページは `/dashboard-ai` で配信されます（このリポジトリが隣にチェックアウトされていれば、HYDRA-UMC-SERVER の `build-frontend` がビルドしてコピーします）。そこでは、同じブラウザーで HYDRA-UMC-STUDIO にサインインした人のアクセストークン（トークンは同一オリジンのアドレスにのみ送られます）を使い、そのサーバーのリレー `/api/ai/datalake`（読み取り専用）と `/api/ai/anomaly-detector` を通して読み取ります。そのためサーバーのロールが適用され、各サービスは自分の Bearer トークンをサーバーだけに保ちます。拒否されたセッションはパネルに表示されます（STUDIO からサインインしてください。管理者またはオペレーターが必要です）。ダッシュボードがそこにあれば、HYDRA-UMC-ANOMALY-DETECTOR を `HYDRA_UMC_ANOMALY_PROTECT_READS=1` で起動できます。
 
 `scripts/serve_static.py` はすべての応答に Content-Security-Policy を付けます。スクリプトはページ自身からのみ(インラインスクリプトとプラグインは不可)、フレームへの埋め込みは不可、接続先はページ自身のオリジンのみです。`VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` を使うビルドでは、呼び出すオリジンを `--connect-src オリジン`(複数指定可)で追加します。`--csp off`(または `HYDRA_DASHBOARD_CSP=off`)はポリシーを送らず、前段のプロキシが設定する場合向けです。それ以外の `--csp` の値は完全なポリシーとしてそのまま使われます。`npm run lint` は ESLint(推奨ルール、typescript-eslint、React フックのルール)を実行し、CI では型チェックとテストと並んで実行されます。
 

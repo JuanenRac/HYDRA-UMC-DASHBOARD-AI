@@ -19,9 +19,13 @@
 import { TrendSummaryPanel } from './components/TrendSummaryPanel'
 import { AnomalyCheckPanel } from './components/AnomalyCheckPanel'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { defaultEndpoints } from './lib/endpoints'
 
-const DATALAKE_BASE_URL = import.meta.env.VITE_DATALAKE_URL ?? '/api/datalake'
-const ANOMALY_BASE_URL = import.meta.env.VITE_ANOMALY_URL ?? '/api/anomaly'
+// Served by HYDRA-UMC-SERVER (under /dashboard-ai) the page reads through that server's relay with the session of STUDIO; served on its
+// own it reads through the proxy of the static server. VITE_DATALAKE_URL / VITE_ANOMALY_URL replace either.
+const ENDPOINTS = defaultEndpoints(typeof window === 'undefined' ? '/' : window.location.pathname)
+const DATALAKE_BASE_URL = import.meta.env.VITE_DATALAKE_URL ?? ENDPOINTS.datalake
+const ANOMALY_BASE_URL = import.meta.env.VITE_ANOMALY_URL ?? ENDPOINTS.anomaly
 
 function App() {
   return (

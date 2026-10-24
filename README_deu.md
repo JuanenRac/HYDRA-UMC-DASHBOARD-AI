@@ -16,7 +16,7 @@
 
 ---
 
-> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 140 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Trend-Vorhersage (ein echtes Prognosemodell) und Optimierungstipps sind beide vollständig aspirativ - für keines von beiden existiert bisher Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
+> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 149 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Trend-Vorhersage (ein echtes Prognosemodell) und Optimierungstipps sind beide vollständig aspirativ - für keines von beiden existiert bisher Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
 
 ---
 
@@ -28,7 +28,7 @@
 |---|---|
 | Version | `0.1.6` |
 | Reifegrad | Funktionsfähig |
-| Tests | 70 (`npm test`) |
+| Tests | 149 (`npm test`) |
 | Technik | TypeScript/React / Vite |
 | Ziel | Der Raspberry Pi CM5 einer HYDRA-UMC-Zelle |
 | Auf echter Hardware | Noch nicht: für diese Version ist kein Lauf auf echter Hardware vermerkt |
@@ -87,7 +87,9 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # Echte Trendzusammenfassungs-Statistiken
-│   │   └── aiProvider.ts     # Echtes KI-Anbieter-Gate: Schema-Validierung + ehrlicher Fallback
+│   │   ├── aiProvider.ts     # Echtes KI-Anbieter-Gate: Schema-Validierung + ehrlicher Fallback
+│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
+│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -137,6 +139,8 @@ build.bat
 `npm run build` verkettet `tsc --noEmit && vite build`; es ändert die Version nie, sodass ein defekter Build niemals eine erhöhte Versionsnummer ausliefert. `npm run dev` startet Vite auf Port `5174` (getrennt vom eigenen `5173` von HYDRA-UMC-STUDIO, damit beide gleichzeitig laufen können). `npm test` führt die echte Vitest-Suite direkt aus.
 
 Standardmäßig rufen die beiden echten Panels die gleich-originalen Pfade `/api/datalake` und `/api/anomaly` auf, die `scripts/serve_static.py` (und der Vite-Dev-Server) an HYDRA-UMC-DATALAKE auf `127.0.0.1:8095` und HYDRA-UMC-ANOMALY-DETECTOR auf `127.0.0.1:8097` weiterleiten (keiner der Dienste sendet CORS-Header, der Browser könnte sie nicht direkt aufrufen) - überschreibbar mit `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (vor `vite build`/`vite dev` gesetzt, Vite bindet sie zur Build-Zeit ein), um auf ein anderes Deployment zu zeigen.
+
+Hinter HYDRA-UMC-SERVER wird die Seite unter `/dashboard-ai` ausgeliefert (das `build-frontend` von HYDRA-UMC-SERVER baut und kopiert sie, wenn dieses Repository daneben ausgecheckt ist). Dort liest sie über das Relay dieses Servers, `/api/ai/datalake` (nur lesend) und `/api/ai/anomaly-detector`, mit dem Zugriffstoken der Person, die sich im selben Browser in HYDRA-UMC-STUDIO angemeldet hat (das Token wird nur an Adressen desselben Ursprungs gesendet); so gelten die Rollen des Servers, und die Dienste behalten ihre eigenen Bearer-Token privat beim Server. Eine abgelehnte Sitzung wird im Panel gemeldet (über STUDIO anmelden; Administrator oder Bediener nötig). Mit dem Dashboard dort kann HYDRA-UMC-ANOMALY-DETECTOR mit `HYDRA_UMC_ANOMALY_PROTECT_READS=1` gestartet werden.
 
 `scripts/serve_static.py` sendet mit jeder Antwort eine Content-Security-Policy: Skripte nur von der Seite selbst (keine Inline-Skripte, keine Plugins), kein Einbetten in Frames und Verbindungen nur zum eigenen Ursprung der Seite. Ein Build mit `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` fügt die Ursprünge, die er aufruft, mit `--connect-src URSPRUNG` hinzu (wiederholbar); `--csp off` (oder `HYDRA_DASHBOARD_CSP=off`) sendet keine, für einen vorgeschalteten Proxy, der sie setzt, und jeder andere `--csp`-Wert wird als vollständige Richtlinie verwendet. `npm run lint` führt ESLint aus (empfohlene Regeln, typescript-eslint und die Regeln der React-Hooks); die CI führt es neben der Typprüfung und den Tests aus.
 

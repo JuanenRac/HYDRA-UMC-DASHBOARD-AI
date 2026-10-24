@@ -16,7 +16,7 @@
 
 ---
 
-> **Verifica di onestà - cosa funziona davvero oggi:** le statistiche di riepilogo del trend (`lib/summary.ts`), il gate del provider AI e il suo onesto fallback statistico (`lib/aiProvider.ts`), il guardiano del contratto esterno, i veri client HTTP (`api/datalakeClient.ts`, `api/anomalyClient.ts`), e l'isolamento dei fallimenti di rendering per pannello (`components/ErrorBoundary.tsx` - un crash nel rendering di un pannello resta contenuto nella scheda di quel pannello invece di smontare l'intera app) sono reali e coperti da 140 test Vitest superati (`npm test` - `tests/*.test.ts(x)`); il server di file statici per la CM5 (`scripts/serve_static.py`) ha i suoi 11 test `unittest` superati (nessun elenco di directory, intestazioni di rafforzamento, timeout per le connessioni inattive, nessuna risalita di percorso). Non esiste alcun vero provider AI basato su LLM in questo repository - il gate di `aiProvider.ts` è reale, ma ogni narrazione mostrata oggi è il fallback statistico `NO_PROVIDER_CONFIGURED`, chiaramente etichettato come tale. La Predizione del Trend (un vero modello di previsione) e i Consigli di Ottimizzazione sono entrambi completamente aspirazionali - non esiste ancora codice per nessuno dei due. L'Evidenziazione delle Anomalie controlla solo la baseline già adattata di HYDRA-UMC-ANOMALY-DETECTOR; non ne adatta mai una da sola. Vedi `CHANGELOG.md` per cosa è stato esattamente consegnato finora.
+> **Verifica di onestà - cosa funziona davvero oggi:** le statistiche di riepilogo del trend (`lib/summary.ts`), il gate del provider AI e il suo onesto fallback statistico (`lib/aiProvider.ts`), il guardiano del contratto esterno, i veri client HTTP (`api/datalakeClient.ts`, `api/anomalyClient.ts`), e l'isolamento dei fallimenti di rendering per pannello (`components/ErrorBoundary.tsx` - un crash nel rendering di un pannello resta contenuto nella scheda di quel pannello invece di smontare l'intera app) sono reali e coperti da 149 test Vitest superati (`npm test` - `tests/*.test.ts(x)`); il server di file statici per la CM5 (`scripts/serve_static.py`) ha i suoi 11 test `unittest` superati (nessun elenco di directory, intestazioni di rafforzamento, timeout per le connessioni inattive, nessuna risalita di percorso). Non esiste alcun vero provider AI basato su LLM in questo repository - il gate di `aiProvider.ts` è reale, ma ogni narrazione mostrata oggi è il fallback statistico `NO_PROVIDER_CONFIGURED`, chiaramente etichettato come tale. La Predizione del Trend (un vero modello di previsione) e i Consigli di Ottimizzazione sono entrambi completamente aspirazionali - non esiste ancora codice per nessuno dei due. L'Evidenziazione delle Anomalie controlla solo la baseline già adattata di HYDRA-UMC-ANOMALY-DETECTOR; non ne adatta mai una da sola. Vedi `CHANGELOG.md` per cosa è stato esattamente consegnato finora.
 
 ---
 
@@ -28,7 +28,7 @@
 |---|---|
 | Versione | `0.1.6` |
 | Maturità | Funzionale |
-| Test | 70 (`npm test`) |
+| Test | 149 (`npm test`) |
 | Tecnologia | TypeScript/React / Vite |
 | Destinazione | Il Raspberry Pi CM5 di una cella HYDRA-UMC |
 | Su hardware reale | Non ancora: per questa versione non risulta alcuna esecuzione su hardware reale |
@@ -87,7 +87,9 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── api/                 # Veri client HTTP: datalakeClient.ts, anomalyClient.ts
 │   ├── lib/
 │   │   ├── summary.ts        # Vere statistiche di riepilogo delle tendenze
-│   │   └── aiProvider.ts     # Vera verifica del fornitore IA: validazione schema + fallback onesto
+│   │   ├── aiProvider.ts     # Vera verifica del fornitore IA: validazione schema + fallback onesto
+│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
+│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
 │   ├── components/
 │   │   ├── TrendSummaryPanel.tsx
 │   │   └── AnomalyCheckPanel.tsx
@@ -137,6 +139,8 @@ build.bat
 `npm run build` concatena `tsc --noEmit && vite build`; non cambia mai la versione, quindi un build rotto non pubblica mai un numero di versione incrementato. `npm run dev` avvia Vite sulla porta `5174` (separata dalla `5173` propria di HYDRA-UMC-STUDIO, così entrambi possono girare insieme). `npm test` esegue direttamente la vera suite Vitest.
 
 Per impostazione predefinita i due veri pannelli chiamano i percorsi della stessa origine `/api/datalake` e `/api/anomaly`, che `scripts/serve_static.py` (e il server di sviluppo Vite) inoltrano a HYDRA-UMC-DATALAKE su `127.0.0.1:8095` e a HYDRA-UMC-ANOMALY-DETECTOR su `127.0.0.1:8097` (nessuno dei servizi invia intestazioni CORS, il browser non potrebbe chiamarli direttamente) - sovrascrivibile con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` (definite prima di `vite build`/`vite dev`, Vite le incorpora in fase di build) per puntare a un deployment diverso.
+
+Dietro HYDRA-UMC-SERVER la pagina viene servita su `/dashboard-ai` (il `build-frontend` di HYDRA-UMC-SERVER la compila e la copia se questo repository è presente accanto). Lì legge tramite il relay di quel server, `/api/ai/datalake` (sola lettura) e `/api/ai/anomaly-detector`, con il token di accesso di chi ha effettuato l'accesso a HYDRA-UMC-STUDIO nello stesso browser (il token viene inviato solo a indirizzi della stessa origine); si applicano quindi i ruoli del server e i servizi mantengono i propri token Bearer privati al server. Una sessione rifiutata viene segnalata nel pannello (accedere tramite STUDIO; serve un amministratore o un operatore). Con la dashboard lì, HYDRA-UMC-ANOMALY-DETECTOR può essere avviato con `HYDRA_UMC_ANOMALY_PROTECT_READS=1`.
 
 `scripts/serve_static.py` invia una Content-Security-Policy con ogni risposta: script solo dalla pagina stessa (nessuno script inline, nessun plugin), nessun incorporamento in frame e connessioni solo all'origine della pagina. Una build con `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` aggiunge le origini che chiama con `--connect-src ORIGINE` (ripetibile); `--csp off` (o `HYDRA_DASHBOARD_CSP=off`) non ne invia alcuna, per un proxy davanti che la imposta, e qualsiasi altro valore di `--csp` è usato come policy completa. `npm run lint` esegue ESLint (regole raccomandate, typescript-eslint e le regole degli hook React); la CI lo esegue insieme al controllo dei tipi e ai test.
 

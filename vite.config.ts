@@ -19,6 +19,8 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // relative asset addresses: the same build works at the root (scripts/serve_static.py) and under /dashboard-ai (HYDRA-UMC-SERVER)
+  base: './',
   plugins: [react()],
   server: {
     host: '0.0.0.0',

@@ -14,6 +14,7 @@
 
 import { fetchWithTimeout, FetchTimeoutError } from './fetchWithTimeout'
 import { joinServiceUrl } from './joinServiceUrl'
+import { authHeaders, sessionHint } from '../lib/session'
 
 export class AnomalyApiError extends Error {
   readonly status?: number
@@ -92,6 +93,10 @@ async function readJsonOrThrow(response: Response, context: string): Promise<unk
   }
   if (!response.ok) {
     const message = (body as { error?: string } | null)?.error ?? `HTTP ${response.status}`
+    const hint = sessionHint(response.status)
+    if (hint) {
+      throw new AnomalyApiError(`${context}: ${message} (${hint})`, response.status)
+    }
     throw new AnomalyApiError(`${context}: ${message}`, response.status)
   }
   return body
@@ -104,7 +109,7 @@ async function readJsonOrThrow(response: Response, context: string): Promise<unk
 export async function fetchDetectorStats(baseUrl: string): Promise<DetectorStats> {
   let response: Response
   try {
-    response = await fetchWithTimeout(serviceUrl(baseUrl, '/stats').toString())
+    response = await fetchWithTimeout(serviceUrl(baseUrl, '/stats').toString(), { headers: authHeaders(baseUrl) })
   } catch (err) {
     if (err instanceof AnomalyApiError) {
       throw err
@@ -130,7 +135,7 @@ export async function detectAnomaly(baseUrl: string, window: number[]): Promise<
   try {
     response = await fetchWithTimeout(serviceUrl(baseUrl, '/detect').toString(), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders(baseUrl) },
       body: JSON.stringify({ window }),
     })
   } catch (err) {
