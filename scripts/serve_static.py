@@ -35,6 +35,44 @@ from pathlib import Path
 
 MAX_PROXY_BODY_BYTES = 4 * 1024 * 1024
 
+# The services can ask for a Bearer token of their own (the data lake for its reads, the anomaly detector for what it
+# scores). In this standalone mode the proxy presents it, so the page never holds it. It is presented only on the calls
+# the dashboard makes and nothing else: an ordinary read of the data lake, the status of the detector and the scoring
+# of a window. Everything else (fitting the baseline, the writes of the data lake, its retention) goes out without
+# the token and the service refuses it, so this server cannot be used to change what the services hold.
+TOKEN_ALLOWED_CALLS: dict[str, frozenset[tuple[str, str]]] = {
+    "/api/datalake": frozenset({("GET", p) for p in ("/query", "/aggregate", "/stats", "/stats/range", "/series", "/health")}),
+    "/api/anomaly": frozenset({("GET", "/stats"), ("POST", "/detect")}),
+}
+# The names the services themselves read, each one also as <NAME>_FILE (a file whose first line is the token).
+TOKEN_ENVIRONMENT: dict[str, tuple[str, ...]] = {
+    "/api/datalake": ("HYDRA_UMC_DATALAKE_READ_TOKEN", "HYDRA_UMC_DATALAKE_TOKEN"),
+    "/api/anomaly": ("HYDRA_UMC_ANOMALY_TOKEN",),
+}
+
+
+def read_upstream_tokens(environ: dict[str, str] | None = None) -> dict[str, str]:
+    """The tokens to present, by proxy prefix, from the environment (or, for NAME_FILE, from the first line of a file).
+    A token with a control character or a line break is refused: it could split a header."""
+    env = os.environ if environ is None else environ
+    tokens: dict[str, str] = {}
+    for prefix, names in TOKEN_ENVIRONMENT.items():
+        for name in names:
+            value = (env.get(name) or "").strip()
+            path = (env.get(name + "_FILE") or "").strip()
+            if not value and path:
+                try:
+                    value = Path(path).read_text(encoding="utf-8").splitlines()[0].strip()
+                except (OSError, IndexError) as error:
+                    raise SystemExit(f"error: cannot read the token file {path} ({name}_FILE): {error}")
+            if not value:
+                continue
+            if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
+                raise SystemExit(f"error: the token of {name} has a control character")
+            tokens[prefix] = value
+            break
+    return tokens
+
 # The Content-Security-Policy of the dashboard page. The page loads its own scripts only (no inline script, no
 # plugin), keeps inline styles because the UI sets style attributes, and may call only its own origin (the two
 # same-origin proxy prefixes) plus the origins the deployment adds with --connect-src for VITE_DATALAKE_URL /
@@ -80,6 +118,8 @@ class QuietHandler(SimpleHTTPRequestHandler):
 
     # prefix -> upstream base URL; set per server by serve()
     proxy_routes: dict[str, str] = {}
+    # prefix -> Bearer token presented on the calls of TOKEN_ALLOWED_CALLS; set per server by serve()
+    proxy_tokens: dict[str, str] = {}
     # the Content-Security-Policy sent with every answer; None sends none. serve() sets it from --csp.
     csp_policy: str | None = build_csp()
 
@@ -89,11 +129,24 @@ class QuietHandler(SimpleHTTPRequestHandler):
                 return upstream.rstrip("/") + (self.path[len(prefix):] or "/")
         return None
 
+    def _token_for(self) -> str | None:
+        """The token to present for this call, or None: only the calls the dashboard makes get one."""
+        for prefix, token in self.proxy_tokens.items():
+            if self.path == prefix or self.path.startswith(prefix + "/") or self.path.startswith(prefix + "?"):
+                rest = self.path[len(prefix):] or "/"
+                path = rest.split("?", 1)[0]
+                if (self.command, path) in TOKEN_ALLOWED_CALLS.get(prefix, frozenset()):
+                    return token
+        return None
+
     def _forward(self, target: str, body: bytes | None) -> None:
         request = urllib.request.Request(target, data=body, method=self.command)
         content_type = self.headers.get("Content-Type")
         if content_type:
             request.add_header("Content-Type", content_type)
+        token = self._token_for()
+        if token:
+            request.add_header("Authorization", f"Bearer {token}")
         try:
             with urllib.request.urlopen(request, timeout=UPSTREAM_TIMEOUT_SECONDS) as response:  # noqa: S310
                 status, payload, upstream_type = response.status, response.read(MAX_PROXY_BODY_BYTES + 1), response.headers.get("Content-Type")
@@ -158,7 +211,15 @@ def serve(
     anomaly: str = "http://127.0.0.1:8097",
     csp: str | None = "default",
     connect_origins: tuple[str, ...] = (),
+    upstream_tokens: dict[str, str] | None = None,
+    allow_tokens_off_loopback: bool = False,
 ) -> None:
+    if upstream_tokens and addr not in ("127.0.0.1", "::1", "localhost") and not allow_tokens_off_loopback:
+        # This server would let anyone who can reach it read the data lake and score windows as if signed in.
+        raise SystemExit(
+            "error: service tokens are set but --addr is not a loopback address; bind to 127.0.0.1 (behind HYDRA-UMC-SERVER "
+            "at /dashboard-ai the page uses the session of STUDIO instead) or pass --allow-tokens-off-loopback."
+        )
     if not (directory / "index.html").is_file():
         raise SystemExit(
             f"error: {directory} has no index.html - run 'npm run build' first "
@@ -169,6 +230,7 @@ def serve(
         (QuietHandler,),
         {
             "proxy_routes": {"/api/datalake": datalake, "/api/anomaly": anomaly},
+            "proxy_tokens": dict(upstream_tokens or {}),
             "csp_policy": build_csp(csp or "default", connect_origins),
         },
     )
@@ -199,13 +261,17 @@ def main() -> int:
                               "(or HYDRA_DASHBOARD_CSP), or a complete policy used as given.")
     parser.add_argument("--connect-src", action="append", default=[], metavar="ORIGIN",
                          help="An extra origin the page may call (repeatable), for a build with VITE_DATALAKE_URL / VITE_ANOMALY_URL.")
+    parser.add_argument("--allow-tokens-off-loopback", action="store_true",
+                         help="Allow the service tokens (HYDRA_UMC_DATALAKE_READ_TOKEN, HYDRA_UMC_ANOMALY_TOKEN, each also as ..._FILE) "
+                              "to be presented by a server bound to an address other than loopback. Off by default.")
     args = parser.parse_args()
 
     try:
         build_csp(args.csp, tuple(args.connect_src))
     except ValueError as error:
         parser.error(str(error))
-    serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly, args.csp, tuple(args.connect_src))
+    serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly, args.csp, tuple(args.connect_src),
+          read_upstream_tokens(), args.allow_tokens_off_loopback)
     return 0
 
 

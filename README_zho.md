@@ -152,7 +152,7 @@ Vitest 测试套件。
 
 在 HYDRA-UMC-SERVER 之后，该页面在 `/dashboard-ai` 提供（当本仓库与 HYDRA-UMC-SERVER 并列检出时，其 `build-frontend` 会构建并复制它）。在那里，页面通过该服务器的中继 `/api/ai/datalake`（只读）和 `/api/ai/anomaly-detector` 读取，使用在同一浏览器中登录 HYDRA-UMC-STUDIO 的用户的访问令牌（令牌只会发送到同源地址），因此适用服务器的角色，而各服务的 Bearer 令牌只保留在服务器上。被拒绝的会话会在面板上提示（请通过 STUDIO 登录；需要管理员或操作员）。仪表板放在那里后，HYDRA-UMC-ANOMALY-DETECTOR 就可以用 `HYDRA_UMC_ANOMALY_PROTECT_READS=1` 启动。
 
-`scripts/serve_static.py` 会在每个响应中发送 Content-Security-Policy:脚本只能来自页面自身(不允许内联脚本和插件),不允许被嵌入框架,连接只限页面自身的源。使用 `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` 的构建可用 `--connect-src 源`(可重复)添加它所调用的源;`--csp off`(或 `HYDRA_DASHBOARD_CSP=off`)不发送任何策略,适用于由前端代理设置策略的情况,`--csp` 的其他取值会被当作完整策略原样使用。`npm run lint` 运行 ESLint(推荐规则、typescript-eslint 和 React hooks 规则);CI 会与类型检查和测试一起运行它。
+`scripts/serve_static.py` 会在每个响应中发送 Content-Security-Policy:脚本只能来自页面自身(不允许内联脚本和插件),不允许被嵌入框架,连接只限页面自身的源。使用 `VITE_DATALAKE_URL`/`VITE_ANOMALY_URL` 的构建可用 `--connect-src 源`(可重复)添加它所调用的源;`--csp off`(或 `HYDRA_DASHBOARD_CSP=off`)不发送任何策略,适用于由前端代理设置策略的情况,`--csp` 的其他取值会被当作完整策略原样使用。`npm run lint` 运行 ESLint(推荐规则、typescript-eslint 和 React hooks 规则);CI 会与类型检查和测试一起运行它。 在独立模式下,同一脚本会出示需要令牌的服务的 Bearer 令牌(`HYDRA_UMC_DATALAKE_READ_TOKEN`,否则 `HYDRA_UMC_DATALAKE_TOKEN`,以及 `HYDRA_UMC_ANOMALY_TOKEN`,每个也可写成 `..._FILE`,即首行为令牌的文件),因此页面从不持有它。令牌只随仪表板发出的调用发送(数据湖的读取、检测器的状态以及对一个窗口的评分);拟合基线、写入数据湖或其保留策略则不带令牌发出,并被服务拒绝。绑定到非回环地址的服务器在带有令牌时拒绝启动,除非指定 `--allow-tokens-off-loopback`。
 
 在配置这些浏览器可见的 URL 或连接真实 AI 提供方之前，请阅读
 [`docs/SECURITY.md`](docs/SECURITY.md)。其中定义了响应校验、内容安全、失败行为以及不含秘密信息的规则。

@@ -285,3 +285,131 @@ class ContentSecurityPolicyTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class UpstreamTokenTests(unittest.TestCase):
+    """The Bearer token of a service is presented by the proxy, only on the calls of the dashboard."""
+
+    def setUp(self) -> None:
+        import functools
+        import json
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+        from serve_static import QuietHandler
+
+        seen: list[tuple[str, str, str | None]] = []
+        self.seen = seen
+
+        class Upstream(BaseHTTPRequestHandler):
+            def log_message(self, format, *args):  # noqa: A002, ANN001, ANN002
+                pass
+
+            def _reply(self) -> None:
+                if self.command == "POST":
+                    self.rfile.read(int(self.headers.get("Content-Length", "0")))
+                seen.append((self.command, self.path, self.headers.get("Authorization")))
+                payload = json.dumps({"ok": True}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+
+            do_GET = do_POST = _reply  # noqa: N815
+
+        self.upstream = ThreadingHTTPServer(("127.0.0.1", 0), Upstream)
+        threading.Thread(target=self.upstream.serve_forever, daemon=True).start()
+        url = f"http://127.0.0.1:{self.upstream.server_address[1]}"
+        self._tmpdir = tempfile.TemporaryDirectory()
+        (Path(self._tmpdir.name) / "index.html").write_text("<html></html>", encoding="utf-8")
+        handler_class = type(
+            "TokenProxyingHandler",
+            (QuietHandler,),
+            {"proxy_routes": {"/api/datalake": url, "/api/anomaly": url}, "proxy_tokens": {"/api/datalake": "lake-token-1234567890", "/api/anomaly": "detector-token-1234"}},
+        )
+        self.httpd = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(handler_class, directory=self._tmpdir.name))
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+        self.base = f"http://127.0.0.1:{self.httpd.server_address[1]}"
+
+    def tearDown(self) -> None:
+        for server in (self.httpd, self.upstream):
+            server.shutdown()
+            server.server_close()
+        self._tmpdir.cleanup()
+
+    def _call(self, method: str, path: str) -> None:
+        request = urllib.request.Request(f"{self.base}{path}", data=b"{}" if method == "POST" else None, method=method, headers={"Content-Type": "application/json"})
+        try:
+            urllib.request.urlopen(request).read()
+        except urllib.error.HTTPError as error:
+            error.read()
+
+    def test_the_calls_of_the_dashboard_carry_the_token_of_their_service(self) -> None:
+        self._call("GET", "/api/datalake/query?sourceId=a")
+        self._call("GET", "/api/datalake/series?kind=vibration")
+        self._call("GET", "/api/anomaly/stats")
+        self._call("POST", "/api/anomaly/detect")
+        self.assertEqual(
+            [(m, p, a) for m, p, a in self.seen],
+            [
+                ("GET", "/query?sourceId=a", "Bearer lake-token-1234567890"),
+                ("GET", "/series?kind=vibration", "Bearer lake-token-1234567890"),
+                ("GET", "/stats", "Bearer detector-token-1234"),
+                ("POST", "/detect", "Bearer detector-token-1234"),
+            ],
+        )
+
+    def test_nothing_else_carries_a_token_so_the_proxy_cannot_change_what_a_service_holds(self) -> None:
+        self._call("POST", "/api/anomaly/baseline/fit")
+        self._call("POST", "/api/anomaly/drift/observe")
+        self._call("POST", "/api/datalake/ingest")
+        self._call("POST", "/api/datalake/retention/apply")
+        self._call("GET", "/api/datalake/retention")
+        self._call("GET", "/api/anomaly/detect")
+        self.assertTrue(self.seen)
+        self.assertTrue(all(auth is None for _m, _p, auth in self.seen), self.seen)
+
+    def test_a_path_that_only_starts_like_an_allowed_one_gets_no_token(self) -> None:
+        self._call("GET", "/api/datalake/query/../retention")
+        self._call("GET", "/api/datalake/queryx")
+        self._call("POST", "/api/anomaly/detect/fit")
+        self.assertTrue(all(auth is None for _m, _p, auth in self.seen), self.seen)
+
+    def test_the_browser_never_receives_the_token(self) -> None:
+        with urllib.request.urlopen(f"{self.base}/api/datalake/stats") as response:
+            self.assertNotIn("lake-token", str(response.headers))
+            self.assertNotIn("lake-token", response.read().decode())
+
+
+class UpstreamTokenSettingsTests(unittest.TestCase):
+    def test_tokens_come_from_the_names_the_services_read_or_from_a_file(self) -> None:
+        from serve_static import read_upstream_tokens
+
+        with tempfile.TemporaryDirectory() as folder:
+            token_file = Path(folder) / "detector.token"
+            token_file.write_text("from-a-file-1234567890\nsecond line ignored\n", encoding="utf-8")
+            tokens = read_upstream_tokens({"HYDRA_UMC_DATALAKE_TOKEN": "  lake-token  ", "HYDRA_UMC_ANOMALY_TOKEN_FILE": str(token_file)})
+        self.assertEqual(tokens, {"/api/datalake": "lake-token", "/api/anomaly": "from-a-file-1234567890"})
+
+    def test_the_read_token_wins_over_the_general_one_and_nothing_set_is_nothing(self) -> None:
+        from serve_static import read_upstream_tokens
+
+        self.assertEqual(read_upstream_tokens({"HYDRA_UMC_DATALAKE_READ_TOKEN": "read-one", "HYDRA_UMC_DATALAKE_TOKEN": "write-one"}), {"/api/datalake": "read-one"})
+        self.assertEqual(read_upstream_tokens({}), {})
+
+    def test_a_token_with_a_line_break_or_a_missing_file_is_refused(self) -> None:
+        from serve_static import read_upstream_tokens
+
+        with self.assertRaises(SystemExit):
+            read_upstream_tokens({"HYDRA_UMC_ANOMALY_TOKEN": "a\nb"})
+        with self.assertRaises(SystemExit):
+            read_upstream_tokens({"HYDRA_UMC_ANOMALY_TOKEN_FILE": "/definitely/not/here"})
+
+    def test_tokens_are_not_presented_by_a_server_that_is_open_to_the_network(self) -> None:
+        from serve_static import serve
+
+        with tempfile.TemporaryDirectory() as folder:
+            (Path(folder) / "index.html").write_text("<html></html>", encoding="utf-8")
+            with self.assertRaises(SystemExit) as caught:
+                serve(Path(folder), "0.0.0.0", 0, upstream_tokens={"/api/anomaly": "t" * 20})
+            self.assertIn("loopback", str(caught.exception))
