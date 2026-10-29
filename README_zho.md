@@ -1,3 +1,9 @@
+<!-- =============================================================================
+HYDRA-UMC-DASHBOARD-AI - Statistical summaries and anomaly highlights for the STUDIO web dashboard
+Copyright (C) JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
+GPL-3.0-or-later - see LICENSE
+============================================================================= -->
+
 <p align="center">
   <img src="images/HYDRA_UMC_BANNER.svg" alt="HYDRA-UMC-DASHBOARD-AI banner" width="100%">
 </p>
@@ -9,18 +15,23 @@
 ### 📈 面向 STUDIO 网页仪表盘的统计摘要与异常高亮(不使用语言模型)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Licencia-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
-  <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="React/Vite/TS">
-  <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Insights">
+  <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
+  <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
+  <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
+  <img src="https://img.shields.io/badge/Tests-164%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Version-0.1.7-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 149 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
+> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 164 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
 
 ---
 
 > **安全与安防现状:**本生态系统不是经认证的安全系统。目前尚无硬件 E-STOP 通路,没有由固件强制执行的限位或联锁,也没有经过验证的运动指令;固件映像使用 CRC32 和共享密钥的 HMAC-SHA256 校验,而非非对称签名;TLS 与双向 TLS 均为可选项,默认关闭;自制电路板尚未组装或测试。在依赖此处任何说法来保障人身安全之前,请先阅读[安全基线](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/SECURITY_BASELINE.md)和[威胁模型](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/THREAT_MODEL.md)。
+
+---
 
 ## 📋 速览
 
@@ -32,6 +43,8 @@
 | 技术栈 | TypeScript/React / Vite |
 | 目标 | HYDRA-UMC 工作单元的 Raspberry Pi CM5 |
 | 真实硬件 | 尚未：此版本没有在真实硬件上运行的记录 |
+
+**跳转：** [概述](#-概述) · [架构](#-架构) · [安全与防护](#-安全与防护) · [接口](#-接口) · [配置](#-配置) · [快速开始](#-快速开始) · [测试](#-测试) · [故障排除](#-故障排除) · [仓库结构](#-仓库结构) · [相关项目](#-相关项目)
 
 ## 🚦 项目状态
 
@@ -46,25 +59,34 @@
 | 真实硬件 | 🔴 | 尚未：此版本没有在真实硬件上运行的记录 |
 | 文档 | 🟢 | 八种语言的 README，每次变更都会与清单核对 |
 
-## 1. 🛠️ 技术概述
+## 🎯 概述
 
 **HYDRA-UMC-DASHBOARD-AI** 是 STUDIO 网页界面的分析插件。它基于已存储的历史数据计算摘要(最小值、最大值、平均值、最新值和趋势方向),并根据异常检测器的统计结果高亮异常。目前尚未使用语言模型,也没有预测功能。
 
 它的目标是把原始遥测数据转换为可直接在浏览器中查看的集群性能和能耗模式摘要(计划中:预测性维护警报和 AI 生成的洞察)。它复用 HYDRA-UMC-STUDIO 自己的技术栈(React 19 + Vite + TypeScript),而不是引入新的技术栈,因此以后可以作为面板嵌入 STUDIO 本身。
 
 ### 关键特性：
-* 🧠 **智能摘要（v0）** —— 根据 HYDRA-UMC-DATALAKE 的真实历史数据计算的真实最小值/最大值/平均值/最新值/趋势统计，其中最小值/最大值/最新值都各自关联到产生它的真实观测时间戳。*（已实现为真实统计数据，尚非 AI 生成的摘要——见下方"构建与运行"）*
+* 🧠 **智能摘要（v0）** —— 根据 HYDRA-UMC-DATALAKE 的真实历史数据计算的真实最小值/最大值/平均值/最新值/趋势统计，其中最小值/最大值/最新值都各自关联到产生它的真实观测时间戳。*（已实现为真实统计数据，尚非 AI 生成的摘要——见下方"构建与发布"）*
 * 🔒 **AI 提供方关卡（v0）** —— 为未来基于 LLM 的叙述真实校验输入/输出模式，加上一个真实的、诚实标注的统计回退方案，在没有配置 AI 提供方，或提供方失败/返回非结构化输出时始终使用。*（今天已实现并接入了趋势摘要面板；真正基于 LLM 的提供方本身仍在计划中）*
 * 🛡️ **外部契约防护（v0）** —— 在面板计算或显示之前校验每个 Datalake 和异常服务响应；格式错误的数值、标志、过长标识符和不安全控制字符都会被拒绝。*（已实现；参见 [`docs/SECURITY.md`](docs/SECURITY.md)）*
 * 📈 **趋势预测** —— 一个真实的预测模型，超越 v0 中真实但简单的方向指示器。*（计划中）*
 * 🚨 **异常高亮（v0）：** 将最新的真实样本与 HYDRA-UMC-ANOMALY-DETECTOR 已拟合的真实基线进行对比检查。*（已实现为真实的文字面板；在 STUDIO 自身的 3D 视图中叠加显示尚在计划中）*
 * 🛠️ **优化建议：** 提出改进周期时间或电机寿命的参数变更建议。*（计划中）*
-* ✅ **工具链骨架** —— 一个真实的 React/Vite/TypeScript 应用，能够通过 `tsc --noEmit` 干净地构建，并使用 Vite 进行服务。*（已实现——见下方"构建与运行"）*
+* ✅ **工具链骨架** —— 一个真实的 React/Vite/TypeScript 应用，能够通过 `tsc --noEmit` 干净地构建，并使用 Vite 进行服务。*（已实现——见下方"构建与发布"）*
 * 🧯 **按面板隔离渲染失败** —— 每个面板都被包裹在自己的 `ErrorBoundary` 中；某个面板渲染时抛出的异常只会显示一个被限制在该面板内的回退卡片，而不会卸载整个仪表盘。*（已实现——见 `components/ErrorBoundary.tsx`）*
 
----
+## 🧩 在 HYDRA-UMC 中的角色
 
-## 2. 🔄 Dashboard AI 流程
+**HYDRA-UMC-DASHBOARD-AI** 是 STUDIO 旁边的只读面板：它把 HYDRA-UMC-DATALAKE 中保存的真实历史整理成趋势摘要（最小值、最大值、平均值、最新值和方向，每项都链接到产生它的样本），并把最新样本与 HYDRA-UMC-ANOMALY-DETECTOR 的基线对比。它没有自己的语言模型：未配置 AI 提供方时显示统计文字并明确说明。
+
+## 🏛️ 架构
+
+<p align="center">
+  <img src="images/architecture.svg" alt="HYDRA-UMC-DASHBOARD-AI architecture" width="100%">
+</p>
+
+<details>
+<summary>图表的文本版本（Mermaid）</summary>
 
 ```mermaid
 flowchart LR
@@ -75,9 +97,9 @@ flowchart LR
     INSIGHTS --> OPERATOR["Web Browser View"]
 ```
 
----
+</details>
 
-## 3. 🧱 架构与设计决策
+### 架构与设计决策
 
 * **为何本项目是 Node/TS 项目，而非像其他 AI 相邻项目那样使用 Python。** 它是 HYDRA-UMC-STUDIO 自身 React/Vite 前端的直接扩展，而非一个独立的 AI 服务——与 STUDIO 自身的技术栈保持一致（而非采用 HYDRA-UMC-COGNITIVE-NODE 的 Python 技术栈），正是使其日后能够真正作为一个真实的 STUDIO 面板挂载，而非一个用户需要单独切换过去的独立应用的原因。
 * **为何它是 STUDIO 的兄弟项目，而非其内部的一个文件夹。** 将其保持为独立的仓库/构建，使 AI 仪表盘层能够独立于 STUDIO 自身的机器人控制发布节奏进行版本管理和交付，这与最初将 HYDRA-UMC-SERVER 从 STUDIO 中拆分出来的理由相同。
@@ -88,60 +110,55 @@ flowchart LR
 * **为何 `safeGenerateNarrative()` 会校验请求，但从不因一个糟糕的响应而抛出异常。** 一个格式错误的请求是这份代码里真实的接线错误——没有摘要可以诚实地回退到，因此允许它抛出异常。而提供方返回*格式错误/非结构化*的响应，对任何真实的外部 API 来说都是常态——那条路径总会降级到真实的统计回退，而不是让面板崩溃，因为调用方已经拥有说出真话所需的一切（真实的摘要）。
 * **为何 `NO_PROVIDER_CONFIGURED` 复用 `summary.ts`，而不是一个独立的回退实现。** 第二份独立的"回退叙述"公式会与面板已经信任、并已经以数字形式展示的真实统计数据产生偏差——复用相同的 `TrendSummary` 数值，能让回退叙述与旁边的数字保持可证明的一致。
 
----
+## 🔒 安全与防护
 
-## 📂 目录结构
+| 威胁 | 防御 | 位置 |
+|---|---|---|
+| 静态服务器转发了不该转发的内容 | 只转发 `/api/datalake` 和 `/api/anomaly`；带令牌时只允许 `TOKEN_ALLOWED_CALLS` 中的调用；请求体上限 4 MiB | `scripts/serve_static.py` |
+| 服务令牌暴露在网络上 | 配置了服务令牌时，除非明确要求，服务器拒绝在非回环地址上启动；含控制字符的令牌会被拒绝 | `scripts/serve_static.py` |
+| 页面加载不该加载的脚本或访问不该访问的主机 | 每个响应都带 Content-Security-Policy：脚本只能来自页面本身，禁止嵌入框架，只连接自身来源；额外来源用 `--connect-src` 逐个添加，且必须是简单来源 | `scripts/serve_static.py` |
+| AI 提供方的文字含控制字符或双向字符，或应答格式错误 | 文字上限 2000 个字符，危险字符被丢弃；格式错误的应答会退回统计文字，而不是弄坏面板 | `src/lib/aiProvider.ts` |
+| 服务挂起导致页面卡死 | 每个请求限时 5 秒，一次查询每个窗口最多取 5000 个样本、最多尝试 12 个窗口；某个面板崩溃时只显示局部卡片，另一个继续工作 | `src/api/fetchWithTimeout.ts`, `src/api/datalakeClient.ts`, `src/components/ErrorBoundary.tsx` |
 
-纯软件 Web 应用——没有自己的硬件、固件或操作系统；这些目录按照仓库结构
-策略予以省略。
+**它绝不做的事：** 写入历史存储、拟合异常基线或操作机器人。它只是读取面板。
 
-```text
-HYDRA-UMC-DASHBOARD-AI/
-├── src/
-│   ├── api/                 # 真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts
-│   ├── lib/
-│   │   ├── summary.ts        # 真实的趋势摘要统计
-│   │   ├── sparkline.ts      # 序列小图的几何计算
-│   │   ├── aiProvider.ts     # 真实的 AI 提供方关卡：模式校验 + 诚实的回退
-│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
-│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
-│   ├── components/
-│   │   ├── TrendSummaryPanel.tsx
-│   │   ├── Sparkline.tsx         # 序列的小图及其标记的样本
-│   │   ├── AnomalyCheckPanel.tsx
-│   │   └── ErrorBoundary.tsx     # 按面板隔离渲染故障 (一个面板出错不会拖垮另一个)
-│   ├── main.tsx              # 应用程序入口点
-│   ├── App.tsx                # 根组件——挂载两个真实面板
-│   ├── index.css              # 基础样式表
-│   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义
-├── tests/                   # 真实测试：HTTP 往返 + 组件测试
-├── scripts/
-│   ├── serve_static.py     # 面向已构建 dist/ SPA 的真实静态文件服务器（实测发现的 CM5 部署缺口）
-│   └── test_serve_static.py # serve_static.py 的真实测试
-├── systemd/
-│   └── hydra-umc-dashboard-ai.service # 本地 CM5 静态服务的 systemd 单元
-├── tools/
-│   ├── build_test.py       # 不递增版本号的构建检查
-│   ├── ci_validate.py      # CI 使用的清单/CHANGELOG/文档校验
-│   ├── _doc_policy.py      # 家族共享的文档规则 (HYDRA-UMC-SDK 的副本,保持同步)
-│   ├── _readme_parity.py   # 检查八个 README 结构一致 (HYDRA-UMC-SDK 的副本,保持同步)
-│   └── hydra_project_tool.py # 每个仓库相同的命令: validate、test、ci、version、status、bump
-├── docs/
-│   └── SECURITY.md          # 外部内容与部署的公开安全契约
-├── build/                  # 预留给发布产物（dist/ 本身已被 gitignore）
-├── images/                 # 媒体与图表
-├── index.html              # Vite 入口 HTML
-├── vite.config.ts          # Vite 打包器 + Vitest 配置
-├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
-├── bump_manifest_version.py # 将 hydra-umc.project.json 的版本与 package.json 同步(--sync)
-├── dev.sh / dev.bat        # 真实开发服务器：安装依赖 + vite
-├── build.sh / build.bat    # 真实构建：安装依赖 + 真实测试套件 + tsc + vite build
-└── package.json
+## 🔌 接口
+
+| 主题或路由 | 内容 |
+|---|---|
+| `/api/datalake/*` | 转发到 `127.0.0.1:8095` 的 HYDRA-UMC-DATALAKE（使用令牌时仅限读取调用） |
+| `/api/anomaly/*` | 转发到 `127.0.0.1:8097` 的 HYDRA-UMC-ANOMALY-DETECTOR |
+| `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | 在 HYDRA-UMC-SERVER 之后，页面位于 `/dashboard-ai`，通过该服务器的中继并使用 STUDIO 会话的访问令牌读取 |
+
+## ⚙️ 配置
+
+| 变量 | 默认值 | 设置内容 |
+|---|---|---|
+| `--dir` | `dist/` | 要提供的已构建页面 |
+| `--addr`, `--port` | `127.0.0.1`, `8115` | 监听位置 |
+| `--datalake`, `--anomaly` | `http://127.0.0.1:8095`, `http://127.0.0.1:8097` | 两个服务所在位置 |
+| `--connect-src` | 无 | 页面可调用的额外来源，用于带 `VITE_DATALAKE_URL` / `VITE_ANOMALY_URL` 的构建；每个来源重复一次 |
+| `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default`，或自定义的完整策略 |
+| `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | 无令牌 | 服务器向每个服务出示的令牌；`_FILE` 变体从文件读取 |
+| `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | 构建时设置、浏览器可见的服务地址；绝不要放入凭据 |
+
+## 🚀 快速开始
+
+需要 Node.js 20 或更高版本及 npm；静态服务器需要 Python 3.10 或更高版本。
+
+```bash
+./dev.sh                                    # installs the dependencies and starts the Vite dev server on port 5174 (dev.bat on Windows)
+./build.sh                                  # runs the tests, type-checks and builds dist/ (build.bat on Windows)
+python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/datalake and /api/anomaly
 ```
 
----
+## 🧪 测试
 
-## 4. ⚙️ 构建与运行
+运行 `npm test` 会执行 164 个自动测试。 静态服务器在 `scripts/test_serve_static.py` 中有自己的 Python 测试。不需要硬件，也不需要正在运行的服务。
+
+CI 运行 `HYDRA_UMC_CI=1 python tools/ci_validate.py`，检查清单、文档、八个 README 和图片。
+
+## 🏗️ 构建与发布
 
 需要 Node.js >= 20。
 
@@ -189,7 +206,67 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 一个抛出异常、或返回缺失/格式错误 `narrative` 字段的响应的提供方，会降级
 到这个真实的回退方案，而不是让面板崩溃或什么都不显示。
 
----
+## 🩺 故障排除
+
+| 你看到 | 原因 | 处理 |
+|---|---|---|
+| 面板为空，控制台提示请求失败 | 静态服务器未运行，或 DATALAKE / 异常服务不在给定地址 | 启动 `scripts/serve_static.py` 并检查 `--datalake` 和 `--anomaly` |
+| 带令牌时服务器拒绝启动 | 设置了服务令牌，但 `--addr` 不是回环地址 | 绑定到 `127.0.0.1`，或把页面放到 HYDRA-UMC-SERVER 之后 |
+| 摘要显示“统计回退” | 未配置 AI 提供方，或其应答未通过验证 | 这是预期的默认行为；数字是真实的 |
+| 同时运行很多测试时会超时 | 机器负载高，Vitest 工作进程未及时响应 | 运行 `npx vitest run --pool=threads`，或在没有其他构建时运行 |
+
+## 📂 仓库结构
+
+<p align="center">
+  <img src="images/repository-structure.svg" alt="Repository structure of HYDRA-UMC-DASHBOARD-AI" width="100%">
+</p>
+
+<details>
+<summary>目录树的文本版本</summary>
+
+```text
+HYDRA-UMC-DASHBOARD-AI/
+├── src/                                                     源代码
+│   ├── api/                                                 真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts
+│   ├── lib/                                                 统计、AI 提供方闸门、会话和端点
+│   ├── components/                                          两个面板、小图表和错误边界
+│   ├── main.tsx                                             应用程序入口点
+│   ├── App.tsx                                              根组件——挂载两个真实面板
+│   ├── index.css                                            基础样式表
+│   └── vite-env.d.ts                                        VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义
+├── tests/                                                   真实测试：HTTP 往返 + 组件测试
+├── scripts/                                                 静态服务器及其测试
+├── systemd/                                                 服务单元
+├── tools/                                                   项目工具和 CI 检查
+├── docs/                                                    项目文档
+├── images/                                                  媒体与图表
+├── .github/                                                 CI 工作流和 Issue 模板
+├── index.html                                               Vite 入口 HTML
+├── vite.config.ts                                           Vite 打包器 + Vitest 配置
+├── tsconfig.json / tsconfig.app.json / tsconfig.node.json   TypeScript 配置（应用和 node）
+├── bump_manifest_version.py                                 将 hydra-umc.project.json 的版本与 package.json 同步(--sync)
+├── dev.sh / dev.bat                                         真实开发服务器：安装依赖 + vite
+├── build.sh / build.bat                                     真实构建：安装依赖 + 真实测试套件 + tsc + vite build
+├── package.json                                             包的元数据和脚本
+├── CHANGELOG.md                                             每个版本的变更
+├── build-test.sh                                            不修改内容的构建检查
+├── hydra-umc.project.json                                   清单：版本、成熟度、系列
+└── test.sh                                                  运行测试
+```
+
+</details>
+
+## 🗺️ 路线图与已知限制
+
+**目前已知的限制**
+
+* **计划中：** 真正的预测（趋势预测）、优化建议、闸门之后的 AI 提供方（预期后端是 HYDRA-UMC-COGNITIVE-NODE，目前未连接），以及在 STUDIO 的 3D 视图上叠加异常判定。
+* 摘要是统计量（最小值、最大值、平均值、最新值和方向），不是预测。
+* 在计算机上对真实的同级服务试过；从未用真实工厂的数据试过。
+
+## 🌍 语言
+
+本 README 和仓库文档提供八种语言：英语、西班牙语、德语、法语、意大利语、日语、中文和葡萄牙语（葡萄牙）。它们同时编写，并由 CI 检查八个文件拥有相同的章节和相同的链接。
 
 ## 🔗 相关项目
 
@@ -280,21 +357,26 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 - **[HYDRA-UMC-OPS-AGENT](https://github.com/JuanenRac/HYDRA-UMC-OPS-AGENT)** — 维护事件协调器：一个低权限的边缘角色采集经过脱敏的库存/健康快照，一个控制面角色以只读方式渲染它，并请求某个 AI 提供方给出诊断建议——从不应用补丁，也从不部署任何内容。
 - **[HYDRA-UMC-DEV-SERVER](https://github.com/JuanenRac/HYDRA-UMC-DEV-SERVER)** — 可复现的开发主机（Raspberry Pi 5 / CM5），保存整个生态系统的源代码，并在持久队列下运行有界的构建/测试任务；这是专用的开发角色，明确区别于运行中的 CM5。
 
+## 📚 文档
 
----
+更多阅读：
 
-## 📚 文档与社区
+* [生态系统的安全基线](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/SECURITY_BASELINE.md)
+* [生态系统的威胁模型](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/THREAT_MODEL.md)
+* [本仓库的更新日志](CHANGELOG.md)
+* [本仓库的许可证](LICENSE.md)
 
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** —— 提交 Pull Request 所需的技术栈和编码规范。
-- **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** —— 本社区所期望的行为准则。
-- **[SECURITY.md](SECURITY.md)** —— 如何报告漏洞;本项目自身的外部内容与部署安全契约请改为参见 [`docs/SECURITY.md`](docs/SECURITY.md)。
-- **[SUPPORT.md](SUPPORT.md)** —— 在哪里提问和报告缺陷。
-- **[LICENSE.md](LICENSE.md)** —— 本项目自身的许可证。
+## 🤝 参与贡献与社区
+
+* 提交 pull request 之前，请运行 `HYDRA_UMC_CI=1 py -3 tools/ci_validate.py`（或 `HYDRA_UMC_CI=1 python3 tools/ci_validate.py`）：它必须输出 `CI_VALIDATION=PASS`。此检查不要运行 `build.sh` 或 `build.bat`；构建不是检查。
+* 八个 README 由 HYDRA-UMC-DOCS 中的同一个源生成；请勿手工编辑。修改源文件，再用 `tools/make_readmes.py` 重新生成。
+* 不要在 README 中声称尚未运行过的内容：属实时请写“仅模拟”或“尚未在硬件上试过”。
+* 请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)、[行为准则](CODE_OF_CONDUCT.md)、[SECURITY.md](SECURITY.md) 和 [SUPPORT.md](SUPPORT.md)。
 
 ## 👤 作者
-**JuanenRac** (Electro Hobby 3D)
-📧 electrohobby3d@gmail.com
-📺 [youtube.com/@electrohobby3d](https://youtube.com/@electrohobby3d)
+
+**JuanenRac (Electro Hobby 3D)** · electrohobby3d@gmail.com
 
 ## 📜 许可证
-GPL-3.0-or-later —— 详见 LICENSE。
+
+GPL-3.0-or-later - [LICENSE](LICENSE).

@@ -1,0 +1,608 @@
+{
+  "repo": "HYDRA-UMC-DASHBOARD-AI",
+  "ecosystem": "hydra",
+  "svg": "en",
+  "exempt": [
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "SUPPORT.md",
+    "LICENSE",
+    "LICENSE.md",
+    "build-test.bat",
+    "eslint.config.js",
+    "package-lock.json",
+    "test.bat"
+  ],
+  "cards": [
+    {
+      "name": "src/",
+      "span": 3,
+      "accent": "a",
+      "rows": [
+        {
+          "name": "api/",
+          "desc": {
+            "en": "Real HTTP clients",
+            "es": "Clientes HTTP reales",
+            "de": "Echte HTTP-Clients",
+            "fr": "Vrais clients HTTP",
+            "it": "Veri client HTTP",
+            "ja": "実際の HTTP クライアント",
+            "zh": "真实的 HTTP 客户端：datalakeC",
+            "pt": "Clientes HTTP reais"
+          },
+          "tree_desc": {
+            "en": "Real HTTP clients: datalakeClient.ts, anomalyClient.ts",
+            "es": "Clientes HTTP reales: datalakeClient.ts, anomalyClient.ts",
+            "de": "Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts",
+            "fr": "Vrais clients HTTP : datalakeClient.ts, anomalyClient.ts",
+            "it": "Veri client HTTP: datalakeClient.ts, anomalyClient.ts",
+            "ja": "実際の HTTP クライアント：datalakeClient.ts、anomalyClient.ts",
+            "zh": "真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts",
+            "pt": "Clientes HTTP reais: datalakeClient.ts, anomalyClient.ts"
+          }
+        },
+        {
+          "name": "lib/",
+          "desc": {
+            "en": "statistics, AI-provider gate, session",
+            "es": "estadísticas, puerta del proveedor de IA",
+            "de": "Statistik, KI-Anbieter-Gate, Sitzung und",
+            "fr": "statistiques, porte du fournisseur d'IA",
+            "it": "statistiche, gate del fornitore di IA",
+            "ja": "統計、AI プロバイダーのゲート、セッション",
+            "zh": "统计、AI 提供方闸门、会话和端点",
+            "pt": "estatísticas, porta do fornecedor de IA"
+          },
+          "tree_desc": {
+            "en": "statistics, AI-provider gate, session and endpoints",
+            "es": "estadísticas, puerta del proveedor de IA, sesión y direcciones",
+            "de": "Statistik, KI-Anbieter-Gate, Sitzung und Endpunkte",
+            "fr": "statistiques, porte du fournisseur d'IA, session et adresses",
+            "it": "statistiche, gate del fornitore di IA, sessione e indirizzi",
+            "ja": "統計、AI プロバイダーのゲート、セッション、エンドポイント",
+            "zh": "统计、AI 提供方闸门、会话和端点",
+            "pt": "estatísticas, porta do fornecedor de IA, sessão e endereços"
+          }
+        },
+        {
+          "name": "components/",
+          "desc": {
+            "en": "the two panels",
+            "es": "los dos paneles",
+            "de": "die beiden Panels",
+            "fr": "les deux panneaux",
+            "it": "i due pannelli",
+            "ja": "2 つのパネル、小さなグラフ、エラー境界",
+            "zh": "两个面板、小图表和错误边界",
+            "pt": "os dois painéis"
+          },
+          "tree_desc": {
+            "en": "the two panels, the small chart and the error boundary",
+            "es": "los dos paneles, el gráfico pequeño y el límite de errores",
+            "de": "die beiden Panels, das kleine Diagramm und die Fehlergrenze",
+            "fr": "les deux panneaux, le petit graphique et la limite d'erreurs",
+            "it": "i due pannelli, il piccolo grafico e il limite degli errori",
+            "ja": "2 つのパネル、小さなグラフ、エラー境界",
+            "zh": "两个面板、小图表和错误边界",
+            "pt": "os dois painéis, o gráfico pequeno e o limite de erros"
+          }
+        },
+        {
+          "name": "main.tsx",
+          "desc": {
+            "en": "Application entry point",
+            "es": "Punto de entrada de la aplicación",
+            "de": "Einstiegspunkt der Anwendung",
+            "fr": "Point d'entrée de l'application",
+            "it": "Punto di ingresso dell'applicazione",
+            "ja": "アプリケーションエントリポイント",
+            "zh": "应用程序入口点",
+            "pt": "Ponto de entrada da aplicação"
+          },
+          "tree_desc": {
+            "en": "Application entry point",
+            "es": "Punto de entrada de la aplicación",
+            "de": "Einstiegspunkt der Anwendung",
+            "fr": "Point d'entrée de l'application",
+            "it": "Punto di ingresso dell'applicazione",
+            "ja": "アプリケーションエントリポイント",
+            "zh": "应用程序入口点",
+            "pt": "Ponto de entrada da aplicação"
+          }
+        },
+        {
+          "name": "App.tsx",
+          "desc": {
+            "en": "Root component - mounts both real panels",
+            "es": "Componente raíz - monta ambos paneles reales",
+            "de": "Wurzelkomponente",
+            "fr": "Composant racine",
+            "it": "Componente radice",
+            "ja": "ルートコンポーネント——両方の実際のパネルを",
+            "zh": "根组件——挂载两个真实面板",
+            "pt": "Componente raiz"
+          },
+          "tree_desc": {
+            "en": "Root component - mounts both real panels",
+            "es": "Componente raíz - monta ambos paneles reales",
+            "de": "Wurzelkomponente - bindet beide echten Panels ein",
+            "fr": "Composant racine - monte les deux vrais panneaux",
+            "it": "Componente radice - monta entrambi i veri pannelli",
+            "ja": "ルートコンポーネント——両方の実際のパネルをマウント",
+            "zh": "根组件——挂载两个真实面板",
+            "pt": "Componente raiz - monta os dois painéis reais"
+          }
+        },
+        {
+          "name": "index.css",
+          "desc": {
+            "en": "Base stylesheet",
+            "es": "Hoja de estilos base",
+            "de": "Basis-Stylesheet",
+            "fr": "Feuille de style de base",
+            "it": "Foglio di stile di base",
+            "ja": "ベーススタイルシート",
+            "zh": "基础样式表",
+            "pt": "Folha de estilos base"
+          },
+          "tree_desc": {
+            "en": "Base stylesheet",
+            "es": "Hoja de estilos base",
+            "de": "Basis-Stylesheet",
+            "fr": "Feuille de style de base",
+            "it": "Foglio di stile di base",
+            "ja": "ベーススタイルシート",
+            "zh": "基础样式表",
+            "pt": "Folha de estilos base"
+          }
+        },
+        {
+          "name": "vite-env.d.ts",
+          "desc": {
+            "en": "VITE_DATALAKE_URL / VITE_ANOMALY_URL typing",
+            "es": "Tipado de VITE_DATALAKE_URL /",
+            "de": "Typisierung von VITE_DATALAKE_URL /",
+            "fr": "Typage de VITE_DATALAKE_URL /",
+            "it": "Tipizzazione di VITE_DATALAKE_URL /",
+            "ja": "VITE_DATALAKE_URL / VI",
+            "zh": "VITE_DATALAKE_URL / VI",
+            "pt": "Tipagem de VITE_DATALAKE_URL /"
+          },
+          "tree_desc": {
+            "en": "VITE_DATALAKE_URL / VITE_ANOMALY_URL typing",
+            "es": "Tipado de VITE_DATALAKE_URL / VITE_ANOMALY_URL",
+            "de": "Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL",
+            "fr": "Typage de VITE_DATALAKE_URL / VITE_ANOMALY_URL",
+            "it": "Tipizzazione di VITE_DATALAKE_URL / VITE_ANOMALY_URL",
+            "ja": "VITE_DATALAKE_URL / VITE_ANOMALY_URL の型定義",
+            "zh": "VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义",
+            "pt": "Tipagem de VITE_DATALAKE_URL / VITE_ANOMALY_URL"
+          }
+        }
+      ],
+      "tree_head": {
+        "en": "source code",
+        "es": "código fuente",
+        "de": "Quellcode",
+        "fr": "code source",
+        "it": "codice sorgente",
+        "ja": "ソースコード",
+        "zh": "源代码",
+        "pt": "código-fonte"
+      },
+      "sub": {
+        "en": "source code",
+        "es": "código fuente",
+        "de": "Quellcode",
+        "fr": "code source",
+        "it": "codice sorgente",
+        "ja": "ソースコード",
+        "zh": "源代码",
+        "pt": "código-fonte"
+      }
+    },
+    {
+      "name": {
+        "en": "folders",
+        "es": "carpetas",
+        "de": "Ordner",
+        "fr": "dossiers",
+        "it": "cartelle",
+        "ja": "フォルダ",
+        "zh": "文件夹",
+        "pt": "pastas"
+      },
+      "kind": "group",
+      "span": 3,
+      "accent": "b",
+      "columns": 2,
+      "rows": [
+        {
+          "name": "tests/",
+          "desc": {
+            "en": "Real tests: HTTP round-trips + component",
+            "es": "Tests reales: round-trips HTTP + tests de",
+            "de": "Echte Tests: HTTP-Round-Trips +",
+            "fr": "Vrais tests : allers-retours HTTP + tests",
+            "it": "Veri test: round-trip HTTP + test dei",
+            "ja": "実際のテスト：HTTP ラウンドトリップ +",
+            "zh": "真实测试：HTTP 往返 + 组件测试",
+            "pt": "Testes reais: idas e voltas HTTP + testes"
+          },
+          "tree_desc": {
+            "en": "Real tests: HTTP round-trips + component tests",
+            "es": "Tests reales: round-trips HTTP + tests de componentes",
+            "de": "Echte Tests: HTTP-Round-Trips + Komponententests",
+            "fr": "Vrais tests : allers-retours HTTP + tests de composants",
+            "it": "Veri test: round-trip HTTP + test dei componenti",
+            "ja": "実際のテスト：HTTP ラウンドトリップ + コンポーネントテスト",
+            "zh": "真实测试：HTTP 往返 + 组件测试",
+            "pt": "Testes reais: idas e voltas HTTP + testes de componentes"
+          }
+        },
+        {
+          "name": "scripts/",
+          "desc": {
+            "en": "the static server and its tests",
+            "es": "el servidor estático y sus pruebas",
+            "de": "der statische Server und seine Tests",
+            "fr": "le serveur statique et ses tests",
+            "it": "il server statico e i suoi test",
+            "ja": "静的サーバーとそのテスト",
+            "zh": "静态服务器及其测试",
+            "pt": "o servidor estático e os seus testes"
+          },
+          "tree_desc": {
+            "en": "the static server and its tests",
+            "es": "el servidor estático y sus pruebas",
+            "de": "der statische Server und seine Tests",
+            "fr": "le serveur statique et ses tests",
+            "it": "il server statico e i suoi test",
+            "ja": "静的サーバーとそのテスト",
+            "zh": "静态服务器及其测试",
+            "pt": "o servidor estático e os seus testes"
+          }
+        },
+        {
+          "name": "systemd/",
+          "desc": {
+            "en": "service unit",
+            "es": "unidad de servicio",
+            "de": "Dienst-Unit",
+            "fr": "unité de service",
+            "it": "unità di servizio",
+            "ja": "サービスユニット",
+            "zh": "服务单元",
+            "pt": "unidade de serviço"
+          },
+          "tree_desc": {
+            "en": "service unit",
+            "es": "unidad de servicio",
+            "de": "Dienst-Unit",
+            "fr": "unité de service",
+            "it": "unità di servizio",
+            "ja": "サービスユニット",
+            "zh": "服务单元",
+            "pt": "unidade de serviço"
+          }
+        },
+        {
+          "name": "tools/",
+          "desc": {
+            "en": "project tools and CI checks",
+            "es": "herramientas del proyecto y comprobaciones",
+            "de": "Projektwerkzeuge und CI-Prüfungen",
+            "fr": "outils du projet et vérifications de la CI",
+            "it": "strumenti del progetto e controlli della CI",
+            "ja": "プロジェクトのツールと CI の検査",
+            "zh": "项目工具和 CI 检查",
+            "pt": "ferramentas do projeto e verificações da CI"
+          },
+          "tree_desc": {
+            "en": "project tools and CI checks",
+            "es": "herramientas del proyecto y comprobaciones del CI",
+            "de": "Projektwerkzeuge und CI-Prüfungen",
+            "fr": "outils du projet et vérifications de la CI",
+            "it": "strumenti del progetto e controlli della CI",
+            "ja": "プロジェクトのツールと CI の検査",
+            "zh": "项目工具和 CI 检查",
+            "pt": "ferramentas do projeto e verificações da CI"
+          }
+        },
+        {
+          "name": "docs/",
+          "desc": {
+            "en": "documents of the project",
+            "es": "documentos del proyecto",
+            "de": "Dokumente des Projekts",
+            "fr": "documents du projet",
+            "it": "documenti del progetto",
+            "ja": "プロジェクトの文書",
+            "zh": "项目文档",
+            "pt": "documentos do projeto"
+          },
+          "tree_desc": {
+            "en": "documents of the project",
+            "es": "documentos del proyecto",
+            "de": "Dokumente des Projekts",
+            "fr": "documents du projet",
+            "it": "documenti del progetto",
+            "ja": "プロジェクトの文書",
+            "zh": "项目文档",
+            "pt": "documentos do projeto"
+          }
+        },
+        {
+          "name": "images/",
+          "desc": {
+            "en": "Media and diagrams",
+            "es": "Medios y diagramas",
+            "de": "Medien und Diagramme",
+            "fr": "Médias et diagrammes",
+            "it": "Media e diagrammi",
+            "ja": "メディアと図表",
+            "zh": "媒体与图表",
+            "pt": "Multimédia e diagramas"
+          },
+          "tree_desc": {
+            "en": "Media and diagrams",
+            "es": "Medios y diagramas",
+            "de": "Medien und Diagramme",
+            "fr": "Médias et diagrammes",
+            "it": "Media e diagrammi",
+            "ja": "メディアと図表",
+            "zh": "媒体与图表",
+            "pt": "Multimédia e diagramas"
+          }
+        },
+        {
+          "name": ".github/",
+          "desc": {
+            "en": "CI workflow and issue templates",
+            "es": "flujo de CI y plantillas de incidencias",
+            "de": "CI-Workflow und Issue-Vorlagen",
+            "fr": "workflow de CI et modèles de tickets",
+            "it": "workflow di CI e modelli di segnalazione",
+            "ja": "CI ワークフローと Issue テンプレート",
+            "zh": "CI 工作流和 Issue 模板",
+            "pt": "fluxo de CI e modelos de problemas"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "en": "project files",
+        "es": "ficheros del proyecto",
+        "de": "Projektdateien",
+        "fr": "fichiers du projet",
+        "it": "file del progetto",
+        "ja": "プロジェクトのファイル",
+        "zh": "项目文件",
+        "pt": "ficheiros do projeto"
+      },
+      "kind": "group",
+      "span": 3,
+      "accent": "c",
+      "columns": 2,
+      "rows": [
+        {
+          "name": "index.html",
+          "desc": {
+            "en": "Vite entry HTML",
+            "es": "HTML de entrada de Vite",
+            "de": "Vite-Einstiegs-HTML",
+            "fr": "HTML d'entrée de Vite",
+            "it": "HTML di ingresso di Vite",
+            "ja": "Vite エントリ HTML",
+            "zh": "Vite 入口 HTML",
+            "pt": "HTML de entrada do Vite"
+          },
+          "tree_desc": {
+            "en": "Vite entry HTML",
+            "es": "HTML de entrada de Vite",
+            "de": "Vite-Einstiegs-HTML",
+            "fr": "HTML d'entrée de Vite",
+            "it": "HTML di ingresso di Vite",
+            "ja": "Vite エントリ HTML",
+            "zh": "Vite 入口 HTML",
+            "pt": "HTML de entrada do Vite"
+          }
+        },
+        {
+          "name": "vite.config.ts",
+          "desc": {
+            "en": "Vite bundler + Vitest configuration",
+            "es": "Configuración del bundler Vite + Vitest",
+            "de": "Vite-Bundler- + Vitest-Konfiguration",
+            "fr": "Configuration du bundler Vite + Vitest",
+            "it": "Configurazione del bundler Vite + Vitest",
+            "ja": "Vite バンドラー + Vitest 設定",
+            "zh": "Vite 打包器 + Vitest 配置",
+            "pt": "Empacotador Vite + configuração do Vitest"
+          },
+          "tree_desc": {
+            "en": "Vite bundler + Vitest configuration",
+            "es": "Configuración del bundler Vite + Vitest",
+            "de": "Vite-Bundler- + Vitest-Konfiguration",
+            "fr": "Configuration du bundler Vite + Vitest",
+            "it": "Configurazione del bundler Vite + Vitest",
+            "ja": "Vite バンドラー + Vitest 設定",
+            "zh": "Vite 打包器 + Vitest 配置",
+            "pt": "Empacotador Vite + configuração do Vitest"
+          }
+        },
+        {
+          "name": "tsconfig.json ...",
+          "desc": {
+            "en": "TypeScript configuration (app and node)",
+            "es": "configuración de TypeScript",
+            "de": "TypeScript-Konfiguration (App und Node)",
+            "fr": "configuration TypeScript",
+            "it": "configurazione TypeScript (app e node)",
+            "ja": "TypeScript 設定（アプリと nod",
+            "zh": "TypeScript 配置（应用和 node",
+            "pt": "configuração do TypeScript"
+          },
+          "tree_desc": {
+            "en": "TypeScript configuration (app and node)",
+            "es": "configuración de TypeScript (aplicación y node)",
+            "de": "TypeScript-Konfiguration (App und Node)",
+            "fr": "configuration TypeScript (application et node)",
+            "it": "configurazione TypeScript (app e node)",
+            "ja": "TypeScript 設定（アプリと node）",
+            "zh": "TypeScript 配置（应用和 node）",
+            "pt": "configuração do TypeScript (aplicação e node)"
+          },
+          "tree_name": "tsconfig.json / tsconfig.app.json / tsconfig.node.json"
+        },
+        {
+          "name": "bump_manifest_version.py",
+          "desc": {
+            "en": "Syncs hydra-umc.project.json's version",
+            "es": "Sincroniza la versión de",
+            "de": "Synchronisiert die Version von",
+            "fr": "Synchronise la version de",
+            "it": "Sincronizza la versione di",
+            "ja": "hydra-umc.project.json",
+            "zh": "将 hydra-umc.project.js",
+            "pt": "Sincroniza a versão do"
+          },
+          "tree_desc": {
+            "en": "Syncs hydra-umc.project.json's version to package.json's (--sync)",
+            "es": "Sincroniza la versión de hydra-umc.project.json con la de package.json (--sync)",
+            "de": "Synchronisiert die Version von hydra-umc.project.json mit der von package.json (--sync)",
+            "fr": "Synchronise la version de hydra-umc.project.json avec celle de package.json (--sync)",
+            "it": "Sincronizza la versione di hydra-umc.project.json con quella di package.json (--sync)",
+            "ja": "hydra-umc.project.json のバージョンを package.json と同期(--sync)",
+            "zh": "将 hydra-umc.project.json 的版本与 package.json 同步(--sync)",
+            "pt": "Sincroniza a versão do hydra-umc.project.json com a do package.json (--sync)"
+          }
+        },
+        {
+          "name": "dev.sh / dev.bat",
+          "desc": {
+            "en": "Real dev server: install deps + vite",
+            "es": "Servidor de desarrollo real",
+            "de": "Echter Dev-Server",
+            "fr": "Serveur de dev réel",
+            "it": "Server di sviluppo reale",
+            "ja": "実際の開発サーバー：依存関係のインストール",
+            "zh": "真实开发服务器：安装依赖 + vite",
+            "pt": "Servidor de desenvolvimento real"
+          },
+          "tree_desc": {
+            "en": "Real dev server: install deps + vite",
+            "es": "Servidor de desarrollo real: instala deps + vite",
+            "de": "Echter Dev-Server: installiert Abhängigkeiten + vite",
+            "fr": "Serveur de dev réel : installe les dépendances + vite",
+            "it": "Server di sviluppo reale: installa le dipendenze + vite",
+            "ja": "実際の開発サーバー：依存関係のインストール + vite",
+            "zh": "真实开发服务器：安装依赖 + vite",
+            "pt": "Servidor de desenvolvimento real: instala dependências + vite"
+          }
+        },
+        {
+          "name": "build.sh / build.bat",
+          "desc": {
+            "en": "Validate and build",
+            "es": "Valida y compila",
+            "de": "Validiert und baut",
+            "fr": "Valide et compile",
+            "it": "Valida e compila",
+            "ja": "実際のビルド：依存関係のインストール + 実",
+            "zh": "真实构建：安装依赖 + 真实测试套件 + t",
+            "pt": "Valida e compila"
+          },
+          "tree_desc": {
+            "en": "Validate and build (building never changes the version)",
+            "es": "Valida y compila (compilar nunca cambia la versión)",
+            "de": "Validiert und baut (Bauen ändert nie die Version)",
+            "fr": "Valide et compile (compiler ne change jamais la version)",
+            "it": "Valida e compila (compilare non cambia mai la versione)",
+            "ja": "実際のビルド：依存関係のインストール + 実際のテストスイート + tsc + vite build",
+            "zh": "真实构建：安装依赖 + 真实测试套件 + tsc + vite build",
+            "pt": "Valida e compila (compilar nunca altera a versão)"
+          }
+        },
+        {
+          "name": "package.json",
+          "desc": {
+            "en": "package metadata and scripts",
+            "es": "metadatos y scripts del paquete",
+            "de": "Paketmetadaten und Skripte",
+            "fr": "métadonnées et scripts du paquet",
+            "it": "metadati e script del pacchetto",
+            "ja": "パッケージのメタデータとスクリプト",
+            "zh": "包的元数据和脚本",
+            "pt": "metadados e scripts do pacote"
+          },
+          "tree_desc": {
+            "en": "package metadata and scripts",
+            "es": "metadatos y scripts del paquete",
+            "de": "Paketmetadaten und Skripte",
+            "fr": "métadonnées et scripts du paquet",
+            "it": "metadati e script del pacchetto",
+            "ja": "パッケージのメタデータとスクリプト",
+            "zh": "包的元数据和脚本",
+            "pt": "metadados e scripts do pacote"
+          }
+        },
+        {
+          "name": "CHANGELOG.md",
+          "desc": {
+            "en": "what changed in each version",
+            "es": "qué cambió en cada versión",
+            "de": "was sich in jeder Version geändert hat",
+            "fr": "ce qui a changé à chaque version",
+            "it": "cosa è cambiato in ogni versione",
+            "ja": "各バージョンの変更点",
+            "zh": "每个版本的变更",
+            "pt": "o que mudou em cada versão"
+          }
+        },
+        {
+          "name": "build-test.sh",
+          "desc": {
+            "en": "non-mutating build check",
+            "es": "comprobación de compilación sin cambios",
+            "de": "Build-Prüfung ohne Änderungen",
+            "fr": "vérification de build sans modification",
+            "it": "controllo di build senza modifiche",
+            "ja": "変更を伴わないビルド確認",
+            "zh": "不修改内容的构建检查",
+            "pt": "verificação de compilação sem alterações"
+          }
+        },
+        {
+          "name": "hydra-umc.project.json",
+          "desc": {
+            "en": "manifest: version, maturity, family",
+            "es": "manifiesto: versión, madurez, familia",
+            "de": "Manifest: Version, Reifegrad, Familie",
+            "fr": "manifeste : version, maturité, famille",
+            "it": "manifesto: versione, maturità, famiglia",
+            "ja": "マニフェスト：バージョン、成熟度、ファミリー",
+            "zh": "清单：版本、成熟度、系列",
+            "pt": "manifesto: versão, maturidade, família"
+          }
+        },
+        {
+          "name": "test.sh",
+          "desc": {
+            "en": "runs the tests",
+            "es": "ejecuta las pruebas",
+            "de": "führt die Tests aus",
+            "fr": "lance les tests",
+            "it": "esegue i test",
+            "ja": "テストを実行",
+            "zh": "运行测试",
+            "pt": "executa os testes"
+          }
+        }
+      ]
+    }
+  ]
+}

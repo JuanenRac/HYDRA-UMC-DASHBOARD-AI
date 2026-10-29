@@ -1,0 +1,188 @@
+{
+  "repo": "HYDRA-UMC-DASHBOARD-AI",
+  "ecosystem": "hydra",
+  "tagline": "A read-only panel: real statistics from the history store, an honest fallback when no AI provider exists.",
+  "description": "HYDRA-UMC-DASHBOARD-AI calls the history store and the anomaly service through one static server, computes the summaries in the browser, and passes the AI gate that validates every provider answer or falls back to the statistics.",
+  "columns": [
+    "WHO USES IT",
+    "THIS REPOSITORY",
+    "WHAT IT TALKS TO"
+  ],
+  "nodes": [
+    {
+      "id": "op",
+      "column": 0,
+      "level": "tested",
+      "title": "The operator's browser",
+      "lines": [
+        "trend summary and",
+        "anomaly check panels"
+      ],
+      "code": [
+        "src/App.tsx"
+      ]
+    },
+    {
+      "id": "stat",
+      "column": 0,
+      "level": "tested",
+      "title": "STUDIO session",
+      "lines": [
+        "the sign-in token read",
+        "from the STUDIO session"
+      ],
+      "code": [
+        "src/lib/session.ts"
+      ]
+    },
+    {
+      "id": "lake",
+      "column": 2,
+      "level": "contract",
+      "title": "DATALAKE",
+      "lines": [
+        "history of samples,",
+        "port 8095"
+      ]
+    },
+    {
+      "id": "ano",
+      "column": 2,
+      "level": "contract",
+      "title": "ANOMALY-DETECTOR",
+      "lines": [
+        "fitted baseline,",
+        "port 8097"
+      ]
+    },
+    {
+      "id": "llm",
+      "column": 2,
+      "level": "untested",
+      "title": "Language model",
+      "lines": [
+        "a provider behind the",
+        "gate: not connected"
+      ]
+    },
+    {
+      "id": "sum",
+      "column": 1,
+      "level": "tested",
+      "title": "summary + sparkline",
+      "lines": [
+        "min, max, average,",
+        "latest, direction"
+      ],
+      "code": [
+        "src/lib/summary.ts",
+        "src/lib/sparkline.ts"
+      ]
+    },
+    {
+      "id": "pan",
+      "column": 1,
+      "level": "tested",
+      "title": "panels",
+      "lines": [
+        "two panels, each in its",
+        "own error boundary"
+      ],
+      "code": [
+        "src/components/TrendSummaryPanel.tsx",
+        "src/components/AnomalyCheckPanel.tsx",
+        "src/components/ErrorBoundary.tsx"
+      ]
+    },
+    {
+      "id": "cli",
+      "column": 1,
+      "level": "tested",
+      "title": "HTTP clients",
+      "lines": [
+        "DATALAKE and anomaly",
+        "calls with a timeout"
+      ],
+      "code": [
+        "src/api/datalakeClient.ts",
+        "src/api/anomalyClient.ts",
+        "src/api/fetchWithTimeout.ts"
+      ]
+    },
+    {
+      "id": "gate",
+      "column": 1,
+      "level": "tested",
+      "title": "AI-provider gate",
+      "lines": [
+        "validates every answer;",
+        "statistical fallback"
+      ],
+      "code": [
+        "src/lib/aiProvider.ts"
+      ]
+    },
+    {
+      "id": "srv",
+      "column": 1,
+      "level": "tested",
+      "title": "serve_static.py",
+      "lines": [
+        "same-origin proxy, CSP,",
+        "service tokens"
+      ],
+      "code": [
+        "scripts/serve_static.py"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "op",
+      "to": "pan",
+      "level": "tested"
+    },
+    {
+      "from": "stat",
+      "to": "cli",
+      "level": "tested"
+    },
+    {
+      "from": "pan",
+      "to": "sum",
+      "level": "tested"
+    },
+    {
+      "from": "pan",
+      "to": "gate",
+      "level": "tested"
+    },
+    {
+      "from": "sum",
+      "to": "cli",
+      "level": "tested"
+    },
+    {
+      "from": "cli",
+      "to": "srv",
+      "level": "tested"
+    },
+    {
+      "from": "srv",
+      "to": "lake",
+      "level": "contract"
+    },
+    {
+      "from": "srv",
+      "to": "ano",
+      "level": "contract"
+    },
+    {
+      "from": "gate",
+      "to": "llm",
+      "level": "untested",
+      "label": "planned"
+    }
+  ],
+  "footer": "Tried against live sibling services on a computer; no plant data and no language model were used."
+}

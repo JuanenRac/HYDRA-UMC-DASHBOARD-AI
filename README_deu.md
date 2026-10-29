@@ -1,3 +1,9 @@
+<!-- =============================================================================
+HYDRA-UMC-DASHBOARD-AI - Statistical summaries and anomaly highlights for the STUDIO web dashboard
+Copyright (C) JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
+GPL-3.0-or-later - see LICENSE
+============================================================================= -->
+
 <p align="center">
   <img src="images/HYDRA_UMC_BANNER.svg" alt="HYDRA-UMC-DASHBOARD-AI banner" width="100%">
 </p>
@@ -9,18 +15,23 @@
 ### 📈 Statistische Zusammenfassungen und Anomalie-Hervorhebung für das STUDIO-Web-Dashboard (kein Sprachmodell)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Licencia-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
-  <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="React/Vite/TS">
-  <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Insights">
+  <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
+  <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
+  <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
+  <img src="https://img.shields.io/badge/Tests-164%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Version-0.1.7-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 149 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Trend-Vorhersage (ein echtes Prognosemodell) und Optimierungstipps sind beide vollständig aspirativ - für keines von beiden existiert bisher Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
+> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 164 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Trend-Vorhersage (ein echtes Prognosemodell) und Optimierungstipps sind beide vollständig aspirativ - für keines von beiden existiert bisher Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
 
 ---
 
 > **Stand von Sicherheit (Safety) und Security:** Dieses Ökosystem ist kein zertifiziertes Sicherheitssystem. Es gibt noch keinen Hardware-E-STOP-Pfad, keine von der Firmware durchgesetzten Grenzen oder Verriegelungen und keinen verifizierten Bewegungsbefehl; Firmware-Images werden mit CRC32 und einem HMAC-SHA256 mit gemeinsamem Schlüssel geprüft, nicht mit einer asymmetrischen Signatur; TLS und gegenseitiges TLS sind optional und standardmäßig aus; noch keine eigene Platine wurde bestückt oder getestet. Lesen Sie die [Sicherheitsbasis](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/SECURITY_BASELINE.md) und das [Bedrohungsmodell](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/THREAT_MODEL.md), bevor Sie sich für die Sicherheit einer Person auf eine Aussage hier verlassen.
+
+---
 
 ## 📋 Auf einen Blick
 
@@ -32,6 +43,8 @@
 | Technik | TypeScript/React / Vite |
 | Ziel | Der Raspberry Pi CM5 einer HYDRA-UMC-Zelle |
 | Auf echter Hardware | Noch nicht: für diese Version ist kein Lauf auf echter Hardware vermerkt |
+
+**Springe zu:** [Überblick](#-überblick) · [Architektur](#-architektur) · [Sicherheit und Schutz](#-sicherheit-und-schutz) · [Schnittstellen](#-schnittstellen) · [Konfiguration](#-konfiguration) · [Schnellstart](#-schnellstart) · [Tests](#-tests) · [Fehlerbehebung](#-fehlerbehebung) · [Struktur des Repositorys](#-struktur-des-repositorys) · [Verwandte Projekte](#-verwandte-projekte)
 
 ## 🚦 Projektstatus
 
@@ -46,25 +59,34 @@ Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heut
 | Echte Hardware | 🔴 | Noch nicht: für diese Version ist kein Lauf auf echter Hardware vermerkt |
 | Dokumentation | 🟢 | README in acht Sprachen, bei jeder Änderung gegen das Manifest geprüft |
 
-## 1. 🛠️ TECHNISCHER ÜBERBLICK
+## 🎯 Überblick
 
 **HYDRA-UMC-DASHBOARD-AI** ist das analytische Plugin für die STUDIO-Weboberfläche. Es ergänzt Zusammenfassungen aus dem gespeicherten Verlauf (Minimum, Maximum, Mittelwert, letzter Wert und Trendrichtung) sowie Anomalie-Hervorhebungen aus den Statistiken des Anomaliedetektors. Ein Sprachmodell und eine Prognose sind noch nicht beteiligt.
 
 Es soll rohe Telemetrie in umsetzbare Zusammenfassungen der Schwarmleistung und der Energieverbrauchsmuster verwandeln, direkt im Browser (geplant: Warnungen zur vorausschauenden Wartung und KI-generierte Einblicke). Es nutzt den eigenen Stack von HYDRA-UMC-STUDIO (React 19 + Vite + TypeScript) statt einen neuen einzuführen, sodass es später als Panel in STUDIO selbst eingebettet werden kann.
 
 ### Hauptmerkmale:
-* 🧠 **Smart Summaries (v0)** — echte Min/Max/Durchschnitt/Letzter-Wert/Trend-Statistiken, berechnet aus dem echten Verlauf von HYDRA-UMC-DATALAKE, wobei Min/Max/Letzter-Wert jeweils mit dem echten Beobachtungszeitpunkt verknüpft sind, der sie erzeugt hat. *(implementiert als echte Statistiken, noch keine KI-generierte Zusammenfassung — siehe BUILD & AUSFÜHRUNG unten)*
+* 🧠 **Smart Summaries (v0)** — echte Min/Max/Durchschnitt/Letzter-Wert/Trend-Statistiken, berechnet aus dem echten Verlauf von HYDRA-UMC-DATALAKE, wobei Min/Max/Letzter-Wert jeweils mit dem echten Beobachtungszeitpunkt verknüpft sind, der sie erzeugt hat. *(implementiert als echte Statistiken, noch keine KI-generierte Zusammenfassung — siehe Build und Veröffentlichung unten)*
 * 🔒 **KI-Anbieter-Gate (v0)** — echte Ein-/Ausgabe-Schema-Validierung für die zukünftige LLM-gestützte Erzählung, plus ein echter, ehrlich beschrifteter statistischer Fallback, der verwendet wird, wann immer kein KI-Anbieter konfiguriert ist oder einer fehlschlägt/unstrukturierte Ausgabe zurückgibt. *(heute implementiert und in das Trend-Summary-Panel eingebunden; ein echter LLM-gestützter Anbieter selbst ist geplant)*
 * 🛡️ **Externes Vertrags-Gate (v0)** — validiert jede Datalake- und Anomaliedienst-Antwort, bevor ein Panel damit rechnet oder sie darstellt; fehlerhafte Zahlen, Flags, überlange Kennungen und unsichere Steuerzeichen werden abgewiesen. *(implementiert; siehe [`docs/SECURITY.md`](docs/SECURITY.md))*
 * 📈 **Trendvorhersage** — ein echtes Vorhersagemodell, über den echten, aber einfachen Richtungsindikator von v0 hinaus. *(geplant)*
 * 🚨 **Anomalie-Hervorhebung (v0)** — prüft die neuesten echten Messwerte gegen eine echte, bereits kalibrierte Baseline von HYDRA-UMC-ANOMALY-DETECTOR. *(implementiert als echtes Textpanel; die Überlagerung in STUDIOs eigener 3D-Ansicht ist geplant)*
 * 🛠️ **Optimierungstipps** — schlägt Parameteränderungen zur Verbesserung von Zykluszeit oder Motorlebensdauer vor. *(geplant)*
-* ✅ **Toolchain-Grundgerüst** — eine echte React/Vite/TypeScript-App, die sauber mit `tsc --noEmit` baut und mit Vite ausgeliefert wird. *(implementiert — siehe BUILD & AUSFÜHRUNG unten)*
+* ✅ **Toolchain-Grundgerüst** — eine echte React/Vite/TypeScript-App, die sauber mit `tsc --noEmit` baut und mit Vite ausgeliefert wird. *(implementiert — siehe Build und Veröffentlichung unten)*
 * 🧯 **Render-Fehler-Isolation pro Panel** — jedes Panel ist in seine eigene `ErrorBoundary` eingebettet; eine Ausnahme beim Rendern in einem Panel zeigt eine eingedämmte Fallback-Karte, statt das gesamte Dashboard zu demontieren. *(implementiert — siehe `components/ErrorBoundary.tsx`)*
 
----
+## 🧩 Rolle in HYDRA-UMC
 
-## 2. 🔄 DASHBOARD-AI-ABLAUF
+**HYDRA-UMC-DASHBOARD-AI** ist ein schreibgeschütztes Panel neben STUDIO: Es macht aus dem echten Verlauf in HYDRA-UMC-DATALAKE Trendzusammenfassungen (Minimum, Maximum, Mittelwert, letzter Wert und Richtung, jeweils mit der Probe verknüpft, die ihn erzeugt hat) und prüft die neuesten Proben gegen die Basislinie von HYDRA-UMC-ANOMALY-DETECTOR. Es hat kein eigenes Sprachmodell: Ist kein KI-Anbieter eingerichtet, zeigt es einen statistischen Text und sagt das auch.
+
+## 🏛️ Architektur
+
+<p align="center">
+  <img src="images/architecture.svg" alt="HYDRA-UMC-DASHBOARD-AI architecture" width="100%">
+</p>
+
+<details>
+<summary>Textversion des Diagramms (Mermaid)</summary>
 
 ```mermaid
 flowchart LR
@@ -75,9 +97,9 @@ flowchart LR
     INSIGHTS --> OPERATOR["Ansicht im Webbrowser"]
 ```
 
----
+</details>
 
-## 3. 🧱 ARCHITEKTUR & DESIGNENTSCHEIDUNGEN
+### ARCHITEKTUR & DESIGNENTSCHEIDUNGEN
 
 * **Warum es ein Node/TS-Projekt ist, kein Python-Projekt wie die anderen KI-nahen Projekte.** Es ist eine direkte Erweiterung des eigenen React/Vite-Frontends von HYDRA-UMC-STUDIO, kein eigenständiger KI-Dienst - sich am eigenen Stack von STUDIO auszurichten (statt am Python-Stack von HYDRA-UMC-COGNITIVE-NODE) ist das, was es später erlaubt, wirklich als echtes STUDIO-Panel eingebunden zu werden, keine separate App, zu der Nutzer wechseln müssten.
 * **Warum es Geschwister von STUDIO ist, kein Ordner darin.** Dies als eigenes Repo/Build zu behalten erlaubt es der KI-Dashboard-Schicht, unabhängig vom eigenen Release-Rhythmus der Robotersteuerung von STUDIO zu versionieren und auszuliefern - derselbe Grund, der seinerzeit HYDRA-UMC-SERVER von STUDIO abgespalten hat.
@@ -88,59 +110,55 @@ flowchart LR
 * **Warum `safeGenerateNarrative()` die Anfrage validiert, aber bei einer schlechten Antwort nie einen Fehler wirft.** Eine fehlerhafte Anfrage ist ein echter Verdrahtungsfehler in diesem Code - es gibt keine Zusammenfassung, auf die ehrlich zurückgegriffen werden könnte, daher darf sie einen Fehler werfen. Eine *fehlerhafte/unstrukturierte* Antwort eines Anbieters ist eine reale Tatsache bei jeder echten externen API - dieser Pfad degradiert immer zum echten statistischen Fallback, statt das Panel abstürzen zu lassen, weil der Aufrufer bereits alles hat, was er braucht (die echte Zusammenfassung), um etwas Wahres zu sagen.
 * **Warum `NO_PROVIDER_CONFIGURED` `summary.ts` wiederverwendet statt einer separaten Fallback-Implementierung.** Eine zweite, unabhängige "Fallback-Erzählung"-Formel würde von den echten Statistiken abweichen, denen das Panel bereits vertraut und die es bereits numerisch anzeigt - die Wiederverwendung derselben `TrendSummary`-Werte hält die Fallback-Erzählung nachweislich konsistent mit den Zahlen direkt daneben.
 
----
+## 🔒 Sicherheit und Schutz
 
-## 📂 VERZEICHNISSTRUKTUR
+| Bedrohung | Abwehr | Wo |
+|---|---|---|
+| Der statische Server leitet mehr weiter als er soll | Nur `/api/datalake` und `/api/anomaly` werden weitergeleitet; mit Token nur die Aufrufe aus `TOKEN_ALLOWED_CALLS`; Bodys sind auf 4 MiB begrenzt | `scripts/serve_static.py` |
+| Dienst-Tokens im Netzwerk offengelegt | Sind Dienst-Tokens gesetzt, startet der Server nicht auf einer Nicht-Loopback-Adresse, außer es wird ausdrücklich verlangt; ein Token mit Steuerzeichen wird abgelehnt | `scripts/serve_static.py` |
+| Eine Seite, die Skripte lädt oder Hosts aufruft, die sie nicht soll | Eine Content-Security-Policy bei jeder Antwort: Skripte nur von der Seite selbst, keine Frames, Verbindungen nur zum eigenen Origin; weitere Origins kommen einzeln über `--connect-src` hinzu und müssen einfache Origins sein | `scripts/serve_static.py` |
+| Text eines KI-Anbieters mit Steuer- oder bidirektionalen Zeichen oder eine fehlerhafte Antwort | Der Text ist auf 2000 Zeichen begrenzt und unsichere Zeichen werden verworfen; eine fehlerhafte Antwort fällt auf den statistischen Text zurück, statt das Panel zu zerstören | `src/lib/aiProvider.ts` |
+| Ein hängender Dienst, der die Seite einfriert | Jede Anfrage hat ein Limit von 5 s, eine Abfrage holt höchstens 5000 Proben pro Fenster mit 12 Fensterversuchen, und ein abstürzendes Panel zeigt eine abgegrenzte Karte, während das andere weiterläuft | `src/api/fetchWithTimeout.ts`, `src/api/datalakeClient.ts`, `src/components/ErrorBoundary.tsx` |
 
-Reine Software-Anwendung — ohne eigene Hardware, Firmware oder Betriebssystem; diese Ordner werden gemäß der Repository-Strukturpolitik ausgelassen.
+**Was es nie tut:** in den Verlaufsspeicher schreiben, die Anomalie-Basislinie anpassen oder auf einen Roboter einwirken. Es ist ein Lesepanel.
 
-```text
-HYDRA-UMC-DASHBOARD-AI/
-├── src/
-│   ├── api/                 # Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts
-│   ├── lib/
-│   │   ├── summary.ts        # Echte Trendzusammenfassungs-Statistiken
-│   │   ├── sparkline.ts      # Die Geometrie des kleinen Diagramms einer Reihe
-│   │   ├── aiProvider.ts     # Echtes KI-Anbieter-Gate: Schema-Validierung + ehrlicher Fallback
-│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
-│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
-│   ├── components/
-│   │   ├── TrendSummaryPanel.tsx
-│   │   ├── Sparkline.tsx         # Das kleine Diagramm einer Reihe und seine markierten Werte
-│   │   ├── AnomalyCheckPanel.tsx
-│   │   └── ErrorBoundary.tsx     # Isolierung von Darstellungsfehlern je Panel (ein defektes Panel reißt das andere nicht mit)
-│   ├── main.tsx              # Einstiegspunkt der Anwendung
-│   ├── App.tsx                # Wurzelkomponente - bindet beide echten Panels ein
-│   ├── index.css              # Basis-Stylesheet
-│   └── vite-env.d.ts          # Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL
-├── tests/                   # Echte Tests: HTTP-Round-Trips + Komponententests
-├── scripts/
-│   ├── serve_static.py     # Echter statischer Dateiserver für das gebaute dist/-SPA (live gefundene CM5-Deployment-Lücke)
-│   └── test_serve_static.py # Echte Tests für serve_static.py
-├── systemd/
-│   └── hydra-umc-dashboard-ai.service # systemd-Unit des lokalen CM5-Static-Serve-Dienstes
-├── tools/
-│   ├── build_test.py       # Nicht-versionierender Build-Check
-│   ├── ci_validate.py      # Manifest/CHANGELOG/Docs-Validierung, von CI genutzt
-│   ├── _doc_policy.py      # Von der Familie geteilte Dokumentationsregeln (Kopie der von HYDRA-UMC-SDK, synchron gehalten)
-│   ├── _readme_parity.py   # Prüfung, dass die acht READMEs dieselbe Struktur haben (Kopie der von HYDRA-UMC-SDK, synchron gehalten)
-│   └── hydra_project_tool.py # Dieselben Befehle in jedem Repository: validate, test, ci, version, status, bump
-├── docs/
-│   └── SECURITY.md          # Öffentlicher Sicherheitsvertrag für externe Inhalte und Deployment
-├── build/                  # Reserviert für Release-Artefakte (dist/ selbst ist von git ignoriert)
-├── images/                 # Medien und Diagramme
-├── index.html              # Vite-Einstiegs-HTML
-├── vite.config.ts          # Vite-Bundler- + Vitest-Konfiguration
-├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
-├── bump_manifest_version.py # Synchronisiert die Version von hydra-umc.project.json mit der von package.json (--sync)
-├── dev.sh / dev.bat        # Echter Dev-Server: installiert Abhängigkeiten + vite
-├── build.sh / build.bat    # Validiert und baut (Bauen ändert nie die Version)
-└── package.json
+## 🔌 Schnittstellen
+
+| Topic oder Route | Was es trägt |
+|---|---|
+| `/api/datalake/*` | an HYDRA-UMC-DATALAKE auf `127.0.0.1:8095` weitergeleitet (mit Token nur lesende Aufrufe) |
+| `/api/anomaly/*` | an HYDRA-UMC-ANOMALY-DETECTOR auf `127.0.0.1:8097` weitergeleitet |
+| `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | hinter HYDRA-UMC-SERVER liegt die Seite unter `/dashboard-ai` und liest über das Relay dieses Servers, mit dem Zugriffstoken der STUDIO-Sitzung |
+
+## ⚙️ Konfiguration
+
+| Variable | Standard | Was sie festlegt |
+|---|---|---|
+| `--dir` | `dist/` | die gebaute Seite, die ausgeliefert wird |
+| `--addr`, `--port` | `127.0.0.1`, `8115` | worauf gelauscht wird |
+| `--datalake`, `--anomaly` | `http://127.0.0.1:8095`, `http://127.0.0.1:8097` | wo die beiden Dienste laufen |
+| `--connect-src` | keiner | ein zusätzlicher Origin, den die Seite aufrufen darf, für einen Build mit `VITE_DATALAKE_URL` / `VITE_ANOMALY_URL`; je Origin wiederholen |
+| `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default` oder eine vollständige eigene Richtlinie |
+| `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | kein Token | der Token, den der Server jedem Dienst zeigt; die `_FILE`-Varianten lesen ihn aus einer Datei |
+| `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | im Browser sichtbare Dienst-URLs, beim Build gesetzt; nie eine Zugangsdaten-Angabe hineinschreiben |
+
+## 🚀 Schnellstart
+
+Benötigt Node.js 20 oder neuer mit npm; der statische Server braucht Python 3.10 oder neuer.
+
+```bash
+./dev.sh                                    # installs the dependencies and starts the Vite dev server on port 5174 (dev.bat on Windows)
+./build.sh                                  # runs the tests, type-checks and builds dist/ (build.bat on Windows)
+python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/datalake and /api/anomaly
 ```
 
----
+## 🧪 Tests
 
-## 4. ⚙️ BUILD & AUSFÜHRUNG
+164 automatische Tests laufen mit `npm test`. Der statische Server hat eigene Python-Tests in `scripts/test_serve_static.py`. Sie brauchen weder Hardware noch einen laufenden Dienst.
+
+Die CI führt `HYDRA_UMC_CI=1 python tools/ci_validate.py` aus; das prüft das Manifest, die Dokumente, die acht READMEs und die Bilder.
+
+## 🏗️ Build und Veröffentlichung
 
 Erfordert Node.js >= 20.
 
@@ -176,7 +194,67 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 
 Ein Anbieter, der einen Fehler wirft oder eine Antwort mit fehlendem oder fehlerhaftem `narrative` zurückgibt, degradiert zu genau diesem echten Fallback, statt das Panel abstürzen zu lassen oder nichts anzuzeigen.
 
----
+## 🩺 Fehlerbehebung
+
+| Du siehst | Weil | Tu |
+|---|---|---|
+| Die Panels sind leer und die Konsole meldet eine fehlgeschlagene Anfrage | Der statische Server läuft nicht, oder DATALAKE bzw. der Anomalie-Dienst ist nicht unter der angegebenen Adresse | `scripts/serve_static.py` starten und `--datalake` und `--anomaly` prüfen |
+| Der Server startet mit Tokens nicht | Ein Dienst-Token ist gesetzt und `--addr` ist keine Loopback-Adresse | An `127.0.0.1` binden oder die Seite hinter HYDRA-UMC-SERVER legen |
+| Die Zusammenfassung nennt „statistischer Ersatz“ | Kein KI-Anbieter ist eingerichtet oder der Anbieter antwortete mit etwas, das die Prüfung nicht bestand | Das ist das erwartete Standardverhalten; die Zahlen sind echt |
+| Die Tests laufen in einen Timeout, wenn viele gleichzeitig laufen | Die Maschine ist ausgelastet und ein Vitest-Worker antwortete nicht rechtzeitig | `npx vitest run --pool=threads` ausführen oder dann, wenn nichts anderes baut |
+
+## 📂 Struktur des Repositorys
+
+<p align="center">
+  <img src="images/repository-structure.svg" alt="Repository structure of HYDRA-UMC-DASHBOARD-AI" width="100%">
+</p>
+
+<details>
+<summary>Textversion des Baums</summary>
+
+```text
+HYDRA-UMC-DASHBOARD-AI/
+├── src/                                                     Quellcode
+│   ├── api/                                                 Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts
+│   ├── lib/                                                 Statistik, KI-Anbieter-Gate, Sitzung und Endpunkte
+│   ├── components/                                          die beiden Panels, das kleine Diagramm und die Fehlergrenze
+│   ├── main.tsx                                             Einstiegspunkt der Anwendung
+│   ├── App.tsx                                              Wurzelkomponente - bindet beide echten Panels ein
+│   ├── index.css                                            Basis-Stylesheet
+│   └── vite-env.d.ts                                        Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL
+├── tests/                                                   Echte Tests: HTTP-Round-Trips + Komponententests
+├── scripts/                                                 der statische Server und seine Tests
+├── systemd/                                                 Dienst-Unit
+├── tools/                                                   Projektwerkzeuge und CI-Prüfungen
+├── docs/                                                    Dokumente des Projekts
+├── images/                                                  Medien und Diagramme
+├── .github/                                                 CI-Workflow und Issue-Vorlagen
+├── index.html                                               Vite-Einstiegs-HTML
+├── vite.config.ts                                           Vite-Bundler- + Vitest-Konfiguration
+├── tsconfig.json / tsconfig.app.json / tsconfig.node.json   TypeScript-Konfiguration (App und Node)
+├── bump_manifest_version.py                                 Synchronisiert die Version von hydra-umc.project.json mit der von package.json (--sync)
+├── dev.sh / dev.bat                                         Echter Dev-Server: installiert Abhängigkeiten + vite
+├── build.sh / build.bat                                     Validiert und baut (Bauen ändert nie die Version)
+├── package.json                                             Paketmetadaten und Skripte
+├── CHANGELOG.md                                             was sich in jeder Version geändert hat
+├── build-test.sh                                            Build-Prüfung ohne Änderungen
+├── hydra-umc.project.json                                   Manifest: Version, Reifegrad, Familie
+└── test.sh                                                  führt die Tests aus
+```
+
+</details>
+
+## 🗺️ Roadmap und bekannte Grenzen
+
+**Bekannte Grenzen heute**
+
+* **Geplant:** eine echte Prognose (Trendvorhersage), Optimierungstipps, ein KI-Anbieter hinter dem Gate (HYDRA-UMC-COGNITIVE-NODE ist das vorgesehene Backend und nicht angebunden) und eine Überlagerung des Anomalie-Urteils auf der 3D-Ansicht von STUDIO.
+* Die Zusammenfassungen sind Statistiken (Minimum, Maximum, Mittelwert, letzter Wert und Richtung), keine Prognose.
+* Gegen laufende Nachbardienste auf einem Rechner erprobt; nie mit Daten einer echten Anlage.
+
+## 🌍 Sprachen
+
+Diese README und die Dokumente des Repositorys gibt es in acht Sprachen: Englisch, Spanisch, Deutsch, Französisch, Italienisch, Japanisch, Chinesisch und Portugiesisch (Portugal). Sie entstehen gemeinsam, und die CI prüft, dass die acht Dateien dieselben Abschnitte und dieselben Links haben.
 
 ## 🔗 Verwandte Projekte
 
@@ -267,21 +345,26 @@ Dieses Projekt ist Teil des HYDRA-UMC-Robotik-Ökosystems desselben Autors (Juan
 - **[HYDRA-UMC-OPS-AGENT](https://github.com/JuanenRac/HYDRA-UMC-OPS-AGENT)** — Wartungsvorfall-Koordinator: eine Edge-Rolle mit niedrigem Privileg sammelt einen bereinigten Inventar-/Gesundheits-Snapshot, eine Control-Plane-Rolle rendert ihn schreibgeschützt und bittet einen KI-Anbieter um einen Diagnosevorschlag - wendet nie einen Patch an und stellt nie etwas bereit.
 - **[HYDRA-UMC-DEV-SERVER](https://github.com/JuanenRac/HYDRA-UMC-DEV-SERVER)** — reproduzierbarer Entwicklungshost (Raspberry Pi 5 / CM5), der den Quellcode des Ökosystems vorhält und begrenzte Build-/Test-Aufgaben über eine dauerhafte Warteschlange ausführt; eine dedizierte Entwicklerrolle, ausdrücklich kein operativer CM5.
 
+## 📚 Dokumentation
 
----
+Hier steht mehr:
 
-## 📚 Dokumentation & Community
+* [Sicherheitsgrundlage des Ökosystems](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/SECURITY_BASELINE.md)
+* [Bedrohungsmodell des Ökosystems](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/THREAT_MODEL.md)
+* [Änderungsprotokoll dieses Repositorys](CHANGELOG.md)
+* [Lizenz dieses Repositorys](LICENSE.md)
 
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** — Technologie-Stack und Coding-Richtlinien für einen Pull Request.
-- **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** — die in dieser Community erwarteten Verhaltensstandards.
-- **[SECURITY.md](SECURITY.md)** — wie man eine Schwachstelle meldet; siehe stattdessen [`docs/SECURITY.md`](docs/SECURITY.md) für den eigenen External-Content- und Deployment-Sicherheitsvertrag dieses Projekts.
-- **[SUPPORT.md](SUPPORT.md)** — wo man Fragen stellt und Fehler meldet.
-- **[LICENSE.md](LICENSE.md)** — die eigene Lizenz dieses Projekts.
+## 🤝 Mitwirken und Community
+
+* Führe vor einem Pull Request `HYDRA_UMC_CI=1 py -3 tools/ci_validate.py` (oder `HYDRA_UMC_CI=1 python3 tools/ci_validate.py`) aus: Es muss `CI_VALIDATION=PASS` ausgeben. Führe dafür nicht `build.sh` oder `build.bat` aus; Bauen ist keine Prüfung.
+* Die acht READMEs entstehen aus einer einzigen Quelle in HYDRA-UMC-DOCS; bearbeite sie nicht von Hand. Ändere die Quelle und schreibe sie mit `tools/make_readmes.py` neu.
+* Behaupte in einer README nichts, was nicht gelaufen ist: Schreibe „simuliert“ oder „nicht auf Hardware erprobt“, wo das stimmt.
+* Siehe [CONTRIBUTING.md](CONTRIBUTING.md), den [Verhaltenskodex](CODE_OF_CONDUCT.md), [SECURITY.md](SECURITY.md) und [SUPPORT.md](SUPPORT.md).
 
 ## 👤 AUTOR
-**JuanenRac** (Electro Hobby 3D)
-📧 electrohobby3d@gmail.com
-📺 [youtube.com/@electrohobby3d](https://youtube.com/@electrohobby3d)
+
+**JuanenRac (Electro Hobby 3D)** · electrohobby3d@gmail.com
 
 ## 📜 LIZENZ
-GPL-3.0-or-later - Siehe LICENSE für Details.
+
+GPL-3.0-or-later - [LICENSE](LICENSE).

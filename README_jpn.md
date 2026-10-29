@@ -1,3 +1,9 @@
+<!-- =============================================================================
+HYDRA-UMC-DASHBOARD-AI - Statistical summaries and anomaly highlights for the STUDIO web dashboard
+Copyright (C) JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
+GPL-3.0-or-later - see LICENSE
+============================================================================= -->
+
 <p align="center">
   <img src="images/HYDRA_UMC_BANNER.svg" alt="HYDRA-UMC-DASHBOARD-AI banner" width="100%">
 </p>
@@ -9,9 +15,12 @@
 ### 📈 STUDIO Web ダッシュボード向けの統計サマリーと異常ハイライト(言語モデルなし)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Licencia-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
-  <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="React/Vite/TS">
-  <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Insights">
+  <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
+  <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
+  <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
+  <img src="https://img.shields.io/badge/Tests-164%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Version-0.1.7-0f6cbd.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
@@ -21,6 +30,8 @@
 ---
 
 > **安全性とセキュリティの現状:** このエコシステムは認証された安全システムではありません。ハードウェアの E-STOP 経路、ファームウェアが強制する制限やインターロック、検証済みの動作コマンドはまだありません。ファームウェアイメージは CRC32 と共有鍵の HMAC-SHA256 で検査しており、非対称署名ではありません。TLS と相互 TLS は任意で、既定では無効です。独自基板はまだ実装も試験もされていません。ここに書かれた内容を人の安全のために頼る前に、[セキュリティベースライン](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/SECURITY_BASELINE.md)と[脅威モデル](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/THREAT_MODEL.md)をお読みください。
+
+---
 
 ## 📋 ひと目で
 
@@ -32,6 +43,8 @@
 | 技術 | TypeScript/React / Vite |
 | 対象 | HYDRA-UMC セルの Raspberry Pi CM5 |
 | 実機での確認 | まだです：このバージョンについて実機での動作記録はありません |
+
+**移動：** [概要](#-概要) · [アーキテクチャ](#-アーキテクチャ) · [セキュリティと安全](#-セキュリティと安全) · [インターフェース](#-インターフェース) · [設定](#-設定) · [クイックスタート](#-クイックスタート) · [テスト](#-テスト) · [トラブルシューティング](#-トラブルシューティング) · [リポジトリの構成](#-リポジトリの構成) · [関連プロジェクト](#-関連プロジェクト)
 
 ## 🚦 プロジェクトの状況
 
@@ -46,25 +59,34 @@
 | 実機 | 🔴 | まだです：このバージョンについて実機での動作記録はありません |
 | ドキュメント | 🟢 | 8 言語の README。変更のたびにマニフェストと照合されます |
 
-## 1. 🛠️ 技術概要
+## 🎯 概要
 
 **HYDRA-UMC-DASHBOARD-AI** は STUDIO の Web インターフェース向けの分析プラグインです。保存された履歴から計算したサマリー(最小値、最大値、平均、最新値、トレンドの方向)と、異常検知器の統計に基づく異常のハイライトを追加します。言語モデルも予測もまだ使っていません。
 
 生のテレメトリを、スウォームの性能やエネルギー消費パターンの実用的なサマリーに変えてブラウザー内に直接表示することを目指しています(計画中:予知保全アラートと AI 生成のインサイト)。新しいスタックを導入せず HYDRA-UMC-STUDIO 自身のスタック(React 19 + Vite + TypeScript)を再利用するため、いずれ STUDIO 自体にパネルとして組み込めます。
 
 ### 主な機能：
-* 🧠 **スマートサマリー（v0）** — HYDRA-UMC-DATALAKE の実際の履歴データから計算された、実際の最小値/最大値/平均値/最新値/傾向の統計。最小値/最大値/最新値はそれぞれ、それを生み出した実際の観測タイムスタンプにひも付けられている。*（実際の統計値として実装済み、AI 生成のサマリーはまだ——下記の「ビルドと実行」を参照）*
+* 🧠 **スマートサマリー（v0）** — HYDRA-UMC-DATALAKE の実際の履歴データから計算された、実際の最小値/最大値/平均値/最新値/傾向の統計。最小値/最大値/最新値はそれぞれ、それを生み出した実際の観測タイムスタンプにひも付けられている。*（実際の統計値として実装済み、AI 生成のサマリーはまだ——下記の「ビルドとリリース」を参照）*
 * 🔒 **AI プロバイダーゲート（v0）** — 将来の LLM ベースのナラティブに向けた実際の入力/出力スキーマ検証と、AI プロバイダーが設定されていない、またはプロバイダーが失敗/非構造化出力を返した場合に常に使われる、実際の、正直にラベル付けされた統計的フォールバック。*（今日実装済みでトレンドサマリーパネルに組み込まれています。実際の LLM ベースのプロバイダー自体は計画中です）*
 * 🛡️ **外部契約ガード（v0）** — パネルが計算または表示する前に、Datalake と異常サービスの各レスポンスを検証します。不正な数値・フラグ・過大な識別子・安全でない制御文字は拒否されます。*（実装済み。[`docs/SECURITY.md`](docs/SECURITY.md) を参照）*
 * 📈 **トレンド予測** — v0 の実際だが単純な方向インジケーターを超える、実際の予測モデル。*（計画中）*
 * 🚨 **異常ハイライト（v0）：** 最新の実際のサンプルを、HYDRA-UMC-ANOMALY-DETECTOR の実際に適合済みのベースラインと照合します。*（実際のテキストパネルとして実装済み。STUDIO 自身の 3D ビューへの重ね合わせは計画中）*
 * 🛠️ **最適化のヒント：** サイクルタイムやモーター寿命を改善するパラメーター変更を提案します。*（計画中）*
-* ✅ **ツールチェーンの足場** — `tsc --noEmit` で問題なくビルドでき、Vite で提供される実際の React/Vite/TypeScript アプリ。*（実装済み——下記の「ビルドと実行」を参照）*
+* ✅ **ツールチェーンの足場** — `tsc --noEmit` で問題なくビルドでき、Vite で提供される実際の React/Vite/TypeScript アプリ。*（実装済み——下記の「ビルドとリリース」を参照）*
 * 🧯 **パネル単位のレンダリング失敗の分離** — 各パネルは独自の `ErrorBoundary` でラップされており、あるパネルのレンダリング時に例外が発生しても、ダッシュボード全体をアンマウントすることなく、そのパネル内に収まったフォールバックカードが表示される。*（実装済み——`components/ErrorBoundary.tsx` を参照）*
 
----
+## 🧩 HYDRA-UMC での役割
 
-## 2. 🔄 Dashboard AI フロー
+**HYDRA-UMC-DASHBOARD-AI** は STUDIO の隣に置く読み取り専用のパネルです。HYDRA-UMC-DATALAKE に保存された実際の履歴を傾向の要約（最小・最大・平均・最新値と向き。それぞれを生んだサンプルに結び付く）にし、最新のサンプルを HYDRA-UMC-ANOMALY-DETECTOR のベースラインと照合します。独自の言語モデルは持たず、AI プロバイダーが未設定のときは統計に基づく文章を表示し、そのことを明示します。
+
+## 🏛️ アーキテクチャ
+
+<p align="center">
+  <img src="images/architecture.svg" alt="HYDRA-UMC-DASHBOARD-AI architecture" width="100%">
+</p>
+
+<details>
+<summary>図のテキスト版（Mermaid）</summary>
 
 ```mermaid
 flowchart LR
@@ -75,9 +97,9 @@ flowchart LR
     INSIGHTS --> OPERATOR["Web Browser View"]
 ```
 
----
+</details>
 
-## 3. 🧱 アーキテクチャと設計上の決定
+### アーキテクチャと設計上の決定
 
 * **他の AI 関連プロジェクトのような Python ではなく、Node/TS プロジェクトである理由。** これは独立した AI サービスではなく、HYDRA-UMC-STUDIO 自身の React/Vite フロントエンドの直接的な拡張です——STUDIO 自身の技術スタックに合わせる（HYDRA-UMC-COGNITIVE-NODE の Python スタックではなく）ことが、後にユーザーが切り替える必要のある別アプリとしてではなく、実際の STUDIO パネルとしてマウントできることを可能にします。
 * **STUDIO の内部のフォルダではなく、STUDIO の兄弟プロジェクトである理由。** これを独自のリポジトリ/ビルドとして保つことで、AI ダッシュボード層が STUDIO 自身のロボット制御リリースのペースとは独立してバージョン管理・出荷できるようになります。これは、そもそも HYDRA-UMC-SERVER を STUDIO から分離した理由と同じです。
@@ -88,61 +110,55 @@ flowchart LR
 * **`safeGenerateNarrative()` がリクエストを検証しつつ、悪いレスポンスに対して決してエラーを投げない理由。** 不正なリクエストはこのコード内の本物の配線バグです——正直に頼れるサマリーが存在しないため、エラーを投げることが許されています。プロバイダーからの*不正な/非構造化な*レスポンスは、実際の外部 API では避けられない現実です——そのパスは常に、パネルをクラッシュさせる代わりに実際の統計的フォールバックに降格します。呼び出し側はすでに真実を語るために必要なすべて(実際のサマリー)を持っているからです。
 * **`NO_PROVIDER_CONFIGURED` が独立したフォールバック実装ではなく `summary.ts` を再利用する理由。** 独立した第二の「フォールバックナラティブ」の計算式は、パネルがすでに信頼し、すでに数値で表示している実際の統計から乖離してしまいます——同じ `TrendSummary` の値を再利用することで、フォールバックナラティブがすぐ隣にある数値と証明可能な形で一致し続けます。
 
----
+## 🔒 セキュリティと安全
 
-## 📂 リポジトリ構成
+| 脅威 | 防御 | 場所 |
+|---|---|---|
+| 静的サーバーが許可以上のものを転送する | 転送するのは `/api/datalake` と `/api/anomaly` だけで、トークン付きは `TOKEN_ALLOWED_CALLS` の呼び出しのみ。本文は 4 MiB まで | `scripts/serve_static.py` |
+| サービストークンがネットワークに露出する | サービストークンがある場合、明示しない限りループバック以外のアドレスでは起動を拒否します。制御文字を含むトークンは拒否されます | `scripts/serve_static.py` |
+| ページが想定外のスクリプトを読み込む、または想定外のホストを呼ぶ | すべての応答に Content-Security-Policy を付けます。スクリプトはページ自身のみ、フレーム禁止、接続は自身のオリジンのみ。追加のオリジンは `--connect-src` で 1 つずつ、単純なオリジンに限ります | `scripts/serve_static.py` |
+| AI プロバイダーの文章に制御文字や双方向文字が含まれる、または応答が不正 | 文章は 2000 文字までで、危険な文字は捨てられます。不正な応答はパネルを壊さず統計の文章に戻ります | `src/lib/aiProvider.ts` |
+| サービスの停止でページが固まる | 各リクエストには 5 秒の制限があり、1 回の問い合わせは 1 ウィンドウ最大 5000 サンプル・12 回までです。パネルが壊れても枠内のカードを出し、もう一方は動き続けます | `src/api/fetchWithTimeout.ts`, `src/api/datalakeClient.ts`, `src/components/ErrorBoundary.tsx` |
 
-純粋なソフトウェアの Web アプリであり、独自のハードウェア、ファームウェア、
-OS はありません。これらのディレクトリはリポジトリ構造ポリシーに従って省略
-されています。
+**絶対にしないこと：** 履歴ストアへの書き込み、異常ベースラインの学習、ロボットへの操作。これは閲覧用のパネルです。
 
-```text
-HYDRA-UMC-DASHBOARD-AI/
-├── src/
-│   ├── api/                 # 実際の HTTP クライアント：datalakeClient.ts、anomalyClient.ts
-│   ├── lib/
-│   │   ├── summary.ts        # 実際のトレンドサマリー統計
-│   │   ├── sparkline.ts      # 系列の小さなグラフの幾何計算
-│   │   ├── aiProvider.ts     # 実際の AI プロバイダーゲート：スキーマ検証 + 正直なフォールバック
-│   │   ├── session.ts        # The STUDIO session behind HYDRA-UMC-SERVER (same-origin only)
-│   │   └── endpoints.ts      # Relay of HYDRA-UMC-SERVER or proxy of the static server
-│   ├── components/
-│   │   ├── TrendSummaryPanel.tsx
-│   │   ├── Sparkline.tsx         # 系列の小さなグラフと印を付けたサンプル
-│   │   ├── AnomalyCheckPanel.tsx
-│   │   └── ErrorBoundary.tsx     # パネル単位の描画失敗の分離 (壊れたパネルが他方を巻き込まない)
-│   ├── main.tsx              # アプリケーションエントリポイント
-│   ├── App.tsx                # ルートコンポーネント——両方の実際のパネルをマウント
-│   ├── index.css              # ベーススタイルシート
-│   └── vite-env.d.ts          # VITE_DATALAKE_URL / VITE_ANOMALY_URL の型定義
-├── tests/                   # 実際のテスト：HTTP ラウンドトリップ + コンポーネントテスト
-├── scripts/
-│   ├── serve_static.py     # ビルド済みdist/ SPA向けの実際の静的ファイルサーバー(実運用で発見されたCM5デプロイの穴)
-│   └── test_serve_static.py # serve_static.pyの実際のテスト
-├── systemd/
-│   └── hydra-umc-dashboard-ai.service # ローカルCM5静的配信サービスのsystemdユニット
-├── tools/
-│   ├── build_test.py       # バージョンを増やさないビルドチェック
-│   ├── ci_validate.py      # CI が使用するマニフェスト/CHANGELOG/ドキュメント検証
-│   ├── _doc_policy.py      # ファミリー共通のドキュメント規則 (HYDRA-UMC-SDK のコピーで、同期を維持)
-│   ├── _readme_parity.py   # 8つの README が同じ構造であることの検査 (HYDRA-UMC-SDK のコピーで、同期を維持)
-│   └── hydra_project_tool.py # すべてのリポジトリで共通のコマンド: validate、test、ci、version、status、bump
-├── docs/
-│   └── SECURITY.md          # 外部コンテンツと配備の公開安全契約
-├── build/                  # リリース成果物用に予約（dist/ 自体は gitignore 対象）
-├── images/                 # メディアと図表
-├── index.html              # Vite エントリ HTML
-├── vite.config.ts          # Vite バンドラー + Vitest 設定
-├── tsconfig.json / tsconfig.app.json / tsconfig.node.json
-├── bump_manifest_version.py # hydra-umc.project.json のバージョンを package.json と同期(--sync)
-├── dev.sh / dev.bat        # 実際の開発サーバー：依存関係のインストール + vite
-├── build.sh / build.bat    # 実際のビルド：依存関係のインストール + 実際のテストスイート + tsc + vite build
-└── package.json
+## 🔌 インターフェース
+
+| トピックまたはルート | 内容 |
+|---|---|
+| `/api/datalake/*` | `127.0.0.1:8095` の HYDRA-UMC-DATALAKE へ転送（トークン使用時は読み取り呼び出しのみ） |
+| `/api/anomaly/*` | `127.0.0.1:8097` の HYDRA-UMC-ANOMALY-DETECTOR へ転送 |
+| `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | HYDRA-UMC-SERVER の背後ではページは `/dashboard-ai` にあり、そのサーバーのリレー経由で STUDIO セッションのアクセストークンを使って読みます |
+
+## ⚙️ 設定
+
+| 変数 | 既定値 | 設定する内容 |
+|---|---|---|
+| `--dir` | `dist/` | 配信するビルド済みページ |
+| `--addr`, `--port` | `127.0.0.1`, `8115` | 待ち受け先 |
+| `--datalake`, `--anomaly` | `http://127.0.0.1:8095`, `http://127.0.0.1:8097` | 2 つのサービスの場所 |
+| `--connect-src` | なし | ページが呼べる追加のオリジン（`VITE_DATALAKE_URL` / `VITE_ANOMALY_URL` を使うビルド用）。オリジンごとに繰り返します |
+| `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default`、または独自の完全なポリシー |
+| `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | トークンなし | サーバーが各サービスに示すトークン。`_FILE` 版はファイルから読みます |
+| `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | ビルド時に設定するブラウザから見えるサービス URL。認証情報は絶対に入れないでください |
+
+## 🚀 クイックスタート
+
+Node.js 20 以上と npm が必要です。静的サーバーには Python 3.10 以上が必要です。
+
+```bash
+./dev.sh                                    # installs the dependencies and starts the Vite dev server on port 5174 (dev.bat on Windows)
+./build.sh                                  # runs the tests, type-checks and builds dist/ (build.bat on Windows)
+python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/datalake and /api/anomaly
 ```
 
----
+## 🧪 テスト
 
-## 4. ⚙️ ビルドと実行
+`npm test` で自動テスト 164 件を実行します。 静的サーバーには `scripts/test_serve_static.py` に独自の Python テストがあります。ハードウェアも稼働中のサービスも不要です。
+
+CI は `HYDRA_UMC_CI=1 python tools/ci_validate.py` を実行し、マニフェスト、文書、8 つの README、図を検査します。
+
+## 🏗️ ビルドとリリース
 
 Node.js >= 20 が必要です。
 
@@ -195,7 +211,67 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 プロバイダーは、パネルをクラッシュさせたり何も表示しなかったりする
 代わりに、まさにこの実際のフォールバックに降格します。
 
----
+## 🩺 トラブルシューティング
+
+| 表示 | 原因 | 対処 |
+|---|---|---|
+| パネルが空で、コンソールにリクエスト失敗と出る | 静的サーバーが動いていないか、DATALAKE または異常検知サービスが指定のアドレスにない | `scripts/serve_static.py` を起動し、`--datalake` と `--anomaly` を確認 |
+| トークンがあるとサーバーが起動しない | サービストークンがあり、`--addr` がループバックではない | `127.0.0.1` で待ち受けるか、ページを HYDRA-UMC-SERVER の背後に置く |
+| 要約に「統計によるフォールバック」と出る | AI プロバイダーが未設定、または検証に通らない応答が返った | これは想定どおりの既定の動作で、数値は実際のものです |
+| 多数を同時に走らせるとテストがタイムアウトする | マシンの負荷が高く、Vitest のワーカーが時間内に応答しなかった | `npx vitest run --pool=threads` を実行するか、他のビルドが無いときに実行 |
+
+## 📂 リポジトリの構成
+
+<p align="center">
+  <img src="images/repository-structure.svg" alt="Repository structure of HYDRA-UMC-DASHBOARD-AI" width="100%">
+</p>
+
+<details>
+<summary>ツリーのテキスト版</summary>
+
+```text
+HYDRA-UMC-DASHBOARD-AI/
+├── src/                                                     ソースコード
+│   ├── api/                                                 実際の HTTP クライアント：datalakeClient.ts、anomalyClient.ts
+│   ├── lib/                                                 統計、AI プロバイダーのゲート、セッション、エンドポイント
+│   ├── components/                                          2 つのパネル、小さなグラフ、エラー境界
+│   ├── main.tsx                                             アプリケーションエントリポイント
+│   ├── App.tsx                                              ルートコンポーネント——両方の実際のパネルをマウント
+│   ├── index.css                                            ベーススタイルシート
+│   └── vite-env.d.ts                                        VITE_DATALAKE_URL / VITE_ANOMALY_URL の型定義
+├── tests/                                                   実際のテスト：HTTP ラウンドトリップ + コンポーネントテスト
+├── scripts/                                                 静的サーバーとそのテスト
+├── systemd/                                                 サービスユニット
+├── tools/                                                   プロジェクトのツールと CI の検査
+├── docs/                                                    プロジェクトの文書
+├── images/                                                  メディアと図表
+├── .github/                                                 CI ワークフローと Issue テンプレート
+├── index.html                                               Vite エントリ HTML
+├── vite.config.ts                                           Vite バンドラー + Vitest 設定
+├── tsconfig.json / tsconfig.app.json / tsconfig.node.json   TypeScript 設定（アプリと node）
+├── bump_manifest_version.py                                 hydra-umc.project.json のバージョンを package.json と同期(--sync)
+├── dev.sh / dev.bat                                         実際の開発サーバー：依存関係のインストール + vite
+├── build.sh / build.bat                                     実際のビルド：依存関係のインストール + 実際のテストスイート + tsc + vite build
+├── package.json                                             パッケージのメタデータとスクリプト
+├── CHANGELOG.md                                             各バージョンの変更点
+├── build-test.sh                                            変更を伴わないビルド確認
+├── hydra-umc.project.json                                   マニフェスト：バージョン、成熟度、ファミリー
+└── test.sh                                                  テストを実行
+```
+
+</details>
+
+## 🗺️ ロードマップと既知の制限
+
+**現時点の既知の制限**
+
+* **予定：** 本物の予測（傾向予測）、最適化のヒント、ゲートの背後に置く AI プロバイダー（想定バックエンドは HYDRA-UMC-COGNITIVE-NODE で、未接続）、STUDIO の 3D ビューへの異常判定の重ね表示。
+* 要約は統計（最小・最大・平均・最新値と向き）であり、予測ではありません。
+* コンピューター上で実際の兄弟サービスに対して試しており、実プラントのデータでは試していません。
+
+## 🌍 言語
+
+この README とリポジトリの文書は、英語・スペイン語・ドイツ語・フランス語・イタリア語・日本語・中国語・ポルトガル語（ポルトガル）の 8 言語で提供されています。8 つのファイルは同時に書かれ、同じ節と同じリンクを持つことを CI が確認します。
 
 ## 🔗 関連プロジェクト
 
@@ -286,21 +362,26 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 - **[HYDRA-UMC-OPS-AGENT](https://github.com/JuanenRac/HYDRA-UMC-OPS-AGENT)** — 保守インシデントコーディネーター: 低権限のエッジ役割がサニタイズされたインベントリ/ヘルスのスナップショットを収集し、コントロールプレーン役割がそれを読み取り専用でレンダリングして AI プロバイダーに診断の提案を依頼します - パッチを適用することも、何かをデプロイすることも決してありません。
 - **[HYDRA-UMC-DEV-SERVER](https://github.com/JuanenRac/HYDRA-UMC-DEV-SERVER)** — 再現可能な開発ホスト（Raspberry Pi 5 / CM5）。エコシステムのソースコードを保管し、永続キューのもとで境界の明確なビルド/テストタスクを実行する。運用中の CM5 とは明確に異なる、開発専用の役割。
 
+## 📚 ドキュメント
 
----
+さらに読むには：
 
-## 📚 ドキュメント & コミュニティ
+* [エコシステムのセキュリティ基準](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/SECURITY_BASELINE.md)
+* [エコシステムの脅威モデル](https://github.com/JuanenRac/HYDRA-UMC-DOCS/blob/main/docs/THREAT_MODEL.md)
+* [このリポジトリの変更履歴](CHANGELOG.md)
+* [このリポジトリのライセンス](LICENSE.md)
 
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** —— プルリクエストのための技術スタックとコーディング指針。
-- **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** —— このコミュニティで期待される行動規範。
-- **[SECURITY.md](SECURITY.md)** —— 脆弱性の報告方法。本プロジェクト自身の外部コンテンツ・デプロイ安全契約については代わりに [`docs/SECURITY.md`](docs/SECURITY.md) を参照。
-- **[SUPPORT.md](SUPPORT.md)** —— 質問の投稿先とバグの報告先。
-- **[LICENSE.md](LICENSE.md)** —— このプロジェクト自身のライセンス。
+## 🤝 コントリビュートとコミュニティ
+
+* プルリクエストの前に `HYDRA_UMC_CI=1 py -3 tools/ci_validate.py`（または `HYDRA_UMC_CI=1 python3 tools/ci_validate.py`）を実行してください。`CI_VALIDATION=PASS` と表示される必要があります。この確認に `build.sh` や `build.bat` は使わないでください。ビルドは検査ではありません。
+* 8 つの README は HYDRA-UMC-DOCS の 1 つのソースから書かれます。手で編集しないでください。ソースを変更し、`tools/make_readmes.py` で書き直します。
+* 実行していないことを README に書かないでください。事実であれば「シミュレーションのみ」「実機では未確認」と書きます。
+* [CONTRIBUTING.md](CONTRIBUTING.md)、[行動規範](CODE_OF_CONDUCT.md)、[SECURITY.md](SECURITY.md)、[SUPPORT.md](SUPPORT.md) を参照してください。
 
 ## 👤 作者
-**JuanenRac** (Electro Hobby 3D)
-📧 electrohobby3d@gmail.com
-📺 [youtube.com/@electrohobby3d](https://youtube.com/@electrohobby3d)
+
+**JuanenRac (Electro Hobby 3D)** · electrohobby3d@gmail.com
 
 ## 📜 ライセンス
-GPL-3.0-or-later —— 詳細は LICENSE を参照してください。
+
+GPL-3.0-or-later - [LICENSE](LICENSE).
