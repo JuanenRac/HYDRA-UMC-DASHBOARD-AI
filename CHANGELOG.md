@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+- **The layout of the README is checked in the CI:** the validator runs `tools/universal_readme_check.py` and lists, as a warning, what differs from the universal layout of the README.
+
 ## [0.1.7] - The standalone server presents the Bearer tokens of the services and the Anomaly Check scores the newest samples of a fa
 
 - **The standalone server presents the Bearer tokens of the services.** The anomaly detector can ask for a token even to score a window, and the data lake for its reads; `scripts/serve_static.py` now presents `HYDRA_UMC_DATALAKE_READ_TOKEN` (else `HYDRA_UMC_DATALAKE_TOKEN`) and `HYDRA_UMC_ANOMALY_TOKEN` (each also as `..._FILE`) on the calls the dashboard makes and on no other, so the page never holds them and the proxy cannot be used to fit the baseline or write to the data lake. A server bound to an address other than loopback refuses to start with tokens unless `--allow-tokens-off-loopback` is given. 8 new tests of the script.
