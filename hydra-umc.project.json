@@ -20,6 +20,7 @@
     "pattern": "\"version\":\\s*\"(\\d+)\\.(\\d+)\\.(\\d+)\""
   },
   "service": {
+    "port": 8115,
     "systemd_unit": "hydra-umc-dashboard-ai.service",
     "health_path": "/"
   }
