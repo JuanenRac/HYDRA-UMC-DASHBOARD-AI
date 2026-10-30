@@ -110,6 +110,14 @@ flowchart LR
 * **Warum `safeGenerateNarrative()` die Anfrage validiert, aber bei einer schlechten Antwort nie einen Fehler wirft.** Eine fehlerhafte Anfrage ist ein echter Verdrahtungsfehler in diesem Code - es gibt keine Zusammenfassung, auf die ehrlich zurückgegriffen werden könnte, daher darf sie einen Fehler werfen. Eine *fehlerhafte/unstrukturierte* Antwort eines Anbieters ist eine reale Tatsache bei jeder echten externen API - dieser Pfad degradiert immer zum echten statistischen Fallback, statt das Panel abstürzen zu lassen, weil der Aufrufer bereits alles hat, was er braucht (die echte Zusammenfassung), um etwas Wahres zu sagen.
 * **Warum `NO_PROVIDER_CONFIGURED` `summary.ts` wiederverwendet statt einer separaten Fallback-Implementierung.** Eine zweite, unabhängige "Fallback-Erzählung"-Formel würde von den echten Statistiken abweichen, denen das Panel bereits vertraut und die es bereits numerisch anzeigt - die Wiederverwendung derselben `TrendSummary`-Werte hält die Fallback-Erzählung nachweislich konsistent mit den Zahlen direkt daneben.
 
+## 🖼️ Screenshots
+
+Aufgenommen mit 1920×1080 auf einem Prüfstand, mit Beispieldaten und ohne eine echte Anlage dahinter.
+
+<table>
+<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="Die zwei Panels: die Trendzusammenfassung einer aus dem Data Lake gelesenen Schwingungsreihe und die Anomalieprüfung, die ihr jüngstes Fenster gegen die angepasste Baseline bewertet." width="100%"><br><sub>Die zwei Panels: die Trendzusammenfassung einer aus dem Data Lake gelesenen Schwingungsreihe und die Anomalieprüfung, die ihr jüngstes Fenster gegen die angepasste Baseline bewertet.</sub></td></tr>
+</table>
+
 ## 🔒 Sicherheit und Schutz
 
 | Bedrohung | Abwehr | Wo |

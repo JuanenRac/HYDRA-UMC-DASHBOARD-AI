@@ -110,6 +110,14 @@ flowchart LR
 * **Perché `safeGenerateNarrative()` valida la richiesta ma non lancia mai eccezioni per una risposta sbagliata.** Una richiesta malformata è un vero bug di cablaggio in questo codice - non c'è un riepilogo a cui ricorrere onestamente, quindi le è permesso lanciare un'eccezione. Una risposta *malformata/non strutturata* da un fornitore è un dato di fatto per qualsiasi API esterna reale - quel percorso degrada sempre al vero fallback statistico invece di far crashare il pannello, perché chi chiama ha già tutto ciò che serve (il vero riepilogo) per dire qualcosa di vero.
 * **Perché `NO_PROVIDER_CONFIGURED` riusa `summary.ts` invece di un'implementazione di fallback separata.** Una seconda formula di "narrazione di fallback" indipendente divergerebbe dalle vere statistiche di cui il pannello già si fida e che già mostra numericamente - riusare gli stessi valori `TrendSummary` mantiene la narrazione di fallback dimostrabilmente coerente con i numeri proprio accanto.
 
+## 🖼️ Schermate
+
+Catturate a 1920×1080 su un banco di prova, con dati di esempio e senza alcuna installazione reale dietro.
+
+<table>
+<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="I due pannelli: il riepilogo di tendenza di una serie di vibrazioni letta dal data lake, e il controllo delle anomalie che valuta l'ultima finestra rispetto alla baseline adattata." width="100%"><br><sub>I due pannelli: il riepilogo di tendenza di una serie di vibrazioni letta dal data lake, e il controllo delle anomalie che valuta l'ultima finestra rispetto alla baseline adattata.</sub></td></tr>
+</table>
+
 ## 🔒 Sicurezza e protezione
 
 | Minaccia | Difesa | Dove |

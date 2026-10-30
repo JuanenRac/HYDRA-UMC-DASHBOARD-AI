@@ -110,6 +110,14 @@ flowchart LR
 * **Why `safeGenerateNarrative()` validates the request but never throws for a bad response.** A malformed request is a real wiring bug in this codebase - there's no summary to honestly fall back to, so it's allowed to throw. A malformed/unstructured *response* from a provider is a fact of life for any real external API - that path always degrades to the real statistical fallback instead of crashing the panel, because the caller already has everything it needs (the real summary) to say something true.
 * **Why `NO_PROVIDER_CONFIGURED` reuses `summary.ts` instead of a separate fallback implementation.** A second, independent "fallback narrative" formula would drift from the real statistics the panel already trusts and displays numerically - reusing the same `TrendSummary` values keeps the fallback narrative provably consistent with the numbers right next to it.
 
+## 🖼️ Screenshots
+
+Captured at 1920×1080 on a test bench, with sample data and no real installation behind them.
+
+<table>
+<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="The two panels: the trend summary of a vibration series read from the data lake, and the anomaly check that scores its latest window against the fitted baseline." width="100%"><br><sub>The two panels: the trend summary of a vibration series read from the data lake, and the anomaly check that scores its latest window against the fitted baseline.</sub></td></tr>
+</table>
+
 ## 🔒 Security & Safety
 
 | Threat | Defence | Where |

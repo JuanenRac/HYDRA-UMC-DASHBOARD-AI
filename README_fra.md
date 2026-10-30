@@ -110,6 +110,14 @@ flowchart LR
 * **Pourquoi `safeGenerateNarrative()` valide la requête mais ne lève jamais d'exception pour une mauvaise réponse.** Une requête malformée est un vrai bug de câblage dans ce code - il n'y a pas de résumé vers lequel se replier honnêtement, donc elle est autorisée à lever une exception. Une réponse *malformée/non structurée* d'un fournisseur est un fait de la vie pour toute API externe réelle - ce chemin dégrade toujours vers le vrai repli statistique au lieu de faire planter le panneau, car l'appelant dispose déjà de tout ce dont il a besoin (le vrai résumé) pour dire quelque chose de vrai.
 * **Pourquoi `NO_PROVIDER_CONFIGURED` réutilise `summary.ts` plutôt qu'une implémentation de repli séparée.** Une seconde formule de « narration de repli » indépendante dériverait des vraies statistiques auxquelles le panneau fait déjà confiance et qu'il affiche déjà numériquement - réutiliser les mêmes valeurs `TrendSummary` maintient la narration de repli prouvablement cohérente avec les nombres juste à côté.
 
+## 🖼️ Captures d'écran
+
+Capturées en 1920×1080 sur un banc d'essai, avec des données d'exemple et sans installation réelle derrière.
+
+<table>
+<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="Les deux panneaux : le résumé de tendance d'une série de vibrations lue dans le lac de données, et le contrôle d'anomalies qui note sa dernière fenêtre par rapport à la base ajustée." width="100%"><br><sub>Les deux panneaux : le résumé de tendance d'une série de vibrations lue dans le lac de données, et le contrôle d'anomalies qui note sa dernière fenêtre par rapport à la base ajustée.</sub></td></tr>
+</table>
+
 ## 🔒 Sécurité et protection
 
 | Menace | Défense | Où |

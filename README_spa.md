@@ -110,6 +110,14 @@ flowchart LR
 * **Por qué `safeGenerateNarrative()` valida la petición pero nunca lanza excepción por una respuesta mala.** Una petición malformada es un bug real de conexionado en este código - no hay un resumen al que recurrir honestamente, así que se le permite lanzar excepción. Una respuesta *malformada/no estructurada* de un proveedor es un hecho de la vida para cualquier API externa real - ese camino siempre degrada al respaldo estadístico real en vez de romper el panel, porque quien llama ya tiene todo lo que necesita (el resumen real) para decir algo verdadero.
 * **Por qué `NO_PROVIDER_CONFIGURED` reutiliza `summary.ts` en vez de una implementación de respaldo separada.** Una segunda fórmula de "narrativa de respaldo" independiente se desincronizaría de las estadísticas reales en las que el panel ya confía y que ya muestra numéricamente - reutilizar los mismos valores de `TrendSummary` mantiene la narrativa de respaldo demostrablemente consistente con los números justo al lado.
 
+## 🖼️ Capturas de pantalla
+
+Capturadas a 1920×1080 en un banco de pruebas, con datos de ejemplo y sin ninguna instalación real detrás.
+
+<table>
+<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="Los dos paneles: el resumen de tendencia de una serie de vibración leída del lago de datos, y la comprobación de anomalías que puntúa su última ventana contra la línea base ajustada." width="100%"><br><sub>Los dos paneles: el resumen de tendencia de una serie de vibración leída del lago de datos, y la comprobación de anomalías que puntúa su última ventana contra la línea base ajustada.</sub></td></tr>
+</table>
+
 ## 🔒 Seguridad y protección
 
 | Amenaza | Defensa | Dónde |

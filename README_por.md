@@ -110,6 +110,14 @@ flowchart LR
 * **Porque o `safeGenerateNarrative()` valida o pedido mas nunca lança erro por uma resposta má.** Um pedido malformado é um verdadeiro erro de ligação neste código - não há resumo honesto a que recorrer, pelo que se permite que lance erro. Uma resposta malformada/não estruturada de um fornecedor é um facto da vida de qualquer API externa real - esse caminho degrada sempre para o recurso estatístico real em vez de derrubar o painel, porque quem chama já tem tudo o que precisa (o resumo real) para dizer algo verdadeiro.
 * **Porque o `NO_PROVIDER_CONFIGURED` reutiliza o `summary.ts` em vez de uma implementação de recurso separada.** Uma segunda fórmula independente de "narrativa de recurso" divergiria das estatísticas reais em que o painel já confia e que mostra numericamente - reutilizar os mesmos valores de `TrendSummary` mantém a narrativa de recurso demonstravelmente coerente com os números mesmo ao lado dela.
 
+## 🖼️ Capturas de ecrã
+
+Capturadas a 1920×1080 numa bancada de testes, com dados de exemplo e sem qualquer instalação real por trás.
+
+<table>
+<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="Os dois painéis: o resumo de tendência de uma série de vibração lida do lago de dados e a verificação de anomalias que pontua a sua última janela contra a linha de base ajustada." width="100%"><br><sub>Os dois painéis: o resumo de tendência de uma série de vibração lida do lago de dados e a verificação de anomalias que pontua a sua última janela contra a linha de base ajustada.</sub></td></tr>
+</table>
+
 ## 🔒 Segurança e proteção
 
 | Ameaça | Defesa | Onde |
