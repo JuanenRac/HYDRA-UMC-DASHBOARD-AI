@@ -33,4 +33,9 @@ export default tseslint.config(
     files: ['*.config.{js,ts}', 'scripts/**/*.mjs'],
     languageOptions: { globals: { ...globals.node } },
   },
+  {
+    // the script that takes the README screenshots runs in Node and drives a page, so it sees both sets of globals
+    files: ['tools/**/*.mjs'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
 )
