@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-164%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-189%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.1.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 164 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Trend-Vorhersage (ein echtes Prognosemodell) und Optimierungstipps sind beide vollständig aspirativ - für keines von beiden existiert bisher Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
+> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 189 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Trend-Vorhersage (ein echtes Prognosemodell) und Optimierungstipps sind beide vollständig aspirativ - für keines von beiden existiert bisher Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | Version | `0.1.8` |
 | Reifegrad | Funktionsfähig |
-| Tests | 164 (`npm test`) |
+| Tests | 189 (`npm test`) |
 | Technik | TypeScript/React / Vite |
 | Ziel | Der Raspberry Pi CM5 einer HYDRA-UMC-Zelle |
 | Auf echter Hardware | Noch nicht: für diese Version ist kein Lauf auf echter Hardware vermerkt |
@@ -55,7 +55,7 @@ Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heut
 | Bereich | Stand | Was das hier bedeutet |
 |---|---|---|
 | Software | 🟡 | Funktioniert für seinen Hauptzweck; die Ehrlichkeitsprüfung oben nennt, was noch fehlt |
-| Tests | 🟢 | 164 automatische Tests, bei jeder Änderung ausgeführt |
+| Tests | 🟢 | 189 automatische Tests, bei jeder Änderung ausgeführt |
 | Echte Hardware | 🔴 | Noch nicht: für diese Version ist kein Lauf auf echter Hardware vermerkt |
 | Dokumentation | 🟢 | README in acht Sprachen, bei jeder Änderung gegen das Manifest geprüft |
 
@@ -72,6 +72,7 @@ Es soll rohe Telemetrie in umsetzbare Zusammenfassungen der Schwarmleistung und 
 * 📈 **Trendvorhersage** — ein echtes Vorhersagemodell, über den echten, aber einfachen Richtungsindikator von v0 hinaus. *(geplant)*
 * 🚨 **Anomalie-Hervorhebung (v0)** — prüft die neuesten echten Messwerte gegen eine echte, bereits kalibrierte Baseline von HYDRA-UMC-ANOMALY-DETECTOR. *(implementiert als echtes Textpanel; die Überlagerung in STUDIOs eigener 3D-Ansicht ist geplant)*
 * 🛠️ **Optimierungstipps** — schlägt Parameteränderungen zur Verbesserung von Zykluszeit oder Motorlebensdauer vor. *(geplant)*
+* ⏳ **Restnutzungsdauer (v0, standardmäßig aus)** — eine Karte, die HYDRA-UMC-ANOMALY-DETECTOR nach den Tagen fragt, bis der Trend der Anomalie-Scores einen Grenzwert erreicht, mit Bereich, ausdrücklichen Zuständen (zu wenig Daten, steigt nicht, Grenzwert erreicht), kleinem Diagramm und konfigurierbaren Warnungen; getestet mit simuliertem Data Lake und Detektor. *(umgesetzt; siehe [`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md))*
 * ✅ **Toolchain-Grundgerüst** — eine echte React/Vite/TypeScript-App, die sauber mit `tsc --noEmit` baut und mit Vite ausgeliefert wird. *(implementiert — siehe Build und Veröffentlichung unten)*
 * 🧯 **Render-Fehler-Isolation pro Panel** — jedes Panel ist in seine eigene `ErrorBoundary` eingebettet; eine Ausnahme beim Rendern in einem Panel zeigt eine eingedämmte Fallback-Karte, statt das gesamte Dashboard zu demontieren. *(implementiert — siehe `components/ErrorBoundary.tsx`)*
 
@@ -137,6 +138,7 @@ Aufgenommen mit 1920×1080 auf einem Prüfstand, mit Beispieldaten und ohne eine
 | `/api/datalake/*` | an HYDRA-UMC-DATALAKE auf `127.0.0.1:8095` weitergeleitet (mit Token nur lesende Aufrufe) |
 | `/api/anomaly/*` | an HYDRA-UMC-ANOMALY-DETECTOR auf `127.0.0.1:8097` weitergeleitet |
 | `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | hinter HYDRA-UMC-SERVER liegt die Seite unter `/dashboard-ai` und liest über das Relay dieses Servers, mit dem Zugriffstoken der STUDIO-Sitzung |
+| `/api/anomaly/rul` | nur bei eingeschalteter Karte für die Restnutzungsdauer: Die Seite sendet die neuesten Anomalie-Scores und liest die Tage bis zum Grenzwert mit Bereich und ausdrücklichem Zustand; der Detektor muss mit `--rul` laufen |
 
 ## ⚙️ Konfiguration
 
@@ -149,6 +151,9 @@ Aufgenommen mit 1920×1080 auf einem Prüfstand, mit Beispieldaten und ohne eine
 | `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default` oder eine vollständige eigene Richtlinie |
 | `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | kein Token | der Token, den der Server jedem Dienst zeigt; die `_FILE`-Varianten lesen ihn aus einer Datei |
 | `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | im Browser sichtbare Dienst-URLs, beim Build gesetzt; nie eine Zugangsdaten-Angabe hineinschreiben |
+| `VITE_RUL_ENABLED` | `false` | `true` (genau so) fügt die Karte für die Restnutzungsdauer hinzu; bei jedem anderen Wert gibt es weder Karte noch Anfrage an den Detektor |
+| `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | der Detektor, der `POST /rul` beantwortet, die aus dem Data Lake gelesene Serie der Anomalie-Scores, der Score, der als Grenzwert gilt, und wie viele der neuesten Proben (1 bis 1000) gesendet werden |
+| `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | die Karte warnt, wenn der früheste plausible Tag innerhalb dieser Tage liegt, und wird kritisch innerhalb der zweiten Zahl (nie größer als die erste); das Zeitlimit der Anfrage in Millisekunden |
 
 ## 🚀 Schnellstart
 
@@ -162,7 +167,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 Tests
 
-164 automatische Tests laufen mit `npm test`. Der statische Server hat eigene Python-Tests in `scripts/test_serve_static.py`. Sie brauchen weder Hardware noch einen laufenden Dienst.
+189 automatische Tests laufen mit `npm test`. Der statische Server hat eigene Python-Tests in `scripts/test_serve_static.py`. Sie brauchen weder Hardware noch einen laufenden Dienst.
 
 Die CI führt `HYDRA_UMC_CI=1 python tools/ci_validate.py` aus; das prüft das Manifest, die Dokumente, die acht READMEs und die Bilder.
 
@@ -223,13 +228,13 @@ Ein Anbieter, der einen Fehler wirft oder eine Antwort mit fehlendem oder fehler
 ```text
 HYDRA-UMC-DASHBOARD-AI/
 ├── src/                                                     Quellcode
-│   ├── api/                                                 Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts
-│   ├── lib/                                                 Statistik, KI-Anbieter-Gate, Sitzung und Endpunkte
-│   ├── components/                                          die beiden Panels, das kleine Diagramm und die Fehlergrenze
+│   ├── api/                                                 Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts, rulClient.ts
+│   ├── lib/                                                 Statistik, KI-Anbieter-Gate, Sitzung und Endpunkte, Auswertung der Restnutzungsdauer und Texte
+│   ├── components/                                          die Panels (eines standardmäßig aus), das Diagramm, die Fehlergrenze
 │   ├── main.tsx                                             Einstiegspunkt der Anwendung
 │   ├── App.tsx                                              Wurzelkomponente - bindet beide echten Panels ein
 │   ├── index.css                                            Basis-Stylesheet
-│   └── vite-env.d.ts                                        Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL
+│   └── vite-env.d.ts                                        Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_*
 ├── tests/                                                   Echte Tests: HTTP-Round-Trips + Komponententests
 ├── scripts/                                                 der statische Server und seine Tests
 ├── systemd/                                                 Dienst-Unit

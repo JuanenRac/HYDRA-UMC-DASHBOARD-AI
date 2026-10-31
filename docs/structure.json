@@ -33,14 +33,14 @@
             "pt": "Clientes HTTP reais"
           },
           "tree_desc": {
-            "en": "Real HTTP clients: datalakeClient.ts, anomalyClient.ts",
-            "es": "Clientes HTTP reales: datalakeClient.ts, anomalyClient.ts",
-            "de": "Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts",
-            "fr": "Vrais clients HTTP : datalakeClient.ts, anomalyClient.ts",
-            "it": "Veri client HTTP: datalakeClient.ts, anomalyClient.ts",
-            "ja": "実際の HTTP クライアント：datalakeClient.ts、anomalyClient.ts",
-            "zh": "真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts",
-            "pt": "Clientes HTTP reais: datalakeClient.ts, anomalyClient.ts"
+            "en": "Real HTTP clients: datalakeClient.ts, anomalyClient.ts, rulClient.ts",
+            "es": "Clientes HTTP reales: datalakeClient.ts, anomalyClient.ts, rulClient.ts",
+            "de": "Echte HTTP-Clients: datalakeClient.ts, anomalyClient.ts, rulClient.ts",
+            "fr": "Vrais clients HTTP : datalakeClient.ts, anomalyClient.ts, rulClient.ts",
+            "it": "Veri client HTTP: datalakeClient.ts, anomalyClient.ts, rulClient.ts",
+            "ja": "実際の HTTP クライアント：datalakeClient.ts、anomalyClient.ts、rulClient.ts",
+            "zh": "真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts、rulClient.ts",
+            "pt": "Clientes HTTP reais: datalakeClient.ts, anomalyClient.ts, rulClient.ts"
           }
         },
         {
@@ -56,37 +56,37 @@
             "pt": "estatísticas, porta do fornecedor de IA"
           },
           "tree_desc": {
-            "en": "statistics, AI-provider gate, session and endpoints",
-            "es": "estadísticas, puerta del proveedor de IA, sesión y direcciones",
-            "de": "Statistik, KI-Anbieter-Gate, Sitzung und Endpunkte",
-            "fr": "statistiques, porte du fournisseur d'IA, session et adresses",
-            "it": "statistiche, gate del fornitore di IA, sessione e indirizzi",
-            "ja": "統計、AI プロバイダーのゲート、セッション、エンドポイント",
-            "zh": "统计、AI 提供方闸门、会话和端点",
-            "pt": "estatísticas, porta do fornecedor de IA, sessão e endereços"
+            "en": "statistics, AI-provider gate, session and endpoints, remaining-useful-life reading and texts",
+            "es": "estadísticas, puerta del proveedor de IA, sesión y direcciones, lectura de la vida útil restante y textos",
+            "de": "Statistik, KI-Anbieter-Gate, Sitzung und Endpunkte, Auswertung der Restnutzungsdauer und Texte",
+            "fr": "statistiques, porte du fournisseur d'IA, session et adresses, lecture de la durée de vie restante et textes",
+            "it": "statistiche, gate del fornitore di IA, sessione e indirizzi, lettura della vita utile residua e testi",
+            "ja": "統計、AI プロバイダーのゲート、セッション、エンドポイント、残存耐用期間の読み取りと文言",
+            "zh": "统计、AI 提供方闸门、会话和端点、剩余使用寿命的解读和文本",
+            "pt": "estatísticas, porta do fornecedor de IA, sessão e endereços, leitura da vida útil restante e textos"
           }
         },
         {
           "name": "components/",
           "desc": {
-            "en": "the two panels",
-            "es": "los dos paneles",
-            "de": "die beiden Panels",
-            "fr": "les deux panneaux",
-            "it": "i due pannelli",
-            "ja": "2 つのパネル、小さなグラフ、エラー境界",
-            "zh": "两个面板、小图表和错误边界",
-            "pt": "os dois painéis"
+            "en": "the panels (one is off by default), the chart, the error boundary",
+            "es": "los paneles (uno apagado por defecto), el gráfico, el límite de errores",
+            "de": "die Panels (eines standardmäßig aus), das Diagramm, die Fehlergrenze",
+            "fr": "les panneaux (un désactivé par défaut), le graphique, la limite d'erreurs",
+            "it": "i pannelli (uno spento di default), il grafico, il limite degli errori",
+            "ja": "パネル（1 つは既定でオフ）、グラフ、エラー境界",
+            "zh": "面板（其中一个默认关闭）、图表、错误边界",
+            "pt": "os painéis (um desligado por defeito), o gráfico, o limite de erros"
           },
           "tree_desc": {
-            "en": "the two panels, the small chart and the error boundary",
-            "es": "los dos paneles, el gráfico pequeño y el límite de errores",
-            "de": "die beiden Panels, das kleine Diagramm und die Fehlergrenze",
-            "fr": "les deux panneaux, le petit graphique et la limite d'erreurs",
-            "it": "i due pannelli, il piccolo grafico e il limite degli errori",
-            "ja": "2 つのパネル、小さなグラフ、エラー境界",
-            "zh": "两个面板、小图表和错误边界",
-            "pt": "os dois painéis, o gráfico pequeno e o limite de erros"
+            "en": "the panels (one is off by default), the chart, the error boundary",
+            "es": "los paneles (uno apagado por defecto), el gráfico, el límite de errores",
+            "de": "die Panels (eines standardmäßig aus), das Diagramm, die Fehlergrenze",
+            "fr": "les panneaux (un désactivé par défaut), le graphique, la limite d'erreurs",
+            "it": "i pannelli (uno spento di default), il grafico, il limite degli errori",
+            "ja": "パネル（1 つは既定でオフ）、グラフ、エラー境界",
+            "zh": "面板（其中一个默认关闭）、图表、错误边界",
+            "pt": "os painéis (um desligado por defeito), o gráfico, o limite de erros"
           }
         },
         {
@@ -171,14 +171,14 @@
             "pt": "Tipagem de VITE_DATALAKE_URL /"
           },
           "tree_desc": {
-            "en": "VITE_DATALAKE_URL / VITE_ANOMALY_URL typing",
-            "es": "Tipado de VITE_DATALAKE_URL / VITE_ANOMALY_URL",
-            "de": "Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL",
-            "fr": "Typage de VITE_DATALAKE_URL / VITE_ANOMALY_URL",
-            "it": "Tipizzazione di VITE_DATALAKE_URL / VITE_ANOMALY_URL",
-            "ja": "VITE_DATALAKE_URL / VITE_ANOMALY_URL の型定義",
-            "zh": "VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义",
-            "pt": "Tipagem de VITE_DATALAKE_URL / VITE_ANOMALY_URL"
+            "en": "VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_* typing",
+            "es": "Tipado de VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_*",
+            "de": "Typisierung von VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_*",
+            "fr": "Typage de VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_*",
+            "it": "Tipizzazione di VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_*",
+            "ja": "VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_* の型定義",
+            "zh": "VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_* 的类型定义",
+            "pt": "Tipagem de VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_*"
           }
         }
       ],

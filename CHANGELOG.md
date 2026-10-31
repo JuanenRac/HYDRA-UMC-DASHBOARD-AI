@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A Remaining useful life card, off by default.** With `VITE_RUL_ENABLED=true` at build time the page adds a third card that reads the newest anomaly scores of one source from the data lake, asks the anomaly detector for the days until their trend reaches a limit (`POST /rul`, which the detector answers when it runs with `--rul`) and shows the estimate with its range, the explicit states (not enough data, not rising, limit reached), a small chart of the scores and a warning or critical notice by thresholds in days. Without the switch there is no card and no request to the detector. The detector URL, the series, the limit, the number of samples, the thresholds and the time limit are build-time values (`VITE_RUL_*`, see `docs/REMAINING_USEFUL_LIFE.md`); a missing or unusable value falls back to its default. A route that is off, a timeout, an unreachable service, a refused session and a malformed answer are each shown inside the card and never break the page. The texts are in the eight languages. `scripts/serve_static.py` presents the detector token on `POST /rul` too. 25 new tests against a simulated data lake and a simulated detector.
+
 ## [0.1.8] - The universal README and its check in the CI
 
 - **README in the universal layout:** the README and its seven translations follow the layout that the four families share (22 sections in a fixed order), with an architecture picture and a repository-structure picture drawn from `docs/architecture.json` and `docs/structure.json`; the CI validator checks both pictures and the file tree.

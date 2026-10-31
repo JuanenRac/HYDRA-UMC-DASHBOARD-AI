@@ -359,6 +359,11 @@ class UpstreamTokenTests(unittest.TestCase):
             ],
         )
 
+    def test_the_remaining_useful_life_estimate_carries_the_token_of_the_detector(self) -> None:
+        self._call("POST", "/api/anomaly/rul")
+        self._call("GET", "/api/anomaly/rul")
+        self.assertEqual(self.seen, [("POST", "/rul", "Bearer detector-token-1234"), ("GET", "/rul", None)])
+
     def test_nothing_else_carries_a_token_so_the_proxy_cannot_change_what_a_service_holds(self) -> None:
         self._call("POST", "/api/anomaly/baseline/fit")
         self._call("POST", "/api/anomaly/drift/observe")

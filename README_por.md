@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-164%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-189%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.1.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **Verificação de honestidade - o que realmente funciona hoje:** as estatísticas do resumo de tendência (`lib/summary.ts`), a porta do fornecedor de IA e o seu recurso estatístico honesto (`lib/aiProvider.ts`), a guarda do contrato externo, os clientes HTTP reais (`api/datalakeClient.ts`, `api/anomalyClient.ts`) e o isolamento de falhas de renderização por painel (`components/ErrorBoundary.tsx` - uma falha no painel fica contida no cartão desse painel em vez de desmontar a aplicação inteira) são reais e estão cobertos por 164 testes Vitest a passar (`npm test` - `tests/*.test.ts(x)`); o servidor de ficheiros estáticos para o CM5 (`scripts/serve_static.py`) tem os seus próprios 11 testes `unittest` a passar (sem listagem de diretórios, cabeçalhos de reforço, um tempo limite para ligações inativas, sem travessia de caminhos). Não existe em todo este repositório nenhum fornecedor de IA real baseado num LLM - a porta do `aiProvider.ts` é real, mas cada narrativa mostrada hoje é o recurso estatístico `NO_PROVIDER_CONFIGURED`, claramente rotulado como tal. A Previsão de Tendências (um modelo de previsão real) e as Dicas de Otimização são ambas totalmente aspiracionais - ainda não existe código para nenhuma. O Realce de Anomalias só consulta a linha de base já ajustada do próprio HYDRA-UMC-ANOMALY-DETECTOR; nunca ajusta uma ele próprio. Veja o `CHANGELOG.md` para saber exatamente o que foi entregue até agora.
+> **Verificação de honestidade - o que realmente funciona hoje:** as estatísticas do resumo de tendência (`lib/summary.ts`), a porta do fornecedor de IA e o seu recurso estatístico honesto (`lib/aiProvider.ts`), a guarda do contrato externo, os clientes HTTP reais (`api/datalakeClient.ts`, `api/anomalyClient.ts`) e o isolamento de falhas de renderização por painel (`components/ErrorBoundary.tsx` - uma falha no painel fica contida no cartão desse painel em vez de desmontar a aplicação inteira) são reais e estão cobertos por 189 testes Vitest a passar (`npm test` - `tests/*.test.ts(x)`); o servidor de ficheiros estáticos para o CM5 (`scripts/serve_static.py`) tem os seus próprios 11 testes `unittest` a passar (sem listagem de diretórios, cabeçalhos de reforço, um tempo limite para ligações inativas, sem travessia de caminhos). Não existe em todo este repositório nenhum fornecedor de IA real baseado num LLM - a porta do `aiProvider.ts` é real, mas cada narrativa mostrada hoje é o recurso estatístico `NO_PROVIDER_CONFIGURED`, claramente rotulado como tal. A Previsão de Tendências (um modelo de previsão real) e as Dicas de Otimização são ambas totalmente aspiracionais - ainda não existe código para nenhuma. O Realce de Anomalias só consulta a linha de base já ajustada do próprio HYDRA-UMC-ANOMALY-DETECTOR; nunca ajusta uma ele próprio. Veja o `CHANGELOG.md` para saber exatamente o que foi entregue até agora.
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | Versão | `0.1.8` |
 | Maturidade | Funcional |
-| Testes | 164 (`npm test`) |
+| Testes | 189 (`npm test`) |
 | Tecnologia | TypeScript/React / Vite |
 | Destino | O Raspberry Pi CM5 de uma célula HYDRA-UMC |
 | Em hardware real | Ainda não: não há registo de execução em hardware real para esta versão |
@@ -55,7 +55,7 @@ Cada linha é uma parte deste repositório e a luz diz até onde chega hoje. É 
 | Área | Estado | O que significa aqui |
 |---|---|---|
 | Software | 🟡 | Funciona para o seu propósito principal; a verificação de honestidade acima lista o que ainda falta |
-| Testes | 🟢 | 164 testes automáticos, executados a cada alteração |
+| Testes | 🟢 | 189 testes automáticos, executados a cada alteração |
 | Hardware real | 🔴 | Ainda não: não há registo de execução em hardware real para esta versão |
 | Documentação | 🟢 | README em oito idiomas, verificado contra o manifesto a cada alteração |
 
@@ -72,6 +72,7 @@ Destina-se a transformar a telemetria em bruto em resumos úteis do desempenho d
 * 📈 **Previsão de tendências** — um modelo de previsão real, para lá do indicador de direção real mas simples da v0. *(planeado)*
 * 🚨 **Realce de anomalias (v0)** — compara as amostras reais mais recentes com uma linha de base real, já ajustada, do HYDRA-UMC-ANOMALY-DETECTOR. *(implementado como painel de texto real; sobrepô-lo à vista 3D do próprio STUDIO está planeado)*
 * 🛠️ **Dicas de otimização** — sugere alterações de parâmetros para melhorar o tempo de ciclo ou a vida útil dos motores. *(planeado)*
+* ⏳ **Vida útil restante (v0, desligada por defeito)** — um cartão que pergunta ao HYDRA-UMC-ANOMALY-DETECTOR os dias até a tendência das pontuações de anomalia atingir um limite, com um intervalo, estados explícitos (dados insuficientes, não sobe, limite atingido), um gráfico pequeno e avisos configuráveis; testado com um data lake e um detetor simulados. *(implementado; ver [`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md))*
 * ✅ **Andaime da cadeia de ferramentas** — uma aplicação real React/Vite/TypeScript que compila limpa com `tsc --noEmit` e é servida com o Vite. *(implementado — veja COMPILAR E EXECUTAR abaixo)*
 * 🧯 **Isolamento de falhas de renderização por painel** — cada painel está envolvido no seu próprio `ErrorBoundary`; uma exceção de renderização num deles mostra um cartão de recurso contido em vez de desmontar todo o painel. *(implementado — veja `components/ErrorBoundary.tsx`)*
 
@@ -137,6 +138,7 @@ Capturadas a 1920×1080 numa bancada de testes, com dados de exemplo e sem qualq
 | `/api/datalake/*` | reencaminhado para o HYDRA-UMC-DATALAKE em `127.0.0.1:8095` (só chamadas de leitura com token) |
 | `/api/anomaly/*` | reencaminhado para o HYDRA-UMC-ANOMALY-DETECTOR em `127.0.0.1:8097` |
 | `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | atrás do HYDRA-UMC-SERVER a página fica em `/dashboard-ai` e lê pelo reencaminhamento desse servidor, com o token de acesso da sessão do STUDIO |
+| `/api/anomaly/rul` | só com o cartão de vida útil restante ligado: a página envia as pontuações de anomalia mais recentes e lê os dias até ao limite, com um intervalo e um estado explícito; o detetor tem de correr com `--rul` |
 
 ## ⚙️ Configuração
 
@@ -149,6 +151,9 @@ Capturadas a 1920×1080 numa bancada de testes, com dados de exemplo e sem qualq
 | `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default`, ou uma política completa própria |
 | `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | sem token | o token que o servidor apresenta a cada serviço; as variantes `_FILE` leem-no de um ficheiro |
 | `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | URL de serviço visíveis no navegador, definidas na compilação; nunca ponha lá uma credencial |
+| `VITE_RUL_ENABLED` | `false` | `true` (exatamente isso) acrescenta o cartão de vida útil restante; com qualquer outro valor não há cartão nem pedido ao detetor |
+| `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | o detetor que responde a `POST /rul`, a série de pontuações de anomalia lida do data lake, a pontuação que conta como limite e quantas das amostras mais recentes (1 a 1000) são enviadas |
+| `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | o cartão avisa quando o dia plausível mais próximo cai dentro destes dias e passa a crítico dentro do segundo número (nunca acima do primeiro); o limite de tempo do pedido em milissegundos |
 
 ## 🚀 Início rápido
 
@@ -162,7 +167,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 Testes
 
-164 testes automáticos correm com `npm test`. O servidor estático tem os seus próprios testes Python em `scripts/test_serve_static.py`. Não precisam de hardware nem de nenhum serviço a correr.
+189 testes automáticos correm com `npm test`. O servidor estático tem os seus próprios testes Python em `scripts/test_serve_static.py`. Não precisam de hardware nem de nenhum serviço a correr.
 
 A CI executa `HYDRA_UMC_CI=1 python tools/ci_validate.py`, que verifica o manifesto, os documentos, os oito README e as imagens.
 
@@ -223,13 +228,13 @@ Um fornecedor que lance erro, ou devolva uma resposta com `narrative` em falta/m
 ```text
 HYDRA-UMC-DASHBOARD-AI/
 ├── src/                                                     código-fonte
-│   ├── api/                                                 Clientes HTTP reais: datalakeClient.ts, anomalyClient.ts
-│   ├── lib/                                                 estatísticas, porta do fornecedor de IA, sessão e endereços
-│   ├── components/                                          os dois painéis, o gráfico pequeno e o limite de erros
+│   ├── api/                                                 Clientes HTTP reais: datalakeClient.ts, anomalyClient.ts, rulClient.ts
+│   ├── lib/                                                 estatísticas, porta do fornecedor de IA, sessão e endereços, leitura da vida útil restante e textos
+│   ├── components/                                          os painéis (um desligado por defeito), o gráfico, o limite de erros
 │   ├── main.tsx                                             Ponto de entrada da aplicação
 │   ├── App.tsx                                              Componente raiz - monta os dois painéis reais
 │   ├── index.css                                            Folha de estilos base
-│   └── vite-env.d.ts                                        Tipagem de VITE_DATALAKE_URL / VITE_ANOMALY_URL
+│   └── vite-env.d.ts                                        Tipagem de VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_*
 ├── tests/                                                   Testes reais: idas e voltas HTTP + testes de componentes
 ├── scripts/                                                 o servidor estático e os seus testes
 ├── systemd/                                                 unidade de serviço

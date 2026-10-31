@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-164%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-189%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.1.8-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 164 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
+> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 189 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | 版本 | `0.1.8` |
 | 成熟度 | 可用 |
-| 测试 | 164 (`npm test`) |
+| 测试 | 189 (`npm test`) |
 | 技术栈 | TypeScript/React / Vite |
 | 目标 | HYDRA-UMC 工作单元的 Raspberry Pi CM5 |
 | 真实硬件 | 尚未：此版本没有在真实硬件上运行的记录 |
@@ -55,7 +55,7 @@ GPL-3.0-or-later - see LICENSE
 | 领域 | 状态 | 在这里的含义 |
 |---|---|---|
 | 软件 | 🟡 | 主要用途可用；上面的诚实性检查列出了仍然缺少的内容 |
-| 测试 | 🟢 | 164 项自动测试，每次变更都会运行 |
+| 测试 | 🟢 | 189 项自动测试，每次变更都会运行 |
 | 真实硬件 | 🔴 | 尚未：此版本没有在真实硬件上运行的记录 |
 | 文档 | 🟢 | 八种语言的 README，每次变更都会与清单核对 |
 
@@ -72,6 +72,7 @@ GPL-3.0-or-later - see LICENSE
 * 📈 **趋势预测** —— 一个真实的预测模型，超越 v0 中真实但简单的方向指示器。*（计划中）*
 * 🚨 **异常高亮（v0）：** 将最新的真实样本与 HYDRA-UMC-ANOMALY-DETECTOR 已拟合的真实基线进行对比检查。*（已实现为真实的文字面板；在 STUDIO 自身的 3D 视图中叠加显示尚在计划中）*
 * 🛠️ **优化建议：** 提出改进周期时间或电机寿命的参数变更建议。*（计划中）*
+* ⏳ **剩余使用寿命（v0，默认关闭）** — 一张向 HYDRA-UMC-ANOMALY-DETECTOR 询问异常分数趋势到达上限还需多少天的卡片，带范围、明确状态（数据不足、不上升、已到上限）、小图表和可配置的警告；已用模拟的数据湖和检测器测试。*（已实现；参见 [`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md)）*
 * ✅ **工具链骨架** —— 一个真实的 React/Vite/TypeScript 应用，能够通过 `tsc --noEmit` 干净地构建，并使用 Vite 进行服务。*（已实现——见下方"构建与发布"）*
 * 🧯 **按面板隔离渲染失败** —— 每个面板都被包裹在自己的 `ErrorBoundary` 中；某个面板渲染时抛出的异常只会显示一个被限制在该面板内的回退卡片，而不会卸载整个仪表盘。*（已实现——见 `components/ErrorBoundary.tsx`）*
 
@@ -137,6 +138,7 @@ flowchart LR
 | `/api/datalake/*` | 转发到 `127.0.0.1:8095` 的 HYDRA-UMC-DATALAKE（使用令牌时仅限读取调用） |
 | `/api/anomaly/*` | 转发到 `127.0.0.1:8097` 的 HYDRA-UMC-ANOMALY-DETECTOR |
 | `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | 在 HYDRA-UMC-SERVER 之后，页面位于 `/dashboard-ai`，通过该服务器的中继并使用 STUDIO 会话的访问令牌读取 |
+| `/api/anomaly/rul` | 仅在开启“剩余使用寿命”卡片时：页面发送最新的异常分数，读取到上限的天数，并附带范围和明确状态；检测器必须以 `--rul` 运行 |
 
 ## ⚙️ 配置
 
@@ -149,6 +151,9 @@ flowchart LR
 | `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default`，或自定义的完整策略 |
 | `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | 无令牌 | 服务器向每个服务出示的令牌；`_FILE` 变体从文件读取 |
 | `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | 构建时设置、浏览器可见的服务地址；绝不要放入凭据 |
+| `VITE_RUL_ENABLED` | `false` | `true`（必须完全一致）会添加“剩余使用寿命”卡片；其他任何值都不会有卡片，也不会向检测器发请求 |
+| `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | 响应 `POST /rul` 的检测器、从数据湖读取的异常分数序列、被视为上限的分数，以及发送的最新样本数量（1 到 1000） |
+| `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | 最早的合理日期落在该天数内时发出警告，落在第二个数（不会大于第一个）内时变为严重；请求的超时时间（毫秒） |
 
 ## 🚀 快速开始
 
@@ -162,7 +167,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 测试
 
-运行 `npm test` 会执行 164 个自动测试。 静态服务器在 `scripts/test_serve_static.py` 中有自己的 Python 测试。不需要硬件，也不需要正在运行的服务。
+运行 `npm test` 会执行 189 个自动测试。 静态服务器在 `scripts/test_serve_static.py` 中有自己的 Python 测试。不需要硬件，也不需要正在运行的服务。
 
 CI 运行 `HYDRA_UMC_CI=1 python tools/ci_validate.py`，检查清单、文档、八个 README 和图片。
 
@@ -235,13 +240,13 @@ const narrative = await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId
 ```text
 HYDRA-UMC-DASHBOARD-AI/
 ├── src/                                                     源代码
-│   ├── api/                                                 真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts
-│   ├── lib/                                                 统计、AI 提供方闸门、会话和端点
-│   ├── components/                                          两个面板、小图表和错误边界
+│   ├── api/                                                 真实的 HTTP 客户端：datalakeClient.ts、anomalyClient.ts、rulClient.ts
+│   ├── lib/                                                 统计、AI 提供方闸门、会话和端点、剩余使用寿命的解读和文本
+│   ├── components/                                          面板（其中一个默认关闭）、图表、错误边界
 │   ├── main.tsx                                             应用程序入口点
 │   ├── App.tsx                                              根组件——挂载两个真实面板
 │   ├── index.css                                            基础样式表
-│   └── vite-env.d.ts                                        VITE_DATALAKE_URL / VITE_ANOMALY_URL 的类型定义
+│   └── vite-env.d.ts                                        VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_* 的类型定义
 ├── tests/                                                   真实测试：HTTP 往返 + 组件测试
 ├── scripts/                                                 静态服务器及其测试
 ├── systemd/                                                 服务单元

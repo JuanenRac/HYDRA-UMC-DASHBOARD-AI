@@ -19,7 +19,9 @@
 import { TrendSummaryPanel } from './components/TrendSummaryPanel'
 import { AnomalyCheckPanel } from './components/AnomalyCheckPanel'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { RulPanel } from './components/RulPanel'
 import { defaultEndpoints } from './lib/endpoints'
+import { readRulConfig, type RulConfig } from './lib/rulConfig'
 
 // Served by HYDRA-UMC-SERVER (under /dashboard-ai) the page reads through that server's relay with the session of STUDIO; served on its
 // own it reads through the proxy of the static server. VITE_DATALAKE_URL / VITE_ANOMALY_URL replace either.
@@ -27,7 +29,15 @@ const ENDPOINTS = defaultEndpoints(typeof window === 'undefined' ? '/' : window.
 const DATALAKE_BASE_URL = import.meta.env.VITE_DATALAKE_URL ?? ENDPOINTS.datalake
 const ANOMALY_BASE_URL = import.meta.env.VITE_ANOMALY_URL ?? ENDPOINTS.anomaly
 
-function App() {
+// The remaining-useful-life card is off unless the build switches it on (VITE_RUL_ENABLED=true); see lib/rulConfig.ts.
+const RUL_CONFIG = readRulConfig(import.meta.env, ANOMALY_BASE_URL)
+
+interface AppProps {
+  /** Overrides the build-time configuration of the card (tests). */
+  rul?: RulConfig
+}
+
+function App({ rul = RUL_CONFIG }: AppProps = {}) {
   return (
     <main className="app-shell">
       <h1>HYDRA-UMC-DASHBOARD-AI</h1>
@@ -44,6 +54,11 @@ function App() {
         <ErrorBoundary panelName="Anomaly Check">
           <AnomalyCheckPanel datalakeBaseUrl={DATALAKE_BASE_URL} anomalyBaseUrl={ANOMALY_BASE_URL} />
         </ErrorBoundary>
+        {rul.enabled && (
+          <ErrorBoundary panelName="Remaining useful life">
+            <RulPanel datalakeBaseUrl={DATALAKE_BASE_URL} config={rul} />
+          </ErrorBoundary>
+        )}
       </div>
     </main>
   )

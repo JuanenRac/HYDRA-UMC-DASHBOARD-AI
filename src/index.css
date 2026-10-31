@@ -187,3 +187,17 @@ body {
 .verdict-bad {
   color: var(--bad);
 }
+
+.rul-estimate {
+  font-size: 1.4rem;
+  margin: 0.75rem 0 0.25rem;
+}
+
+.rul-range,
+.rul-state,
+.rul-detail,
+.rul-disclaimer {
+  color: var(--dim);
+  font-size: 0.85rem;
+  margin: 0.25rem 0;
+}

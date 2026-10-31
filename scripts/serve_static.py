@@ -42,7 +42,7 @@ MAX_PROXY_BODY_BYTES = 4 * 1024 * 1024
 # the token and the service refuses it, so this server cannot be used to change what the services hold.
 TOKEN_ALLOWED_CALLS: dict[str, frozenset[tuple[str, str]]] = {
     "/api/datalake": frozenset({("GET", p) for p in ("/query", "/aggregate", "/stats", "/stats/range", "/series", "/health")}),
-    "/api/anomaly": frozenset({("GET", "/stats"), ("POST", "/detect")}),
+    "/api/anomaly": frozenset({("GET", "/stats"), ("POST", "/detect"), ("POST", "/rul")}),
 }
 # The names the services themselves read, each one also as <NAME>_FILE (a file whose first line is the token).
 TOKEN_ENVIRONMENT: dict[str, tuple[str, ...]] = {
