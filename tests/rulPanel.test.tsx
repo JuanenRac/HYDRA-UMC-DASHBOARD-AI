@@ -177,10 +177,14 @@ describe('App', () => {
     expect(spy).not.toHaveBeenCalled()
   })
 
-  it('shows the card as a third panel when the switch is on', () => {
-    vi.spyOn(globalThis, 'fetch').mockImplementation(() => new Promise(() => { /* pending */ }))
+  it('shows the card as a third panel when the switch is on and the server has it open', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation((input) =>
+      String(input).endsWith('/api/rul/config')
+        ? Promise.resolve(new Response(JSON.stringify({ enabled: true, maxPoints: 5000, timeoutMs: 8000 }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+        : new Promise(() => { /* pending */ }),
+    )
     render(<App rul={readRulConfig({ VITE_RUL_ENABLED: 'true' }, '/api/anomaly')} />)
-    expect(screen.getByTestId('rul-panel')).toBeInTheDocument()
+    expect(await screen.findByTestId('rul-panel')).toBeInTheDocument()
     expect(document.querySelectorAll('section.panel')).toHaveLength(3)
   })
 })

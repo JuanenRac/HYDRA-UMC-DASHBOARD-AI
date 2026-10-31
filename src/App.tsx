@@ -19,7 +19,7 @@
 import { TrendSummaryPanel } from './components/TrendSummaryPanel'
 import { AnomalyCheckPanel } from './components/AnomalyCheckPanel'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { RulPanel } from './components/RulPanel'
+import { RulGate } from './components/RulGate'
 import { defaultEndpoints } from './lib/endpoints'
 import { readRulConfig, type RulConfig } from './lib/rulConfig'
 
@@ -29,7 +29,8 @@ const ENDPOINTS = defaultEndpoints(typeof window === 'undefined' ? '/' : window.
 const DATALAKE_BASE_URL = import.meta.env.VITE_DATALAKE_URL ?? ENDPOINTS.datalake
 const ANOMALY_BASE_URL = import.meta.env.VITE_ANOMALY_URL ?? ENDPOINTS.anomaly
 
-// The remaining-useful-life card is off unless the build switches it on (VITE_RUL_ENABLED=true); see lib/rulConfig.ts.
+// The remaining-useful-life card needs the build to allow it (VITE_RUL_ENABLED=true; see lib/rulConfig.ts) and the running server to have
+// it open (GET /api/rul/config; see components/RulGate.tsx). Either one missing, or a server that does not answer: no card.
 const RUL_CONFIG = readRulConfig(import.meta.env, ANOMALY_BASE_URL)
 
 interface AppProps {
@@ -54,11 +55,7 @@ function App({ rul = RUL_CONFIG }: AppProps = {}) {
         <ErrorBoundary panelName="Anomaly Check">
           <AnomalyCheckPanel datalakeBaseUrl={DATALAKE_BASE_URL} anomalyBaseUrl={ANOMALY_BASE_URL} />
         </ErrorBoundary>
-        {rul.enabled && (
-          <ErrorBoundary panelName="Remaining useful life">
-            <RulPanel datalakeBaseUrl={DATALAKE_BASE_URL} config={rul} />
-          </ErrorBoundary>
-        )}
+        <RulGate build={rul} datalakeBaseUrl={DATALAKE_BASE_URL} />
       </div>
     </main>
   )

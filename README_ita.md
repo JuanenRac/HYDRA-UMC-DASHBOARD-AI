@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-189%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-210%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.1.9-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **Verifica di onestà - cosa funziona davvero oggi:** le statistiche di riepilogo del trend (`lib/summary.ts`), il gate del provider AI e il suo onesto fallback statistico (`lib/aiProvider.ts`), il guardiano del contratto esterno, i veri client HTTP (`api/datalakeClient.ts`, `api/anomalyClient.ts`), e l'isolamento dei fallimenti di rendering per pannello (`components/ErrorBoundary.tsx` - un crash nel rendering di un pannello resta contenuto nella scheda di quel pannello invece di smontare l'intera app) sono reali e coperti da 189 test Vitest superati (`npm test` - `tests/*.test.ts(x)`); il server di file statici per la CM5 (`scripts/serve_static.py`) ha i suoi 11 test `unittest` superati (nessun elenco di directory, intestazioni di rafforzamento, timeout per le connessioni inattive, nessuna risalita di percorso). Non esiste alcun vero provider AI basato su LLM in questo repository - il gate di `aiProvider.ts` è reale, ma ogni narrazione mostrata oggi è il fallback statistico `NO_PROVIDER_CONFIGURED`, chiaramente etichettato come tale. La Predizione del Trend (un vero modello di previsione) e i Consigli di Ottimizzazione sono entrambi completamente aspirazionali - non esiste ancora codice per nessuno dei due. L'Evidenziazione delle Anomalie controlla solo la baseline già adattata di HYDRA-UMC-ANOMALY-DETECTOR; non ne adatta mai una da sola. Vedi `CHANGELOG.md` per cosa è stato esattamente consegnato finora.
+> **Verifica di onestà - cosa funziona davvero oggi:** le statistiche di riepilogo del trend (`lib/summary.ts`), il gate del provider AI e il suo onesto fallback statistico (`lib/aiProvider.ts`), il guardiano del contratto esterno, i veri client HTTP (`api/datalakeClient.ts`, `api/anomalyClient.ts`), e l'isolamento dei fallimenti di rendering per pannello (`components/ErrorBoundary.tsx` - un crash nel rendering di un pannello resta contenuto nella scheda di quel pannello invece di smontare l'intera app) sono reali e coperti da 210 test Vitest superati (`npm test` - `tests/*.test.ts(x)`); il server di file statici per la CM5 (`scripts/serve_static.py`) ha i suoi 11 test `unittest` superati (nessun elenco di directory, intestazioni di rafforzamento, timeout per le connessioni inattive, nessuna risalita di percorso). Non esiste alcun vero provider AI basato su LLM in questo repository - il gate di `aiProvider.ts` è reale, ma ogni narrazione mostrata oggi è il fallback statistico `NO_PROVIDER_CONFIGURED`, chiaramente etichettato come tale. La Predizione del Trend (un vero modello di previsione) e i Consigli di Ottimizzazione sono entrambi completamente aspirazionali - non esiste ancora codice per nessuno dei due. L'Evidenziazione delle Anomalie controlla solo la baseline già adattata di HYDRA-UMC-ANOMALY-DETECTOR; non ne adatta mai una da sola. Vedi `CHANGELOG.md` per cosa è stato esattamente consegnato finora.
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | Versione | `0.1.9` |
 | Maturità | Funzionale |
-| Test | 189 (`npm test`) |
+| Test | 210 (`npm test`) |
 | Tecnologia | TypeScript/React / Vite |
 | Destinazione | Il Raspberry Pi CM5 di una cella HYDRA-UMC |
 | Su hardware reale | Non ancora: per questa versione non risulta alcuna esecuzione su hardware reale |
@@ -55,7 +55,7 @@ Ogni riga è una parte di questo repository e il semaforo dice a che punto è og
 | Area | Stato | Cosa significa qui |
 |---|---|---|
 | Software | 🟡 | Funziona per il suo scopo principale; la verifica di onestà qui sopra elenca ciò che manca ancora |
-| Test | 🟢 | 189 test automatici, eseguiti a ogni modifica |
+| Test | 🟢 | 210 test automatici, eseguiti a ogni modifica |
 | Hardware reale | 🔴 | Non ancora: per questa versione non risulta alcuna esecuzione su hardware reale |
 | Documentazione | 🟢 | README in otto lingue, verificato rispetto al manifesto a ogni modifica |
 
@@ -139,6 +139,7 @@ Catturate a 1920×1080 su un banco di prova, con dati di esempio e senza alcuna 
 | `/api/anomaly/*` | inoltrato a HYDRA-UMC-ANOMALY-DETECTOR su `127.0.0.1:8097` |
 | `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | dietro HYDRA-UMC-SERVER la pagina sta in `/dashboard-ai` e legge dal relay di quel server, con il token di accesso della sessione STUDIO |
 | `/api/anomaly/rul` | solo con la scheda della vita utile residua attiva: la pagina invia gli ultimi punteggi di anomalia e legge i giorni al limite, con un intervallo e uno stato esplicito; il rilevatore deve girare con `--rul` |
+| `/api/rul/config` | solo se la compilazione consente la scheda della vita utile residua: letta una volta all'apertura della pagina, con la sessione di STUDIO, per sapere se il server ha l'opzione aperta e quali limiti applica; qualsiasi risposta diversa da un "aperto" chiaro (chiuso, nessuna rotta, sessione rifiutata, errore, nessuna risposta) lascia fuori la scheda |
 
 ## ⚙️ Configurazione
 
@@ -151,7 +152,7 @@ Catturate a 1920×1080 su un banco di prova, con dati di esempio e senza alcuna 
 | `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default`, o una policy completa propria |
 | `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | nessun token | il token che il server presenta a ogni servizio; le varianti `_FILE` lo leggono da un file |
 | `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | URL dei servizi visibili nel browser, fissate in compilazione; non metterci mai una credenziale |
-| `VITE_RUL_ENABLED` | `false` | `true` (esattamente) aggiunge la scheda della vita utile residua; con qualsiasi altro valore non c'è né scheda né richiesta al rilevatore |
+| `VITE_RUL_ENABLED` | `false` | `true` (esattamente) consente la scheda della vita utile residua, che compare inoltre solo finché il server in esecuzione ha l'opzione aperta (`GET /api/rul/config`); con qualsiasi altro valore non c'è né scheda né richiesta al rilevatore o al server |
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | il rilevatore che risponde a `POST /rul`, la serie di punteggi di anomalia letta dal data lake, il punteggio che conta come limite e quanti dei campioni più recenti (da 1 a 1000) vengono inviati |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | la scheda avvisa quando il giorno plausibile più vicino cade entro questi giorni e diventa critica entro il secondo numero (mai superiore al primo); il limite di tempo della richiesta in millisecondi |
 
@@ -167,7 +168,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 Test
 
-189 test automatici si eseguono con `npm test`. Il server statico ha propri test Python in `scripts/test_serve_static.py`. Non richiedono hardware né servizi in esecuzione.
+210 test automatici si eseguono con `npm test`. Il server statico ha propri test Python in `scripts/test_serve_static.py`. Non richiedono hardware né servizi in esecuzione.
 
 La CI esegue `HYDRA_UMC_CI=1 python tools/ci_validate.py`, che controlla il manifesto, i documenti, gli otto README e le immagini.
 

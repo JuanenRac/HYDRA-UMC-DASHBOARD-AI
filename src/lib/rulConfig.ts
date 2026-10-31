@@ -4,7 +4,8 @@
 // GPL-3.0-or-later - see LICENSE
 // =============================================================================
 // The card is OFF unless the build says VITE_RUL_ENABLED=true (exactly that): with it off the page shows no card and never
-// asks the detector for an estimate. Every other value is optional and falls back to the default below when it is missing
+// asks the detector for an estimate or the server for its setting. With it on the card still waits for the running server to
+// have the option open (GET /api/rul/config, see components/RulGate.tsx). Every other value is optional and falls back to the default below when it is missing
 // or unusable. Vite inlines these at build time.
 
 export interface RulConfig {

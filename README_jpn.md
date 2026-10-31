@@ -18,7 +18,7 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-189%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-210%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.1.9-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | バージョン | `0.1.9` |
 | 成熟度 | 機能する |
-| テスト | 189 (`npm test`) |
+| テスト | 210 (`npm test`) |
 | 技術 | TypeScript/React / Vite |
 | 対象 | HYDRA-UMC セルの Raspberry Pi CM5 |
 | 実機での確認 | まだです：このバージョンについて実機での動作記録はありません |
@@ -55,7 +55,7 @@ GPL-3.0-or-later - see LICENSE
 | 領域 | 状態 | ここでの意味 |
 |---|---|---|
 | ソフトウェア | 🟡 | 主な目的では動作します。足りない点は上の正直さの確認に書かれています |
-| テスト | 🟢 | 自動テスト 189 件。変更のたびに実行されます |
+| テスト | 🟢 | 自動テスト 210 件。変更のたびに実行されます |
 | 実機 | 🔴 | まだです：このバージョンについて実機での動作記録はありません |
 | ドキュメント | 🟢 | 8 言語の README。変更のたびにマニフェストと照合されます |
 
@@ -139,6 +139,7 @@ flowchart LR
 | `/api/anomaly/*` | `127.0.0.1:8097` の HYDRA-UMC-ANOMALY-DETECTOR へ転送 |
 | `/dashboard-ai`, `/api/ai/datalake`, `/api/ai/anomaly-detector` | HYDRA-UMC-SERVER の背後ではページは `/dashboard-ai` にあり、そのサーバーのリレー経由で STUDIO セッションのアクセストークンを使って読みます |
 | `/api/anomaly/rul` | 残存耐用期間のカードがオンのときのみ：ページは最新の異常スコアを送り、限界までの日数を範囲と明示的な状態つきで読みます。検出器は `--rul` で動かす必要があります |
+| `/api/rul/config` | ビルドが残存耐用期間のカードを許可している場合のみ：ページを開くときに STUDIO のセッションで 1 回読み、サーバーがオプションを開いているか、どの上限を適用するかを確認します。明確な「開」以外の応答（閉、ルートなし、セッション拒否、エラー、応答なし）ではカードを表示しません |
 
 ## ⚙️ 設定
 
@@ -151,7 +152,7 @@ flowchart LR
 | `--csp`, `HYDRA_DASHBOARD_CSP` | `default` | `default`、または独自の完全なポリシー |
 | `HYDRA_UMC_DATALAKE_READ_TOKEN`, `HYDRA_UMC_DATALAKE_TOKEN`, `HYDRA_UMC_ANOMALY_TOKEN` | トークンなし | サーバーが各サービスに示すトークン。`_FILE` 版はファイルから読みます |
 | `VITE_DATALAKE_URL`, `VITE_ANOMALY_URL` | `/api/datalake`, `/api/anomaly` | ビルド時に設定するブラウザから見えるサービス URL。認証情報は絶対に入れないでください |
-| `VITE_RUL_ENABLED` | `false` | `true`（この文字列のみ）で残存耐用期間のカードを追加します。それ以外ではカードも検出器へのリクエストもありません |
+| `VITE_RUL_ENABLED` | `false` | `true`（この文字列のみ）で残存耐用期間のカードを許可します。カードは、稼働中のサーバーがこのオプションを開いている間だけ表示されます（`GET /api/rul/config`）。それ以外ではカードも、検出器やサーバーへのリクエストもありません |
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | `POST /rul` に答える検出器、データレイクから読む異常スコアの系列、限界とみなすスコア、送る最新サンプルの数（1〜1000） |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | 最も早い妥当な日が日数以内になると警告し、2 番目の数（1 番目を超えない）以内で重大になります。リクエストの制限時間（ミリ秒） |
 
@@ -167,7 +168,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 テスト
 
-`npm test` で自動テスト 189 件を実行します。 静的サーバーには `scripts/test_serve_static.py` に独自の Python テストがあります。ハードウェアも稼働中のサービスも不要です。
+`npm test` で自動テスト 210 件を実行します。 静的サーバーには `scripts/test_serve_static.py` に独自の Python テストがあります。ハードウェアも稼働中のサービスも不要です。
 
 CI は `HYDRA_UMC_CI=1 python tools/ci_validate.py` を実行し、マニフェスト、文書、8 つの README、図を検査します。
 
