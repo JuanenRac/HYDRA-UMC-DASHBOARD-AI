@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.2.1] - An administrator is told when the server has the remaining-useful-life card closed
+
 - **An administrator is told when the server has the remaining-useful-life card closed:** with the build allowing the card and the server answering that the option is closed, the card is still left out for everybody, but an administrator (read from the role in the access token, only to decide what to show) sees a note that it is closed by the server, in the eight languages. An operator, a viewer, a token that cannot be read and no session see nothing; a missing route, a refused session or a failure are not reported as closed by the server.
 
 ## [0.2.0] - The Remaining useful life card also needs the running server to have it open
