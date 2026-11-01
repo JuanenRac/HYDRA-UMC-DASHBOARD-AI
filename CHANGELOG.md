@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **An administrator is told when the server has the remaining-useful-life card closed:** with the build allowing the card and the server answering that the option is closed, the card is still left out for everybody, but an administrator (read from the role in the access token, only to decide what to show) sees a note that it is closed by the server, in the eight languages. An operator, a viewer, a token that cannot be read and no session see nothing; a missing route, a refused session or a failure are not reported as closed by the server.
+
 ## [0.2.0] - The Remaining useful life card also needs the running server to have it open
 
 - **The Remaining useful life card also needs the server to have it open:** with `VITE_RUL_ENABLED=true` the page now reads `GET /api/rul/config` of the server it is served from, once, with the session of STUDIO, and shows the card only for a clear `enabled: true`. A server that has it closed, has no such route, refuses the session, fails, does not answer or answers anything but `{ enabled, maxPoints, timeoutMs }` leaves the card out and the other two panels working. The number of points sent never exceeds the `maxPoints` of the server and the time limit never falls below its `timeoutMs`. With the default build nothing changes and nothing is requested. Served on its own, with no server behind it, the card no longer appears. New `tests/rulServerGate.test.tsx` (the build against an open, a closed, a route-less, a refusing, a failing, a hanging and a nonsense server).

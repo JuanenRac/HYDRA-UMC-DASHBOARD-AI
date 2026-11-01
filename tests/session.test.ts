@@ -7,7 +7,7 @@
 
 import { afterEach, describe, expect, it } from 'vitest'
 import { createServer, type Server } from 'node:http'
-import { authHeaders, isSameOriginPath, readToken, sessionHint, TOKEN_KEY } from '../src/lib/session'
+import { authHeaders, isSameOriginPath, readToken, sessionHint, TOKEN_KEY, tokenRole } from '../src/lib/session'
 import { defaultEndpoints } from '../src/lib/endpoints'
 import { queryDatalake, DatalakeApiError } from '../src/api/datalakeClient'
 import { detectAnomaly, fetchDetectorStats, AnomalyApiError } from '../src/api/anomalyClient'
@@ -136,5 +136,16 @@ describe('the clients and the session', () => {
     } finally {
       globalThis.fetch = originalFetch
     }
+  })
+})
+
+describe('tokenRole', () => {
+  const part = (value: unknown) => btoa(JSON.stringify(value)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  it('reads the role of a token the way the server makes it', () => {
+    expect(tokenRole(`${part({ alg: 'HS256' })}.${part({ role: 'admin', username: 'ñandú' })}.sig`)).toBe('admin')
+    expect(tokenRole(`${part({})}.${part({ role: 'operator' })}.sig`)).toBe('operator')
+  })
+  it('gives null for no token, one that cannot be read, or a role that is not text', () => {
+    for (const token of [null, '', 'abc', 'a.b', 'a.b.c', `${part({})}.${part({ role: 5 })}.sig`, `${part({})}.${part([])}.sig`, `${part({})}.!!!.sig`]) expect(tokenRole(token as string | null), String(token)).toBeNull()
   })
 })

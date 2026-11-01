@@ -257,3 +257,69 @@ describe('the open card is sized by the limits of the server', () => {
     expect((sent as unknown as { points: unknown[] }).points.length).toBeLessThanOrEqual(20)
   })
 })
+
+/** A token the way the server makes it (header.payload.signature, the payload in base64url); only the payload is read. */
+function tokenOf(role: string): string {
+  const part = (value: unknown) => btoa(JSON.stringify(value)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  return `${part({ alg: 'HS256', typ: 'JWT' })}.${part({ username: 'u', role })}.signature`
+}
+
+describe('the notice that the server has the card closed (administrators only)', () => {
+  const CLOSED = () => reply(200, { ...OPEN, enabled: false })
+
+  it('an administrator is told that the server closed it, and there is still no card', async () => {
+    window.sessionStorage.setItem(TOKEN_KEY, tokenOf('admin'))
+    const spy = serverAnswering(CLOSED)
+    render(<App rul={BUILD_ON} />)
+    await waitFor(() => expect(configCalls(spy)).toHaveLength(1))
+    const notice = await screen.findByTestId('rul-closed-by-server')
+    expect(notice.textContent).toMatch(/closed by the server/i)
+    expect(screen.queryByTestId('rul-panel')).not.toBeInTheDocument()
+  })
+
+  it('an operator, a viewer, a token that cannot be read and no session see nothing at all', async () => {
+    for (const token of [tokenOf('operator'), tokenOf('viewer'), 'tok-123', 'a.b.c', null]) {
+      window.sessionStorage.clear()
+      if (token) window.sessionStorage.setItem(TOKEN_KEY, token)
+      const spy = serverAnswering(CLOSED)
+      const view = render(<App rul={BUILD_ON} />)
+      await waitFor(() => expect(configCalls(spy)).toHaveLength(1))
+      await settle()
+      expect(screen.queryByTestId('rul-closed-by-server'), String(token)).not.toBeInTheDocument()
+      expect(screen.queryByTestId('rul-panel')).not.toBeInTheDocument()
+      view.unmount()
+      vi.restoreAllMocks()
+    }
+  })
+
+  it('only a server that closed it says so: no route, a refused session or a failure are not "closed by the server"', async () => {
+    window.sessionStorage.setItem(TOKEN_KEY, tokenOf('admin'))
+    for (const answer of [() => reply(404, ''), () => reply(401, { error: 'x' }), () => reply(500, { error: 'x' }), () => reply(200, 'not json')]) {
+      const spy = serverAnswering(answer)
+      const view = render(<App rul={BUILD_ON} />)
+      await waitFor(() => expect(configCalls(spy)).toHaveLength(1))
+      await settle()
+      expect(screen.queryByTestId('rul-closed-by-server')).not.toBeInTheDocument()
+      view.unmount()
+      vi.restoreAllMocks()
+    }
+  })
+
+  it('a build that has the card off makes no request and shows no notice, even to an administrator', async () => {
+    window.sessionStorage.setItem(TOKEN_KEY, tokenOf('admin'))
+    const spy = serverAnswering(CLOSED)
+    render(<App rul={BUILD_OFF} />)
+    await settle()
+    expect(configCalls(spy)).toHaveLength(0)
+    expect(screen.queryByTestId('rul-closed-by-server')).not.toBeInTheDocument()
+  })
+
+  it('an open server shows the card and no notice', async () => {
+    window.sessionStorage.setItem(TOKEN_KEY, tokenOf('admin'))
+    const spy = serverAnswering(() => reply(200, OPEN))
+    render(<App rul={BUILD_ON} />)
+    await waitFor(() => expect(configCalls(spy)).toHaveLength(1))
+    expect(await screen.findByTestId('rul-panel')).toBeInTheDocument()
+    expect(screen.queryByTestId('rul-closed-by-server')).not.toBeInTheDocument()
+  })
+})

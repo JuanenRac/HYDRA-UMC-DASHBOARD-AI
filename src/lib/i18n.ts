@@ -11,7 +11,7 @@ export type Lang = (typeof LANGUAGES)[number]
 export const RUL_KEYS = [
   'title', 'subtitle', 'source', 'kind', 'field', 'limit', 'refresh', 'loading', 'estimate', 'range', 'rangeOpen',
   'slope', 'current', 'samples', 'chart', 'disclaimer', 'statusInsufficient', 'statusNotRising', 'statusLimitReached',
-  'warning', 'critical', 'noSamples', 'errTimeout', 'errUnreachable', 'errDisabled', 'errAuth', 'errHttp', 'errInvalid', 'errInput',
+  'warning', 'critical', 'noSamples', 'errTimeout', 'errUnreachable', 'errDisabled', 'errAuth', 'errHttp', 'errInvalid', 'errInput', 'closedByServer',
 ] as const
 export type RulKey = (typeof RUL_KEYS)[number]
 type Dict = Record<RulKey, string>
@@ -39,6 +39,7 @@ const en: Dict = {
   errHttp: 'The service answered with an error: {detail}',
   errInvalid: 'The detector sent an answer that cannot be used.',
   errInput: 'The configuration of this card is not valid: {detail}',
+  closedByServer: 'The remaining-useful-life card is closed by the server. Open it in Server Admin (remaining useful life for operators) to show it.',
 }
 
 const es: Dict = {
@@ -64,6 +65,7 @@ const es: Dict = {
   errHttp: 'El servicio respondió con un error: {detail}',
   errInvalid: 'El detector envió una respuesta que no se puede usar.',
   errInput: 'La configuración de esta tarjeta no es válida: {detail}',
+  closedByServer: 'La tarjeta de vida útil restante está cerrada por el servidor. Ábrela en Server Admin (vida útil restante para operadores) para mostrarla.',
 }
 
 const de: Dict = {
@@ -89,6 +91,7 @@ const de: Dict = {
   errHttp: 'Der Dienst hat mit einem Fehler geantwortet: {detail}',
   errInvalid: 'Der Detektor hat eine unbrauchbare Antwort gesendet.',
   errInput: 'Die Konfiguration dieser Karte ist ungültig: {detail}',
+  closedByServer: 'Die Karte zur Restnutzungsdauer ist vom Server geschlossen. Öffnen Sie sie in Server Admin (Restnutzungsdauer für Bediener), um sie anzuzeigen.',
 }
 
 const fr: Dict = {
@@ -114,6 +117,7 @@ const fr: Dict = {
   errHttp: 'Le service a répondu par une erreur : {detail}',
   errInvalid: 'Le détecteur a envoyé une réponse inutilisable.',
   errInput: "La configuration de cette carte n'est pas valide : {detail}",
+  closedByServer: "La carte de durée de vie restante est fermée par le serveur. Ouvrez-la dans Server Admin (durée de vie restante pour les opérateurs) pour l'afficher.",
 }
 
 const it: Dict = {
@@ -139,6 +143,7 @@ const it: Dict = {
   errHttp: 'Il servizio ha risposto con un errore: {detail}',
   errInvalid: 'Il rilevatore ha inviato una risposta inutilizzabile.',
   errInput: 'La configurazione di questa scheda non è valida: {detail}',
+  closedByServer: 'La scheda della vita utile residua è chiusa dal server. Aprila in Server Admin (vita utile residua per gli operatori) per mostrarla.',
 }
 
 const ja: Dict = {
@@ -164,6 +169,7 @@ const ja: Dict = {
   errHttp: 'サービスがエラーを返しました: {detail}',
   errInvalid: '検出器から使用できない応答が返りました。',
   errInput: 'このカードの設定が正しくありません: {detail}',
+  closedByServer: '残存耐用期間のカードはサーバーによって閉じられています。表示するには Server Admin（オペレーター向けの残存耐用期間）で開いてください。',
 }
 
 const zh: Dict = {
@@ -189,6 +195,7 @@ const zh: Dict = {
   errHttp: '服务返回了错误：{detail}',
   errInvalid: '检测器返回了无法使用的响应。',
   errInput: '此卡片的配置无效：{detail}',
+  closedByServer: '剩余使用寿命卡片已被服务器关闭。请在 Server Admin（面向操作员的剩余使用寿命）中打开后才会显示。',
 }
 
 const pt: Dict = {
@@ -214,6 +221,7 @@ const pt: Dict = {
   errHttp: 'O serviço respondeu com um erro: {detail}',
   errInvalid: 'O detetor enviou uma resposta que não se pode usar.',
   errInput: 'A configuração deste cartão não é válida: {detail}',
+  closedByServer: 'O cartão da vida útil restante está fechado pelo servidor. Abra-o no Server Admin (vida útil restante para operadores) para o mostrar.',
 }
 
 export const RUL_TEXTS: Record<Lang, Dict> = { en, es, de, fr, it, ja, zh, pt }

@@ -9,7 +9,9 @@
 
 import { useEffect, useState } from 'react'
 import { applyServerLimits, fetchRulServerConfig, RUL_SERVER_CONFIG_PATH, type RulServerOutcome } from '../api/rulServerConfigClient'
+import { browserLang, tr } from '../lib/i18n'
 import type { RulConfig } from '../lib/rulConfig'
+import { tokenRole } from '../lib/session'
 import { ErrorBoundary } from './ErrorBoundary'
 import { RulPanel } from './RulPanel'
 
@@ -36,6 +38,14 @@ export function RulGate({ build, datalakeBaseUrl, serverConfigUrl = RUL_SERVER_C
     }
   }, [allowed, serverConfigUrl])
 
+  // A server that has the option closed leaves the card out for everybody; an administrator is told why, because only an administrator can open it.
+  if (allowed && outcome !== null && outcome.state === 'closed' && outcome.reason === 'disabled' && tokenRole() === 'admin') {
+    return (
+      <p role="note" data-testid="rul-closed-by-server" className="rul-closed-by-server">
+        {tr(browserLang(), 'closedByServer')}
+      </p>
+    )
+  }
   if (!allowed || outcome === null || outcome.state !== 'open') return null
   return (
     <ErrorBoundary panelName="Remaining useful life">

@@ -42,6 +42,25 @@ export function readToken(stores: Stores = { session: browserStorage('sessionSto
   return token !== '' && !/[\u0000-\u001F\u007F]/.test(token) ? token : null
 }
 
+/**
+ * The role of the person who signed in, read from the access token (an administrator, an operator...); null when there is no token or it cannot be read.
+ * The token is only read, not checked: this decides what to SHOW (a notice for administrators), never what is allowed - the server decides that.
+ */
+export function tokenRole(token: string | null = readToken()): string | null {
+  if (!token) return null
+  const parts = token.split('.')
+  if (parts.length !== 3) return null
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4)
+    const payload = JSON.parse(atob(padded)) as unknown
+    const role = typeof payload === 'object' && payload !== null ? (payload as { role?: unknown }).role : undefined
+    return typeof role === 'string' ? role : null
+  } catch {
+    return null
+  }
+}
+
 /** Is this base URL on the page's own origin ("/api/..." and not "//host/..." or "http://host")? */
 export function isSameOriginPath(baseUrl: string): boolean {
   return baseUrl.startsWith('/') && !baseUrl.startsWith('//') && !baseUrl.includes('\\')

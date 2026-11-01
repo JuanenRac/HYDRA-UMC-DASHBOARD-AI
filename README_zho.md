@@ -72,7 +72,7 @@ GPL-3.0-or-later - see LICENSE
 * 📈 **趋势预测** —— 一个真实的预测模型，超越 v0 中真实但简单的方向指示器。*（计划中）*
 * 🚨 **异常高亮（v0）：** 将最新的真实样本与 HYDRA-UMC-ANOMALY-DETECTOR 已拟合的真实基线进行对比检查。*（已实现为真实的文字面板；在 STUDIO 自身的 3D 视图中叠加显示尚在计划中）*
 * 🛠️ **优化建议：** 提出改进周期时间或电机寿命的参数变更建议。*（计划中）*
-* ⏳ **剩余使用寿命（v0，默认关闭）** — 一张向 HYDRA-UMC-ANOMALY-DETECTOR 询问异常分数趋势到达上限还需多少天的卡片，带范围、明确状态（数据不足、不上升、已到上限）、小图表和可配置的警告；已用模拟的数据湖和检测器测试。*（已实现；参见 [`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md)）*
+* ⏳ **剩余使用寿命（v0，默认关闭）** — 一张向 HYDRA-UMC-ANOMALY-DETECTOR 询问异常分数趋势到达上限还需多少天的卡片，带范围、明确状态（数据不足、不上升、已到上限）、小图表和可配置的警告；已用模拟的数据湖和检测器测试。*（已实现；参见 [`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md)）* 服务器关闭该选项时，只有管理员会看到提示：该卡片已被服务器关闭。
 * ✅ **工具链骨架** —— 一个真实的 React/Vite/TypeScript 应用，能够通过 `tsc --noEmit` 干净地构建，并使用 Vite 进行服务。*（已实现——见下方"构建与发布"）*
 * 🧯 **按面板隔离渲染失败** —— 每个面板都被包裹在自己的 `ErrorBoundary` 中；某个面板渲染时抛出的异常只会显示一个被限制在该面板内的回退卡片，而不会卸载整个仪表盘。*（已实现——见 `components/ErrorBoundary.tsx`）*
 
