@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Development tools brought to their current major versions:** Vitest 5, ESLint 10 with the React hooks rules 7 (the one effect that asks the services when the card appears says so in a comment), and Node.js 22 as the minimum for the tests and the CI. The typecheck, the lint, the 217 tests and the production build pass.
+
 ## [0.2.1] - An administrator is told when the server has the remaining-useful-life card closed
 
 - **An administrator is told when the server has the remaining-useful-life card closed:** with the build allowing the card and the server answering that the option is closed, the card is still left out for everybody, but an administrator (read from the role in the access token, only to decide what to show) sees a note that it is closed by the server, in the eight languages. An operator, a viewer, a token that cannot be read and no session see nothing; a missing route, a refused session or a failure are not reported as closed by the server.

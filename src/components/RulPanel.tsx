@@ -94,6 +94,8 @@ export function RulPanel({ datalakeBaseUrl, config, lang }: Props) {
 
   // one estimate when the card appears; after that, the button
   useEffect(() => {
+    // the card asks the services once when it appears: the state it sets first belongs to that request
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void run()
     return () => {
       latest.current += 1
