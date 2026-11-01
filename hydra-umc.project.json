@@ -12,6 +12,7 @@
   "deployment_target": "cm5",
   "maturity": "functional",
   "evidence": "none",
+  "hardware_bound": false,
   "family": "Complementary Tools",
   "parent": null,
   "build": "python tools/build_test.py",
