@@ -418,3 +418,83 @@ class UpstreamTokenSettingsTests(unittest.TestCase):
             with self.assertRaises(SystemExit) as caught:
                 serve(Path(folder), "0.0.0.0", 0, upstream_tokens={"/api/anomaly": "t" * 20})
             self.assertIn("loopback", str(caught.exception))
+
+
+class CognitiveRelayTests(unittest.TestCase):
+    """/api/cognitive forwards POST /narrative of the cognitive node and nothing else; /api/anomaly/fleet is a read the detector token covers."""
+
+    def setUp(self) -> None:
+        import functools
+        import json
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+        from serve_static import QuietHandler
+
+        seen: list[tuple[str, str, str | None]] = []
+        self.seen = seen
+
+        class Upstream(BaseHTTPRequestHandler):
+            def log_message(self, format, *args):  # noqa: A002, ANN001, ANN002
+                pass
+
+            def _reply(self) -> None:
+                if self.command == "POST":
+                    self.rfile.read(int(self.headers.get("Content-Length", "0")))
+                seen.append((self.command, self.path, self.headers.get("Authorization")))
+                payload = json.dumps({"ok": True}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+
+            do_GET = do_POST = _reply  # noqa: N815
+
+        self.upstream = ThreadingHTTPServer(("127.0.0.1", 0), Upstream)
+        threading.Thread(target=self.upstream.serve_forever, daemon=True).start()
+        url = f"http://127.0.0.1:{self.upstream.server_address[1]}"
+        self._tmpdir = tempfile.TemporaryDirectory()
+        (Path(self._tmpdir.name) / "index.html").write_text("<html></html>", encoding="utf-8")
+        handler_class = type(
+            "CognitiveProxyingHandler",
+            (QuietHandler,),
+            {"proxy_routes": {"/api/anomaly": url, "/api/cognitive": url},
+             "proxy_tokens": {"/api/anomaly": "detector-token-1234", "/api/cognitive": "cognitive-token-1234"}},
+        )
+        self.httpd = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(handler_class, directory=self._tmpdir.name))
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+        self.base = f"http://127.0.0.1:{self.httpd.server_address[1]}"
+
+    def tearDown(self) -> None:
+        for server in (self.httpd, self.upstream):
+            server.shutdown()
+            server.server_close()
+        self._tmpdir.cleanup()
+
+    def _call(self, method: str, path: str) -> int:
+        request = urllib.request.Request(f"{self.base}{path}", data=b"{}" if method == "POST" else None, method=method, headers={"Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(request) as response:
+                response.read()
+                return response.status
+        except urllib.error.HTTPError as error:
+            error.read()
+            return error.code
+
+    def test_the_narrative_is_forwarded_with_the_token_of_the_node(self) -> None:
+        self.assertEqual(self._call("POST", "/api/cognitive/narrative"), 200)
+        self.assertEqual(self.seen[-1], ("POST", "/narrative", "Bearer cognitive-token-1234"))
+
+    def test_nothing_else_of_the_node_is_forwarded(self) -> None:
+        for method, path in (("GET", "/api/cognitive/family-status"), ("GET", "/api/cognitive/metrics"), ("GET", "/api/cognitive/narrative"),
+                             ("POST", "/api/cognitive/family-status"), ("POST", "/api/cognitive/narrative/x"), ("POST", "/api/cognitive")):
+            self.assertEqual(self._call(method, path), 403, (method, path))
+        self.assertEqual(self.seen, [])
+
+    def test_the_fleet_read_carries_the_token_of_the_detector(self) -> None:
+        self.assertEqual(self._call("GET", "/api/anomaly/fleet"), 200)
+        self.assertEqual(self.seen[-1], ("GET", "/fleet", "Bearer detector-token-1234"))
+
+    def test_the_read_of_a_fleet_lookalike_gets_no_token(self) -> None:
+        self._call("GET", "/api/anomaly/fleet/extra")
+        self.assertEqual(self.seen[-1][2], None)

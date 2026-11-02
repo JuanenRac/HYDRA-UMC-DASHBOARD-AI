@@ -16,6 +16,7 @@
 // an AI-generated narrative.
 
 import type { TrendSummary } from './summary'
+import { verifyNarrativeNumbers } from './numberVerifier'
 
 export interface NarrativeRequest {
   sourceId: string
@@ -27,9 +28,21 @@ export interface NarrativeRequest {
 export interface NarrativeResponse {
   narrative: string
   generatedBy: 'ai' | 'statistical-fallback'
+  /** Only on a fallback that took the place of a provider: it could not answer, or its numbers did not match the summary. */
+  fallbackReason?: 'unavailable' | 'unverified'
 }
 
 export class AiProviderError extends Error {}
+
+/** A narrative that quotes a number that is not one of the summary. */
+export class UnverifiedNarrativeError extends AiProviderError {
+  readonly unmatched: string[]
+  constructor(unmatched: string[]) {
+    super(`narrative quotes numbers that are not in the summary: ${unmatched.slice(0, 5).join(', ')}`)
+    this.unmatched = unmatched
+    this.name = 'UnverifiedNarrativeError'
+  }
+}
 
 export interface AiProvider {
   readonly name: string
@@ -147,6 +160,11 @@ export async function safeGenerateNarrative(
   try {
     const raw = await provider.generateNarrative(request)
     const checked = validateNarrativeResponse(raw)
+    if (provider !== NO_PROVIDER_CONFIGURED) {
+      // a model may only show figures that are the figures of the summary: any other number sends the reader to the statistical sentence
+      const verdict = verifyNarrativeNumbers(checked.narrative, request)
+      if (!verdict.ok) throw new UnverifiedNarrativeError(verdict.unmatched)
+    }
     // the label comes from the path taken here, never from the provider's own
     // claim: only the built-in statistical provider is labeled statistical
     return {
@@ -155,6 +173,8 @@ export async function safeGenerateNarrative(
     }
   } catch (err) {
     console.warn('narrative provider unavailable, using the statistical summary:', err)
-    return NO_PROVIDER_CONFIGURED.generateNarrative(request)
+    const fallback = await NO_PROVIDER_CONFIGURED.generateNarrative(request)
+    // the label of a fallback that replaced a provider says why; the built-in one never gets here
+    return { ...fallback, fallbackReason: err instanceof UnverifiedNarrativeError ? 'unverified' : 'unavailable' }
   }
 }

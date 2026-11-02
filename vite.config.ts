@@ -32,6 +32,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/datalake/, ''),
       },
+      '/api/cognitive': {
+        target: 'http://127.0.0.1:8096',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/cognitive/, ''),
+      },
       '/api/anomaly': {
         target: 'http://127.0.0.1:8097',
         changeOrigin: true,

@@ -42,12 +42,19 @@ MAX_PROXY_BODY_BYTES = 4 * 1024 * 1024
 # the token and the service refuses it, so this server cannot be used to change what the services hold.
 TOKEN_ALLOWED_CALLS: dict[str, frozenset[tuple[str, str]]] = {
     "/api/datalake": frozenset({("GET", p) for p in ("/query", "/aggregate", "/stats", "/stats/range", "/series", "/health")}),
-    "/api/anomaly": frozenset({("GET", "/stats"), ("POST", "/detect"), ("POST", "/rul")}),
+    "/api/anomaly": frozenset({("GET", "/stats"), ("GET", "/fleet"), ("POST", "/detect"), ("POST", "/rul")}),
+    "/api/cognitive": frozenset({("POST", "/narrative")}),
+}
+# A prefix listed here forwards ONLY these calls; any other method or path under it is refused with 403. The cognitive node has routes
+# (its family status, its metrics) that a page has no business reading through this relay.
+ONLY_CALLS: dict[str, frozenset[tuple[str, str]]] = {
+    "/api/cognitive": frozenset({("POST", "/narrative")}),
 }
 # The names the services themselves read, each one also as <NAME>_FILE (a file whose first line is the token).
 TOKEN_ENVIRONMENT: dict[str, tuple[str, ...]] = {
     "/api/datalake": ("HYDRA_UMC_DATALAKE_READ_TOKEN", "HYDRA_UMC_DATALAKE_TOKEN"),
     "/api/anomaly": ("HYDRA_UMC_ANOMALY_TOKEN",),
+    "/api/cognitive": ("HYDRA_UMC_COGNITIVE_NODE_TOKEN",),
 }
 
 
@@ -129,6 +136,14 @@ class QuietHandler(SimpleHTTPRequestHandler):
                 return upstream.rstrip("/") + (self.path[len(prefix):] or "/")
         return None
 
+    def _allowed_here(self) -> bool:
+        """False for a call a restricted prefix (ONLY_CALLS) does not forward."""
+        for prefix, calls in ONLY_CALLS.items():
+            if self.path == prefix or self.path.startswith(prefix + "/") or self.path.startswith(prefix + "?"):
+                path = (self.path[len(prefix):] or "/").split("?", 1)[0]
+                return (self.command, path) in calls
+        return True
+
     def _token_for(self) -> str | None:
         """The token to present for this call, or None: only the calls the dashboard makes get one."""
         for prefix, token in self.proxy_tokens.items():
@@ -140,6 +155,9 @@ class QuietHandler(SimpleHTTPRequestHandler):
         return None
 
     def _forward(self, target: str, body: bytes | None) -> None:
+        if not self._allowed_here():
+            self.send_error(403, "This call is not forwarded")
+            return
         request = urllib.request.Request(target, data=body, method=self.command)
         content_type = self.headers.get("Content-Type")
         if content_type:
@@ -213,6 +231,7 @@ def serve(
     connect_origins: tuple[str, ...] = (),
     upstream_tokens: dict[str, str] | None = None,
     allow_tokens_off_loopback: bool = False,
+    cognitive: str = "http://127.0.0.1:8096",
 ) -> None:
     if upstream_tokens and addr not in ("127.0.0.1", "::1", "localhost") and not allow_tokens_off_loopback:
         # This server would let anyone who can reach it read the data lake and score windows as if signed in.
@@ -229,7 +248,7 @@ def serve(
         "ProxyingHandler",
         (QuietHandler,),
         {
-            "proxy_routes": {"/api/datalake": datalake, "/api/anomaly": anomaly},
+            "proxy_routes": {"/api/datalake": datalake, "/api/anomaly": anomaly, "/api/cognitive": cognitive},
             "proxy_tokens": dict(upstream_tokens or {}),
             "csp_policy": build_csp(csp or "default", connect_origins),
         },
@@ -256,6 +275,8 @@ def main() -> int:
                          help="HYDRA-UMC-DATALAKE base URL behind /api/datalake (default: http://127.0.0.1:8095).")
     parser.add_argument("--anomaly", default="http://127.0.0.1:8097",
                          help="HYDRA-UMC-ANOMALY-DETECTOR base URL behind /api/anomaly (default: http://127.0.0.1:8097).")
+    parser.add_argument("--cognitive", default="http://127.0.0.1:8096",
+                         help="HYDRA-UMC-COGNITIVE-NODE base URL behind /api/cognitive; only POST /narrative is forwarded, and the page uses it only when built with VITE_COGNITIVE_ENABLED=true (default: http://127.0.0.1:8096).")
     parser.add_argument("--csp", default=os.environ.get("HYDRA_DASHBOARD_CSP", "default"),
                          help='Content-Security-Policy: "default" (own scripts only, connections to this origin), "off" for none '
                               "(or HYDRA_DASHBOARD_CSP), or a complete policy used as given.")
@@ -271,7 +292,7 @@ def main() -> int:
     except ValueError as error:
         parser.error(str(error))
     serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly, args.csp, tuple(args.connect_src),
-          read_upstream_tokens(), args.allow_tokens_off_loopback)
+          read_upstream_tokens(), args.allow_tokens_off_loopback, args.cognitive)
     return 0
 
 

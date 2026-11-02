@@ -12,10 +12,16 @@ import { useState } from 'react'
 import { queryDatalake, DatalakeApiError } from '../api/datalakeClient'
 import { Sparkline } from './Sparkline'
 import { summarize, SummaryError, type TrendSummary } from '../lib/summary'
-import { NO_PROVIDER_CONFIGURED, safeGenerateNarrative, type NarrativeResponse } from '../lib/aiProvider'
+import { NO_PROVIDER_CONFIGURED, safeGenerateNarrative, type AiProvider, type NarrativeResponse } from '../lib/aiProvider'
+import { at } from '../lib/aiTexts'
+import { browserLang, type Lang } from '../lib/i18n'
 
 interface Props {
   datalakeBaseUrl: string
+  /** The provider of the sentence; the statistical one unless the build switched the language model on. */
+  provider?: AiProvider
+  /** Fixed language of the label; the browser's by default. */
+  lang?: Lang
 }
 
 const DIRECTION_LABEL: Record<TrendSummary['direction'], string> = {
@@ -32,7 +38,8 @@ function formatObservedAt(timestampMs: number): string {
   return new Date(timestampMs).toLocaleString()
 }
 
-export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
+export function TrendSummaryPanel({ datalakeBaseUrl, provider = NO_PROVIDER_CONFIGURED, lang }: Props) {
+  const language = lang ?? browserLang()
   const [sourceId, setSourceId] = useState('robot-1')
   const [kind, setKind] = useState('motor_temp')
   const [field, setField] = useState('value')
@@ -69,11 +76,9 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
         minIndex: ordered.findIndex((p) => p.timestamp === computed.minTimestamp),
         maxIndex: ordered.findIndex((p) => p.timestamp === computed.maxTimestamp),
       })
-      // No real AI provider is configured for v0 - safeGenerateNarrative
-      // still runs the real request/response validation gate and returns
-      // the real, honestly-labeled statistical fallback rather than
-      // skipping straight to it.
-      setNarrative(await safeGenerateNarrative(NO_PROVIDER_CONFIGURED, { sourceId, kind, field, summary: computed }))
+      // Without a language model (the default) safeGenerateNarrative still runs the validation gate and returns the honestly-labeled
+      // statistical sentence. With one, its sentence is shown only when every number in it is a figure of the summary.
+      setNarrative(await safeGenerateNarrative(provider, { sourceId, kind, field, summary: computed }))
     } catch (err) {
       if (err instanceof DatalakeApiError || err instanceof SummaryError) {
         setError(err.message)
@@ -180,9 +185,15 @@ export function TrendSummaryPanel({ datalakeBaseUrl }: Props) {
       {narrative && (
         <p className="panel-narrative" data-testid="trend-narrative">
           <span className="panel-narrative-badge">
-            {narrative.generatedBy === 'ai' ? 'AI' : 'Statistical fallback'}
+            {narrative.generatedBy === 'ai' ? at(language, 'badgeAi') : at(language, 'badgeFallback')}
           </span>{' '}
           {narrative.narrative}
+          {narrative.fallbackReason && (
+            <span className="summary-observed-at" data-testid="trend-narrative-reason">
+              {' '}
+              {at(language, narrative.fallbackReason === 'unverified' ? 'reasonUnverified' : 'reasonUnavailable')}
+            </span>
+          )}
         </p>
       )}
     </section>

@@ -201,3 +201,44 @@ body {
   font-size: 0.85rem;
   margin: 0.25rem 0;
 }
+
+/* The page inside a frame of STUDIO (?embed=1): no heading of its own, less padding */
+.app-embedded {
+  min-height: 0;
+  padding: 0.5rem;
+}
+
+.fleet-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.fleet-table th,
+.fleet-table td {
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.fleet-state {
+  font-weight: 600;
+}
+
+.fleet-state-sustained,
+.fleet-state-anomalous {
+  color: var(--bad);
+}
+
+.fleet-state-drifted {
+  color: #fbbf24;
+}
+
+.fleet-state-normal {
+  color: var(--good);
+}
+
+.fleet-state-nodata {
+  color: var(--dim);
+}

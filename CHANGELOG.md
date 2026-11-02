@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The sentence of a local language model, off by default (`VITE_COGNITIVE_ENABLED=true`):** the Trend Summary asks the cognitive node (`POST /narrative`) for its sentence, sending only the identifiers and the numbers of the summary. Every number in the answer must be one of the figures of the summary, to the decimals it is written with (decimal commas, thousands separators, signs and full-width digits are read; digits of other writing systems are refused); otherwise the page shows the statistical sentence and says why, in the eight languages. Served on its own, `scripts/serve_static.py` forwards `/api/cognitive` (`--cognitive URL`) and only `POST /narrative`, with the token of the node.
+- **A Fleet card, off by default (`VITE_FLEET_ENABLED=true`):** a table of every series the anomaly detector follows with its last score, its drift and its state (sustained drift, drifting, anomalous, normal, no data), worst first, and how many maintenance proposals the detector has sent; refreshed every `VITE_FLEET_REFRESH_MS` (15 s by default, 0 for manual), in the eight languages. `scripts/serve_static.py` presents the detector token on `GET /fleet`.
+- **The page can run embedded in a frame of STUDIO (`?embed=1`):** it leaves out its own heading and posts its height to the parent, to its own origin only. The side of STUDIO and of the server is described in `docs/LANGUAGE_MODEL_AND_FLEET.md`. New `tests/numberVerifier.test.ts` and `tests/aiFeatures.test.tsx`, and 4 tests of the relay.
+
 - **Development tools brought to their current major versions:** Vitest 5, ESLint 10 with the React hooks rules 7 (the one effect that asks the services when the card appears says so in a comment), and Node.js 22 as the minimum for the tests and the CI. The typecheck, the lint, the 217 tests and the production build pass.
 
 ## [0.2.1] - An administrator is told when the server has the remaining-useful-life card closed
