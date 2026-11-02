@@ -119,11 +119,13 @@ flowchart LR
 
 ## 🖼️ Schermate
 
-Catturate a 1920×1080 su un banco di prova, con dati di esempio e senza alcuna installazione reale dietro.
+Catturate su un banco di prova con dati di esempio inventati e senza alcuna installazione reale dietro.
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="I due pannelli: il riepilogo di tendenza di una serie di vibrazioni letta dal data lake, e il controllo delle anomalie che valuta l'ultima finestra rispetto alla baseline adattata." width="100%"><br><sub>I due pannelli: il riepilogo di tendenza di una serie di vibrazioni letta dal data lake, e il controllo delle anomalie che valuta l'ultima finestra rispetto alla baseline adattata.</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/dashboard.png" alt="I due pannelli" width="100%">
+</p>
+
+<p align="center"><em>I due pannelli: il riepilogo di tendenza di una serie di vibrazioni letta dal data lake, e il controllo delle anomalie che valuta l'ultima finestra rispetto alla baseline adattata.</em></p>
 
 ## 🔒 Sicurezza e protezione
 
@@ -247,7 +249,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── systemd/                                                 unità di servizio
 ├── tools/                                                   strumenti del progetto e controlli della CI
 ├── docs/                                                    documenti del progetto
-├── images/                                                  Media e diagrammi
+├── images/                                                  Banner e schermate del README
 ├── .github/                                                 workflow di CI e modelli di segnalazione
 ├── index.html                                               HTML di ingresso di Vite
 ├── vite.config.ts                                           Configurazione del bundler Vite + Vitest

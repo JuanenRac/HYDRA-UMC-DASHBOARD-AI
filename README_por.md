@@ -119,11 +119,13 @@ flowchart LR
 
 ## 🖼️ Capturas de ecrã
 
-Capturadas a 1920×1080 numa bancada de testes, com dados de exemplo e sem qualquer instalação real por trás.
+Capturadas numa bancada de testes com dados de exemplo inventados e sem qualquer instalação real por trás.
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="Os dois painéis: o resumo de tendência de uma série de vibração lida do lago de dados e a verificação de anomalias que pontua a sua última janela contra a linha de base ajustada." width="100%"><br><sub>Os dois painéis: o resumo de tendência de uma série de vibração lida do lago de dados e a verificação de anomalias que pontua a sua última janela contra a linha de base ajustada.</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/dashboard.png" alt="Os dois painéis" width="100%">
+</p>
+
+<p align="center"><em>Os dois painéis: o resumo de tendência de uma série de vibração lida do lago de dados e a verificação de anomalias que pontua a sua última janela contra a linha de base ajustada.</em></p>
 
 ## 🔒 Segurança e proteção
 
@@ -247,7 +249,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── systemd/                                                 unidade de serviço
 ├── tools/                                                   ferramentas do projeto e verificações da CI
 ├── docs/                                                    documentos do projeto
-├── images/                                                  Multimédia e diagramas
+├── images/                                                  Faixa e capturas de ecrã do README
 ├── .github/                                                 fluxo de CI e modelos de problemas
 ├── index.html                                               HTML de entrada do Vite
 ├── vite.config.ts                                           Empacotador Vite + configuração do Vitest

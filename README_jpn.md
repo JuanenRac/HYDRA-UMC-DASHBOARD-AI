@@ -119,11 +119,13 @@ flowchart LR
 
 ## 🖼️ スクリーンショット
 
-テストベンチで 1920×1080 で撮影。サンプルデータを使用しており、実際の設備は接続されていません。
+テストベンチで架空のサンプルデータを使って撮影したもので、実際の設備は接続されていません。
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="2 つのパネル：データレイクから読み取った振動系列のトレンド要約と、最新のウィンドウをフィット済みのベースラインに対して採点する異常チェック。" width="100%"><br><sub>2 つのパネル：データレイクから読み取った振動系列のトレンド要約と、最新のウィンドウをフィット済みのベースラインに対して採点する異常チェック。</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/dashboard.png" alt="2 つのパネル" width="100%">
+</p>
+
+<p align="center"><em>2 つのパネル：データレイクから読み取った振動系列のトレンド要約と、最新のウィンドウをフィット済みのベースラインに対して採点する異常チェック。</em></p>
 
 ## 🔒 セキュリティと安全
 
@@ -264,7 +266,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── systemd/                                                 サービスユニット
 ├── tools/                                                   プロジェクトのツールと CI の検査
 ├── docs/                                                    プロジェクトの文書
-├── images/                                                  メディアと図表
+├── images/                                                  README のバナーとスクリーンショット
 ├── .github/                                                 CI ワークフローと Issue テンプレート
 ├── index.html                                               Vite エントリ HTML
 ├── vite.config.ts                                           Vite バンドラー + Vitest 設定

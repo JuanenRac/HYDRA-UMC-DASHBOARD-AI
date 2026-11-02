@@ -1,0 +1,27 @@
+{
+  "screens": [
+    {
+      "file": "dashboard.png",
+      "alt": {
+        "en": "The two panels",
+        "es": "Los dos paneles",
+        "fr": "Les deux panneaux",
+        "it": "I due pannelli",
+        "de": "Die zwei Panels",
+        "zh": "两个面板",
+        "ja": "2 つのパネル",
+        "pt": "Os dois painéis"
+      },
+      "caption": {
+        "en": "The two panels: the trend summary of a vibration series read from the data lake, and the anomaly check that scores its latest window against the fitted baseline.",
+        "es": "Los dos paneles: el resumen de tendencia de una serie de vibración leída del lago de datos, y la comprobación de anomalías que puntúa su última ventana contra la línea base ajustada.",
+        "fr": "Les deux panneaux : le résumé de tendance d'une série de vibrations lue dans le lac de données, et le contrôle d'anomalies qui note sa dernière fenêtre par rapport à la base ajustée.",
+        "it": "I due pannelli: il riepilogo di tendenza di una serie di vibrazioni letta dal data lake, e il controllo delle anomalie che valuta l'ultima finestra rispetto alla baseline adattata.",
+        "de": "Die zwei Panels: die Trendzusammenfassung einer aus dem Data Lake gelesenen Schwingungsreihe und die Anomalieprüfung, die ihr jüngstes Fenster gegen die angepasste Baseline bewertet.",
+        "zh": "两个面板：从数据湖读取的振动序列的趋势摘要，以及将其最新窗口与已拟合基线进行评分的异常检查。",
+        "ja": "2 つのパネル：データレイクから読み取った振動系列のトレンド要約と、最新のウィンドウをフィット済みのベースラインに対して採点する異常チェック。",
+        "pt": "Os dois painéis: o resumo de tendência de uma série de vibração lida do lago de dados e a verificação de anomalias que pontua a sua última janela contra a linha de base ajustada."
+      }
+    }
+  ]
+}

@@ -119,11 +119,13 @@ flowchart LR
 
 ## 🖼️ Screenshots
 
-Aufgenommen mit 1920×1080 auf einem Prüfstand, mit Beispieldaten und ohne eine echte Anlage dahinter.
+Aufgenommen auf einem Prüfstand mit erfundenen Beispieldaten und ohne eine echte Anlage dahinter.
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="Die zwei Panels: die Trendzusammenfassung einer aus dem Data Lake gelesenen Schwingungsreihe und die Anomalieprüfung, die ihr jüngstes Fenster gegen die angepasste Baseline bewertet." width="100%"><br><sub>Die zwei Panels: die Trendzusammenfassung einer aus dem Data Lake gelesenen Schwingungsreihe und die Anomalieprüfung, die ihr jüngstes Fenster gegen die angepasste Baseline bewertet.</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/dashboard.png" alt="Die zwei Panels" width="100%">
+</p>
+
+<p align="center"><em>Die zwei Panels: die Trendzusammenfassung einer aus dem Data Lake gelesenen Schwingungsreihe und die Anomalieprüfung, die ihr jüngstes Fenster gegen die angepasste Baseline bewertet.</em></p>
 
 ## 🔒 Sicherheit und Schutz
 
@@ -247,7 +249,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── systemd/                                                 Dienst-Unit
 ├── tools/                                                   Projektwerkzeuge und CI-Prüfungen
 ├── docs/                                                    Dokumente des Projekts
-├── images/                                                  Medien und Diagramme
+├── images/                                                  README-Banner und Screenshots
 ├── .github/                                                 CI-Workflow und Issue-Vorlagen
 ├── index.html                                               Vite-Einstiegs-HTML
 ├── vite.config.ts                                           Vite-Bundler- + Vitest-Konfiguration

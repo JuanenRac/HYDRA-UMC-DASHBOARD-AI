@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The README shows a screenshot of the dashboard** (the trend summary and the anomaly check), taken with made-up sample data by `tools/capture_screenshots.mjs`; the list and the captions in the eight languages are in `docs/screenshots.json`.
+
 ## [0.2.2] - A numeric verifier for the model sentence, a fleet card with the worst series first and an embedded mode with no header of its own
 
 - **The sentence of a local language model, off by default (`VITE_COGNITIVE_ENABLED=true`):** the Trend Summary asks the cognitive node (`POST /narrative`) for its sentence, sending only the identifiers and the numbers of the summary. Every number in the answer must be one of the figures of the summary, to the decimals it is written with (decimal commas, thousands separators, signs and full-width digits are read; digits of other writing systems are refused); otherwise the page shows the statistical sentence and says why, in the eight languages. Served on its own, `scripts/serve_static.py` forwards `/api/cognitive` (`--cognitive URL`) and only `POST /narrative`, with the token of the node.

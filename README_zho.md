@@ -119,11 +119,13 @@ flowchart LR
 
 ## 🖼️ 屏幕截图
 
-在测试台上以 1920×1080 截取，使用示例数据，背后没有真实的安装。
+在测试台上使用虚构的示例数据截取，背后没有真实的安装。
 
-<table>
-<tr><td width="50%" valign="top"><img src="images/screenshots/dashboard.png" alt="两个面板：从数据湖读取的振动序列的趋势摘要，以及将其最新窗口与已拟合基线进行评分的异常检查。" width="100%"><br><sub>两个面板：从数据湖读取的振动序列的趋势摘要，以及将其最新窗口与已拟合基线进行评分的异常检查。</sub></td></tr>
-</table>
+<p align="center">
+  <img src="images/screenshots/dashboard.png" alt="两个面板" width="100%">
+</p>
+
+<p align="center"><em>两个面板：从数据湖读取的振动序列的趋势摘要，以及将其最新窗口与已拟合基线进行评分的异常检查。</em></p>
 
 ## 🔒 安全与防护
 
@@ -259,7 +261,7 @@ HYDRA-UMC-DASHBOARD-AI/
 ├── systemd/                                                 服务单元
 ├── tools/                                                   项目工具和 CI 检查
 ├── docs/                                                    项目文档
-├── images/                                                  媒体与图表
+├── images/                                                  README 横幅和截图
 ├── .github/                                                 CI 工作流和 Issue 模板
 ├── index.html                                               Vite 入口 HTML
 ├── vite.config.ts                                           Vite 打包器 + Vitest 配置

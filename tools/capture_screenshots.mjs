@@ -5,8 +5,8 @@
  * Copyright (C) 2026 JuanenRac (Electro Hobby 3D). GPL-3.0-or-later.
  *
  *   npm run build                                the dashboard built (dist/)
- *   node tools/make_screenshots.mjs              writes images/screenshots/<name>.png at 1920x1080
- *   node tools/make_screenshots.mjs --out DIR    writes them in DIR instead, to look at them before they replace the ones in the repository
+ *   node tools/capture_screenshots.mjs              writes images/screenshots/<name>.png at 1920x1080
+ *   node tools/capture_screenshots.mjs --out DIR    writes them in DIR instead, to look at them before they replace the ones in the repository
  *
  * It needs Edge (the one Windows has), the two sibling repositories HYDRA-UMC-DATALAKE and HYDRA-UMC-ANOMALY-DETECTOR with their Python environments (.venv), and
  * Playwright, which it takes from PLAYWRIGHT_DIR (a folder that has node_modules/@playwright/test). Ports 8095, 8097 and 8115 must be free.
