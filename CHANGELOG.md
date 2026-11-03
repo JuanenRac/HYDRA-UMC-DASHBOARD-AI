@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.2.3] - Browser tests with Playwright and axe on the real build in eight languages, run by a separate workflow with a pinned and cached browser, and the list of files of the repository kept in step
+
 - **Browser tests with Playwright and axe-core (`e2e/`),** run on the real build served by `scripts/serve_static.py` against fake services: the page loads without a console or page error or a failed request, a trend summary is computed, a service that is down is reported, the Fleet card appears in the eight languages of the browser, the dark theme holds under both system preferences, axe finds no serious or critical violation in English and Japanese, and the form works from the keyboard. The Chromium is the one of the exact `@playwright/test` version pinned in `e2e/package-lock.json`.
 - **A workflow of its own for them (`browser-tests.yml`),** apart from the baseline, so a failed download of the browser cannot turn the main check red; the download is kept in the cache of the runner under a key made from the lock file, the permissions are read-only on the contents, and the screenshots of a failed run are kept for seven days.
 - **The README shows a screenshot of the dashboard** (the trend summary and the anomaly check), taken with made-up sample data by `tools/capture_screenshots.mjs`; the list and the captions in the eight languages are in `docs/screenshots.json`.
