@@ -243,6 +243,29 @@
           }
         },
         {
+          "name": "e2e/",
+          "desc": {
+            "en": "browser tests with a pinned Chromium",
+            "es": "pruebas de navegador con Chromium fijado",
+            "de": "Browsertests mit festem Chromium",
+            "fr": "tests de navigateur, Chromium figé",
+            "it": "test del browser con Chromium fissato",
+            "ja": "固定版 Chromium のブラウザーテスト",
+            "zh": "固定版本 Chromium 的浏览器测试",
+            "pt": "testes de navegador com Chromium fixo"
+          },
+          "tree_desc": {
+            "en": "browser tests with a pinned Chromium",
+            "es": "pruebas de navegador con Chromium fijado",
+            "de": "Browsertests mit festem Chromium",
+            "fr": "tests de navigateur, Chromium figé",
+            "it": "test del browser con Chromium fissato",
+            "ja": "固定版 Chromium のブラウザーテスト",
+            "zh": "固定版本 Chromium 的浏览器测试",
+            "pt": "testes de navegador com Chromium fixo"
+          }
+        },
+        {
           "name": "scripts/",
           "desc": {
             "en": "the static server and its tests",

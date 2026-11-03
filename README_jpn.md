@@ -262,6 +262,7 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── index.css                                            ベーススタイルシート
 │   └── vite-env.d.ts                                        VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_* の型定義
 ├── tests/                                                   実際のテスト：HTTP ラウンドトリップ + コンポーネントテスト
+├── e2e/                                                     固定版 Chromium のブラウザーテスト
 ├── scripts/                                                 静的サーバーとそのテスト
 ├── systemd/                                                 サービスユニット
 ├── tools/                                                   プロジェクトのツールと CI の検査

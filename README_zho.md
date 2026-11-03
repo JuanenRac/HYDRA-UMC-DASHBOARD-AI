@@ -257,6 +257,7 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── index.css                                            基础样式表
 │   └── vite-env.d.ts                                        VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_* 的类型定义
 ├── tests/                                                   真实测试：HTTP 往返 + 组件测试
+├── e2e/                                                     固定版本 Chromium 的浏览器测试
 ├── scripts/                                                 静态服务器及其测试
 ├── systemd/                                                 服务单元
 ├── tools/                                                   项目工具和 CI 检查

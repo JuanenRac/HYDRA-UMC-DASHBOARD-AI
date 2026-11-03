@@ -245,6 +245,7 @@ HYDRA-UMC-DASHBOARD-AI/
 │   ├── index.css                                            Base stylesheet
 │   └── vite-env.d.ts                                        VITE_DATALAKE_URL / VITE_ANOMALY_URL / VITE_RUL_* typing
 ├── tests/                                                   Real tests: HTTP round-trips + component tests
+├── e2e/                                                     browser tests with a pinned Chromium
 ├── scripts/                                                 the static server and its tests
 ├── systemd/                                                 service unit
 ├── tools/                                                   project tools and CI checks

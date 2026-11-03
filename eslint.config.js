@@ -38,4 +38,10 @@ export default tseslint.config(
     files: ['tools/**/*.mjs'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
+  {
+    // the browser tests (Playwright): its fixtures hand over the page with a function that is called `use`, which is not a React hook
+    files: ['e2e/**/*.ts'],
+    languageOptions: { globals: { ...globals.node } },
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
+  },
 )

@@ -1,0 +1,125 @@
+# =============================================================================
+# HYDRA-UMC-DASHBOARD-AI - .github/workflows/browser-tests.yml
+# Copyright (C) 2026 JuanenRac (Electro Hobby 3D) <electrohobby3d@gmail.com>
+# GPL-3.0-or-later - see LICENSE
+#
+# Browser tests of the page (Playwright and axe-core, e2e/).
+#
+# A workflow of its own, apart from the baseline of the repository: the download of a browser can fail for reasons that have nothing to do with the code, and
+# that must not turn the main check red. The version of Chromium is the one of the exact version of @playwright/test pinned in e2e/package-lock.json, and the
+# download is kept in the cache of the runner under a key made from that lock file, so it is fetched again only when the pinned version changes.
+# The page is the real build served by scripts/serve_static.py; the two services behind it are faked by the tests. Nothing here needs a secret.
+#
+# Locally: see the section on browser tests in CONTRIBUTING.md.
+# =============================================================================
+
+name: Browser tests
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "index.html"
+      - "e2e/**"
+      - "scripts/serve_static.py"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
+      - ".github/workflows/browser-tests.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "index.html"
+      - "e2e/**"
+      - "scripts/serve_static.py"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
+      - ".github/workflows/browser-tests.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: browser-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    name: Playwright and axe-core
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # An LTS line, pinned: the newest Node release can be ahead of what the pinned Playwright supports.
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            e2e/package-lock.json
+
+      - name: Install the dependencies of the page
+        run: npm ci
+
+      # The Fleet card is off in a normal build; the tests need it for the eight languages, so this build switches it on.
+      - name: Build the page
+        env:
+          VITE_FLEET_ENABLED: "true"
+        run: npm run build
+
+      - name: Install the test dependencies
+        working-directory: e2e
+        run: npm ci
+
+      - name: Restore the pinned Chromium
+        id: browser-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('e2e/package-lock.json') }}
+
+      - name: Download Chromium (only when it is not in the cache)
+        if: steps.browser-cache.outputs.cache-hit != 'true'
+        working-directory: e2e
+        timeout-minutes: 10
+        run: npx playwright install --with-deps chromium
+
+      # The libraries of the system are not part of the cache.
+      - name: Install the system libraries of Chromium (browser already cached)
+        if: steps.browser-cache.outputs.cache-hit == 'true'
+        working-directory: e2e
+        run: npx playwright install-deps chromium
+
+      - name: Run the tests
+        working-directory: e2e
+        env:
+          CI: "true"
+        run: npx playwright test
+
+      - name: Keep the screenshots of the failed tests
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-failures
+          path: |
+            e2e/test-results/
+            e2e/playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7

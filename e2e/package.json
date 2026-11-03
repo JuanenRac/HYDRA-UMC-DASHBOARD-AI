@@ -1,0 +1,14 @@
+{
+  "name": "hydra-umc-dashboard-ai-browser-tests",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Browser tests of HYDRA-UMC-DASHBOARD-AI against fake services (Playwright with a pinned Chromium, axe-core).",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.64.1",
+    "playwright-core": "1.64.1"
+  }
+}
