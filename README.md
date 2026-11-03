@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-217%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-261%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.2.3-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **Honesty check - what actually runs today:** the trend-summary statistics (`lib/summary.ts`), the AI-provider gate and its honest statistical fallback (`lib/aiProvider.ts`), the external contract guard, the real HTTP clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`), and per-panel render-failure isolation (`components/ErrorBoundary.tsx` - a crash in one panel's render stays contained to that panel's own card instead of unmounting the whole app) are real and covered by 217 passing Vitest tests (`npm test` - `tests/*.test.ts(x)`); the CM5 static-file server (`scripts/serve_static.py`) has its own 11 passing `unittest` tests (no directory listing, hardening headers, an idle-connection timeout, no path traversal). There is no real LLM-backed AI provider anywhere in this repo - `aiProvider.ts`'s gate is real, but every narrative shown today is the `NO_PROVIDER_CONFIGURED` statistical fallback, clearly labeled as such. Trend Prediction (a real forecast model) and Optimization Tips are both fully aspirational - no code exists for either yet. Anomaly Highlighting only checks HYDRA-UMC-ANOMALY-DETECTOR's own already-fitted baseline; it never fits one itself. See `CHANGELOG.md` for exactly what has shipped so far.
+> **Honesty check - what actually runs today:** the trend-summary statistics (`lib/summary.ts`), the AI-provider gate and its honest statistical fallback (`lib/aiProvider.ts`), the external contract guard, the real HTTP clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`), and per-panel render-failure isolation (`components/ErrorBoundary.tsx` - a crash in one panel's render stays contained to that panel's own card instead of unmounting the whole app) are real and covered by 261 passing Vitest tests (`npm test` - `tests/*.test.ts(x)`); the CM5 static-file server (`scripts/serve_static.py`) has its own 11 passing `unittest` tests (no directory listing, hardening headers, an idle-connection timeout, no path traversal). There is no real LLM-backed AI provider anywhere in this repo - `aiProvider.ts`'s gate is real, but every narrative shown today is the `NO_PROVIDER_CONFIGURED` statistical fallback, clearly labeled as such. Trend Prediction (a real forecast model) and Optimization Tips are both fully aspirational - no code exists for either yet. Anomaly Highlighting only checks HYDRA-UMC-ANOMALY-DETECTOR's own already-fitted baseline; it never fits one itself. See `CHANGELOG.md` for exactly what has shipped so far.
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | Version | `0.2.3` |
 | Maturity | Functional |
-| Tests | 217 (`npm test`) |
+| Tests | 261 (`npm test`) |
 | Stack | TypeScript/React / Vite |
 | Target | The Raspberry Pi CM5 of a HYDRA-UMC cell |
 | On real hardware | Not applicable: nothing here runs on hardware |
@@ -55,7 +55,7 @@ Each line is one part of this repository and the light says how far it is today.
 | Area | State | What it means here |
 |---|---|---|
 | Software | 🟡 | Works for its main purpose; the honesty check above lists what is still missing |
-| Tests | 🟢 | 217 automated tests, run on every change |
+| Tests | 🟢 | 261 automated tests, run on every change |
 | Real hardware | 🟢 | Not applicable: nothing here runs on hardware |
 | Interface and protocols | 🟡 | The routes or messages it offers are documented and tested with a client; not every client has used them yet |
 | Integration | 🟡 | It runs together with the other services on the CM5 test bench and its messages follow the shared contracts of the SDK |
@@ -176,7 +176,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 Testing
 
-217 automated tests run with `npm test`. The static server has its own Python tests in `scripts/test_serve_static.py`. They need no hardware and no running service.
+261 automated tests run with `npm test`. The static server has its own Python tests in `scripts/test_serve_static.py`. They need no hardware and no running service.
 
 The CI runs `HYDRA_UMC_CI=1 python tools/ci_validate.py`, which checks the manifest, the documents, the eight READMEs and the pictures.
 
