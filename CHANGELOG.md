@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The build test of the repository compiles only on CI or when allowed:** for the stacks that compile (`rust`, `go`, `android`, `flutter`, `firmware-c`), `tools/build_test.py` prints `BUILD_TEST=SKIPPED` with exit status 2 on a plain PC, never a pass; `ALLOW_LOCAL_BUILD=1` allows it and a CI runner always may. The `python` and `node` stacks are not locked.
+
 ## [0.2.3] - Browser tests with Playwright and axe on the real build in eight languages, run by a separate workflow with a pinned and cached browser, and the list of files of the repository kept in step
 
 - **Browser tests with Playwright and axe-core (`e2e/`),** run on the real build served by `scripts/serve_static.py` against fake services: the page loads without a console or page error or a failed request, a trend summary is computed, a service that is down is reported, the Fleet card appears in the eight languages of the browser, the dark theme holds under both system preferences, axe finds no serious or critical violation in English and Japanese, and the form works from the keyboard. The Chromium is the one of the exact `@playwright/test` version pinned in `e2e/package-lock.json`.
