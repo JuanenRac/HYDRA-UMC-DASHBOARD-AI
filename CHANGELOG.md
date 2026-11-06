@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.2.4] - Dependencies updated: the npm dependencies of the application and of the end-to-end suite move to their latest compatible releases (React 19.3, Vite React plugin 6.1, jsdom 30, Testing Library, axe-core and the type... (and 1 more changes)
+
 - **Dependencies updated:** the npm dependencies of the application and of the end-to-end suite move to their latest compatible releases (React 19.3, Vite React plugin 6.1, jsdom 30, Testing Library, axe-core and the type definitions); TypeScript stays on its current line.
 
 - **The build test of the repository compiles only on CI or when allowed:** for the stacks that compile (`rust`, `go`, `android`, `flutter`, `firmware-c`), `tools/build_test.py` prints `BUILD_TEST=SKIPPED` with exit status 2 on a plain PC, never a pass; `ALLOW_LOCAL_BUILD=1` allows it and a CI runner always may. The `python` and `node` stacks are not locked.
