@@ -86,6 +86,8 @@ GPL-3.0-or-later - see LICENSE
 
 **HYDRA-UMC-DASHBOARD-AI** 是 STUDIO 旁边的只读面板：它把 HYDRA-UMC-DATALAKE 中保存的真实历史整理成趋势摘要（最小值、最大值、平均值、最新值和方向，每项都链接到产生它的样本），并把最新样本与 HYDRA-UMC-ANOMALY-DETECTOR 的基线对比。它没有自己的语言模型：未配置 AI 提供方时显示统计文字并明确说明。
 
+> **平台：** 本 README 中的 CM5 指的是目前正在运行的试验台；HYDRA-UMC 的目标平台是 NVIDIA Jetson Orin NX 16 GB，这是尚未制造或测试的设计。
+
 ## 🏛️ 架构
 
 <p align="center">

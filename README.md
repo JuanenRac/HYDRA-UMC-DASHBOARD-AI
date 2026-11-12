@@ -86,6 +86,8 @@ It is meant to turn raw telemetry into actionable summaries of swarm performance
 
 **HYDRA-UMC-DASHBOARD-AI** is a read-only panel next to STUDIO: it turns the real history stored in HYDRA-UMC-DATALAKE into trend summaries (minimum, maximum, average, latest value and direction, each linked to the sample that produced it) and checks the newest samples against the baseline of HYDRA-UMC-ANOMALY-DETECTOR. It has no language model of its own: when no AI provider is configured it shows a statistical text and says so.
 
+> **Platform:** where this README says CM5, it means the pilot bench that runs today; the target platform of HYDRA-UMC is an NVIDIA Jetson Orin NX 16 GB, a design that has not been built or tested.
+
 ## 🏛️ Architecture
 
 <p align="center">

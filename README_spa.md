@@ -86,6 +86,8 @@ Está pensado para convertir la telemetría en bruto en resúmenes accionables d
 
 **HYDRA-UMC-DASHBOARD-AI** es un panel de solo lectura junto a STUDIO: convierte el historial real guardado en HYDRA-UMC-DATALAKE en resúmenes de tendencia (mínimo, máximo, media, último valor y dirección, cada uno enlazado a la muestra que lo produjo) y comprueba las muestras más recientes contra la línea base de HYDRA-UMC-ANOMALY-DETECTOR. No tiene modelo de lenguaje propio: si no hay proveedor de IA configurado muestra un texto estadístico y lo dice.
 
+> **Plataforma:** donde este README dice CM5, se refiere al banco piloto que funciona hoy; la plataforma objetivo de HYDRA-UMC es una NVIDIA Jetson Orin NX de 16 GB, un diseño que no se ha construido ni probado.
+
 ## 🏛️ Arquitectura
 
 <p align="center">

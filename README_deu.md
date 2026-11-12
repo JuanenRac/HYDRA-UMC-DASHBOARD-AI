@@ -86,6 +86,8 @@ Es soll rohe Telemetrie in umsetzbare Zusammenfassungen der Schwarmleistung und 
 
 **HYDRA-UMC-DASHBOARD-AI** ist ein schreibgeschütztes Panel neben STUDIO: Es macht aus dem echten Verlauf in HYDRA-UMC-DATALAKE Trendzusammenfassungen (Minimum, Maximum, Mittelwert, letzter Wert und Richtung, jeweils mit der Probe verknüpft, die ihn erzeugt hat) und prüft die neuesten Proben gegen die Basislinie von HYDRA-UMC-ANOMALY-DETECTOR. Es hat kein eigenes Sprachmodell: Ist kein KI-Anbieter eingerichtet, zeigt es einen statistischen Text und sagt das auch.
 
+> **Plattform:** Wo dieses README CM5 sagt, ist der Pilotprüfstand gemeint, der heute läuft; die Zielplattform von HYDRA-UMC ist ein NVIDIA Jetson Orin NX 16 GB, ein Entwurf, der weder gebaut noch getestet wurde.
+
 ## 🏛️ Architektur
 
 <p align="center">
