@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-261%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-272%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.2.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、149件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の11件の通過する `unittest` テスト（ディレクトリ一覧なし、堅牢化ヘッダー、アイドル接続のタイムアウト、パストラバーサルなし）がある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測(本物の予測モデル)と最適化のヒントはどちらも完全に構想段階であり、どちらのコードもまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
+> **誠実性チェック - 今日実際に動くもの:** トレンド要約統計（`lib/summary.ts`）、AI プロバイダーゲートとその誠実な統計フォールバック（`lib/aiProvider.ts`）、外部契約ガード、本物の HTTP クライアント（`api/datalakeClient.ts`、`api/anomalyClient.ts`）、およびパネル単位のレンダリング失敗の分離（`components/ErrorBoundary.tsx` - 1つのパネルのレンダリングでのクラッシュは、アプリ全体をアンマウントすることなく、そのパネル自身のカード内に封じ込められる）は本物であり、149件の通過する Vitest テストで検証されている（`npm test` - `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）。CM5 向けの静的ファイルサーバー（`scripts/serve_static.py`）には独自の11件の通過する `unittest` テスト（ディレクトリ一覧なし、堅牢化ヘッダー、アイドル接続のタイムアウト、パストラバーサルなし）がある。本リポジトリのどこにも本物の LLM ベースの AI プロバイダーは存在しない - `aiProvider.ts` のゲート自体は本物だが、今日表示されるすべてのナラティブは `NO_PROVIDER_CONFIGURED` の統計フォールバックであり、そのように明確にラベル付けされている。トレンド予測は95 %の範囲付きの短期的な直線近似（`lib/forecast.ts`）であり、機械のモデルではない。最適化のヒントは完全に構想段階であり、コードはまだ存在しない。異常ハイライト機能は HYDRA-UMC-ANOMALY-DETECTOR 自身の既に適合済みのベースラインを確認するだけであり、自らベースラインを適合させることは一切ない。これまでに実際に出荷された内容は `CHANGELOG.md` を参照。
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | バージョン | `0.2.4` |
 | 成熟度 | 機能する |
-| テスト | 261 (`npm test`) |
+| テスト | 272 (`npm test`) |
 | 技術 | TypeScript/React / Vite |
 | 対象 | HYDRA-UMC セルの Raspberry Pi CM5 |
 | 実機での確認 | 対象外：ここにあるものはハードウェア上では動きません |
@@ -55,7 +55,7 @@ GPL-3.0-or-later - see LICENSE
 | 領域 | 状態 | ここでの意味 |
 |---|---|---|
 | ソフトウェア | 🟡 | 主な目的では動作します。足りない点は上の正直さの確認に書かれています |
-| テスト | 🟢 | 自動テスト 261 件。変更のたびに実行されます |
+| テスト | 🟢 | 自動テスト 272 件。変更のたびに実行されます |
 | 実機 | 🟢 | 対象外：ここにあるものはハードウェア上では動きません |
 | インターフェースとプロトコル | 🟡 | 提供するルートやメッセージは文書化され、クライアントで試験済みです。すべてのクライアントがまだ使ったわけではありません |
 | 連携 | 🟡 | CM5 のテストベンチで他のサービスと一緒に動作し、メッセージは SDK の共通契約に従います |
@@ -75,7 +75,7 @@ GPL-3.0-or-later - see LICENSE
 * 🧠 **スマートサマリー（v0）** — HYDRA-UMC-DATALAKE の実際の履歴データから計算された、実際の最小値/最大値/平均値/最新値/傾向の統計。最小値/最大値/最新値はそれぞれ、それを生み出した実際の観測タイムスタンプにひも付けられている。*（実際の統計値として実装済み、AI 生成のサマリーはまだ——下記の「ビルドとリリース」を参照）*
 * 🔒 **AI プロバイダーゲート（v0）** — 将来の LLM ベースのナラティブに向けた実際の入力/出力スキーマ検証と、AI プロバイダーが設定されていない、またはプロバイダーが失敗/非構造化出力を返した場合に常に使われる、実際の、正直にラベル付けされた統計的フォールバック。*（今日実装済みでトレンドサマリーパネルに組み込まれています。実際の LLM ベースのプロバイダー自体は計画中です）*
 * 🛡️ **外部契約ガード（v0）** — パネルが計算または表示する前に、Datalake と異常サービスの各レスポンスを検証します。不正な数値・フラグ・過大な識別子・安全でない制御文字は拒否されます。*（実装済み。[`docs/SECURITY.md`](docs/SECURITY.md) を参照）*
-* 📈 **トレンド予測** — v0 の実際だが単純な方向インジケーターを超える、実際の予測モデル。*（計画中）*
+* 📈 **トレンド予測** — 系列の最小二乗直線から、照会した期間の4分の1だけ先を95 %の範囲付きで予測します。期間が短すぎる、またはデータが少なすぎる場合は予測を出しません。*（直線近似として実装済み。それ以上のモデルは計画中）*
 * 🚨 **異常ハイライト（v0）：** 最新の実際のサンプルを、HYDRA-UMC-ANOMALY-DETECTOR の実際に適合済みのベースラインと照合します。*（実際のテキストパネルとして実装済み。STUDIO 自身の 3D ビューへの重ね合わせは計画中）*
 * 🛠️ **最適化のヒント：** サイクルタイムやモーター寿命を改善するパラメーター変更を提案します。*（計画中）*
 * ⏳ **残存耐用期間（v0、既定でオフ）** — 異常スコアの傾向が限界に達するまでの日数を HYDRA-UMC-ANOMALY-DETECTOR に問い合わせるカード。範囲、明示的な状態（データ不足・上昇なし・限界到達）、小さなグラフ、設定可能な警告を備え、模擬のデータレイクと検出器でテスト済みです。*（実装済み。[`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md) を参照）* サーバーでこのオプションが閉じられている場合は、管理者だけに、カードがサーバーによって閉じられている旨の通知が表示されます。
@@ -176,7 +176,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 テスト
 
-`npm test` で自動テスト 261 件を実行します。 静的サーバーには `scripts/test_serve_static.py` に独自の Python テストがあります。ハードウェアも稼働中のサービスも不要です。
+`npm test` で自動テスト 272 件を実行します。 静的サーバーには `scripts/test_serve_static.py` に独自の Python テストがあります。ハードウェアも稼働中のサービスも不要です。
 
 CI は `HYDRA_UMC_CI=1 python tools/ci_validate.py` を実行し、マニフェスト、文書、8 つの README、図を検査します。
 

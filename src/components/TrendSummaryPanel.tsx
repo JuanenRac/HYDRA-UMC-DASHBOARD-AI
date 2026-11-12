@@ -12,6 +12,7 @@ import { useState } from 'react'
 import { queryDatalake, DatalakeApiError } from '../api/datalakeClient'
 import { Sparkline } from './Sparkline'
 import { summarize, SummaryError, type TrendSummary } from '../lib/summary'
+import { forecast as forecastSeries, type Forecast } from '../lib/forecast'
 import { NO_PROVIDER_CONFIGURED, safeGenerateNarrative, type AiProvider, type NarrativeResponse } from '../lib/aiProvider'
 import { at } from '../lib/aiTexts'
 import { browserLang, type Lang } from '../lib/i18n'
@@ -50,6 +51,8 @@ export function TrendSummaryPanel({ datalakeBaseUrl, provider = NO_PROVIDER_CONF
   const [summary, setSummary] = useState<TrendSummary | null>(null)
   const [series, setSeries] = useState<{ values: number[]; minIndex: number; maxIndex: number }>({ values: [], minIndex: -1, maxIndex: -1 })
   const [narrative, setNarrative] = useState<NarrativeResponse | null>(null)
+  // null before a query; { forecast: null } when the window has not enough steady data to forecast
+  const [outlook, setOutlook] = useState<{ forecast: Forecast | null } | null>(null)
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -62,6 +65,7 @@ export function TrendSummaryPanel({ datalakeBaseUrl, provider = NO_PROVIDER_CONF
     setSummary(null)
     setSeries({ values: [], minIndex: -1, maxIndex: -1 })
     setNarrative(null)
+    setOutlook(null)
 
     const end = Date.now()
     const start = end - minutesBack * 60_000
@@ -70,6 +74,8 @@ export function TrendSummaryPanel({ datalakeBaseUrl, provider = NO_PROVIDER_CONF
       const points = await queryDatalake(datalakeBaseUrl, { sourceId, kind, field, start, end })
       const computed = summarize(points)
       setSummary(computed)
+      // a quarter of the window ahead, never further: the forecast refuses to look past what the data covers
+      setOutlook({ forecast: forecastSeries(points, (minutesBack * 60_000) / 4) })
       const ordered = [...points].sort((a, b) => a.timestamp - b.timestamp)
       setSeries({
         values: ordered.map((p) => p.value),
@@ -180,6 +186,20 @@ export function TrendSummaryPanel({ datalakeBaseUrl, provider = NO_PROVIDER_CONF
             <dd>{DIRECTION_LABEL[summary.direction]}</dd>
           </div>
         </dl>
+      )}
+
+      {outlook && (
+        <p className="panel-narrative" data-testid="trend-forecast">
+          {outlook.forecast
+            ? at(language, 'forecastLine', {
+                minutes: Math.round(outlook.forecast.horizonMs / 60_000),
+                value: outlook.forecast.value.toFixed(2),
+                low: outlook.forecast.low.toFixed(2),
+                high: outlook.forecast.high.toFixed(2),
+                n: outlook.forecast.basedOn,
+              })
+            : at(language, 'forecastNone')}
+        </p>
       )}
 
       {narrative && (

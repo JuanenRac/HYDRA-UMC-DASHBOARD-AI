@@ -12,6 +12,7 @@ export const AI_KEYS = [
   'stateNormal', 'stateAnomalous', 'stateDrifted', 'stateSustained', 'stateNoData', 'proposalSent', 'driftLimit', 'proposeNote', 'skippedRows',
   'fleetErrOff', 'fleetErrAuth', 'fleetErrTimeout', 'fleetErrUnreachable', 'fleetErrHttp', 'fleetErrInvalid',
   'badgeAi', 'badgeFallback', 'reasonUnavailable', 'reasonUnverified',
+  'forecastLine', 'forecastNone',
 ] as const
 export type AiKey = (typeof AI_KEYS)[number]
 type Dict = Record<AiKey, string>
@@ -30,6 +31,8 @@ const en: Dict = {
   badgeAi: 'AI, numbers checked', badgeFallback: 'Statistical fallback',
   reasonUnavailable: 'The language model did not answer: this is the statistical sentence.',
   reasonUnverified: 'The language model wrote a number that is not in the summary: this is the statistical sentence.',
+  forecastLine: 'Forecast in {minutes} min: {value} (range {low} to {high}, from {n} samples).',
+  forecastNone: 'Not enough steady data in this window to forecast.',
 }
 
 const es: Dict = {
@@ -46,6 +49,8 @@ const es: Dict = {
   badgeAi: 'IA, números comprobados', badgeFallback: 'Alternativa estadística',
   reasonUnavailable: 'El modelo de lenguaje no respondió: esta es la frase estadística.',
   reasonUnverified: 'El modelo de lenguaje escribió un número que no está en el resumen: esta es la frase estadística.',
+  forecastLine: 'Previsión a {minutes} min: {value} (rango de {low} a {high}, con {n} muestras).',
+  forecastNone: 'No hay datos estables suficientes en esta ventana para prever.',
 }
 
 const de: Dict = {
@@ -62,6 +67,8 @@ const de: Dict = {
   badgeAi: 'KI, Zahlen geprüft', badgeFallback: 'Statistischer Ersatz',
   reasonUnavailable: 'Das Sprachmodell hat nicht geantwortet: Dies ist der statistische Satz.',
   reasonUnverified: 'Das Sprachmodell hat eine Zahl geschrieben, die nicht in der Zusammenfassung steht: Dies ist der statistische Satz.',
+  forecastLine: 'Prognose in {minutes} Min.: {value} (Bereich {low} bis {high}, aus {n} Messwerten).',
+  forecastNone: 'In diesem Fenster gibt es nicht genug stabile Daten für eine Prognose.',
 }
 
 const fr: Dict = {
@@ -78,6 +85,8 @@ const fr: Dict = {
   badgeAi: 'IA, chiffres vérifiés', badgeFallback: 'Repli statistique',
   reasonUnavailable: 'Le modèle de langage n’a pas répondu : voici la phrase statistique.',
   reasonUnverified: 'Le modèle de langage a écrit un nombre absent du résumé : voici la phrase statistique.',
+  forecastLine: 'Prévision dans {minutes} min : {value} (plage de {low} à {high}, d’après {n} échantillons).',
+  forecastNone: 'Pas assez de données stables dans cette fenêtre pour prévoir.',
 }
 
 const it: Dict = {
@@ -94,6 +103,8 @@ const it: Dict = {
   badgeAi: 'IA, numeri verificati', badgeFallback: 'Ripiego statistico',
   reasonUnavailable: 'Il modello linguistico non ha risposto: questa è la frase statistica.',
   reasonUnverified: 'Il modello linguistico ha scritto un numero che non è nel riepilogo: questa è la frase statistica.',
+  forecastLine: 'Previsione tra {minutes} min: {value} (intervallo da {low} a {high}, da {n} campioni).',
+  forecastNone: 'In questa finestra non ci sono dati stabili a sufficienza per prevedere.',
 }
 
 const ja: Dict = {
@@ -110,6 +121,8 @@ const ja: Dict = {
   badgeAi: 'AI・数値確認済み', badgeFallback: '統計による代替',
   reasonUnavailable: '言語モデルが応答しませんでした。統計による文を表示しています。',
   reasonUnverified: '言語モデルが要約にない数値を書きました。統計による文を表示しています。',
+  forecastLine: '{minutes}分後の予測：{value}（範囲 {low}～{high}、{n}件のサンプルから）。',
+  forecastNone: 'この期間には予測に足りる安定したデータがありません。',
 }
 
 const zh: Dict = {
@@ -126,6 +139,8 @@ const zh: Dict = {
   badgeAi: 'AI，数字已核对', badgeFallback: '统计替代',
   reasonUnavailable: '语言模型没有响应：显示的是统计句子。',
   reasonUnverified: '语言模型写出了摘要中没有的数字：显示的是统计句子。',
+  forecastLine: '{minutes} 分钟后的预测：{value}（范围 {low} 至 {high}，基于 {n} 个样本）。',
+  forecastNone: '此时间窗口内没有足够的稳定数据用于预测。',
 }
 
 const pt: Dict = {
@@ -142,6 +157,8 @@ const pt: Dict = {
   badgeAi: 'IA, números verificados', badgeFallback: 'Alternativa estatística',
   reasonUnavailable: 'O modelo de linguagem não respondeu: esta é a frase estatística.',
   reasonUnverified: 'O modelo de linguagem escreveu um número que não está no resumo: esta é a frase estatística.',
+  forecastLine: 'Previsão daqui a {minutes} min: {value} (intervalo de {low} a {high}, com {n} amostras).',
+  forecastNone: 'Não há dados estáveis suficientes nesta janela para prever.',
 }
 
 export const AI_TEXTS: Record<Lang, Dict> = { en, es, de, fr, it, ja, zh, pt }

@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-261%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-272%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.2.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **Comprobación de honestidad - qué funciona realmente hoy:** las estadísticas de resumen de tendencia (`lib/summary.ts`), la puerta de proveedor de IA y su fallback estadístico honesto (`lib/aiProvider.ts`), el guardián de contrato externo, los clientes HTTP reales (`api/datalakeClient.ts`, `api/anomalyClient.ts`), y el aislamiento de fallos de renderizado por panel (`components/ErrorBoundary.tsx` - un fallo en el renderizado de un panel queda contenido en la propia tarjeta de ese panel en vez de desmontar toda la app) son reales y están cubiertos por 261 tests de Vitest que pasan (`npm test` - `tests/*.test.ts(x)`); el servidor de archivos estáticos para la CM5 (`scripts/serve_static.py`) tiene sus propios 11 tests de `unittest` que pasan (sin listado de directorios, cabeceras de refuerzo, tiempo límite para conexiones inactivas, sin salto de ruta). No existe ningún proveedor de IA real basado en LLM en todo este repositorio - la puerta de `aiProvider.ts` es real, pero toda narrativa mostrada hoy es el fallback estadístico `NO_PROVIDER_CONFIGURED`, claramente etiquetado como tal. La Predicción de Tendencia (un modelo de pronóstico real) y los Consejos de Optimización son ambos completamente aspiracionales - todavía no existe código para ninguno de los dos. El Resaltado de Anomalías solo comprueba la línea base ya ajustada de HYDRA-UMC-ANOMALY-DETECTOR; nunca ajusta una por sí mismo. Ver `CHANGELOG.md` para lo que se ha entregado exactamente hasta ahora.
+> **Comprobación de honestidad - qué funciona realmente hoy:** las estadísticas de resumen de tendencia (`lib/summary.ts`), la puerta de proveedor de IA y su fallback estadístico honesto (`lib/aiProvider.ts`), el guardián de contrato externo, los clientes HTTP reales (`api/datalakeClient.ts`, `api/anomalyClient.ts`), y el aislamiento de fallos de renderizado por panel (`components/ErrorBoundary.tsx` - un fallo en el renderizado de un panel queda contenido en la propia tarjeta de ese panel en vez de desmontar toda la app) son reales y están cubiertos por 272 tests de Vitest que pasan (`npm test` - `tests/*.test.ts(x)`); el servidor de archivos estáticos para la CM5 (`scripts/serve_static.py`) tiene sus propios 11 tests de `unittest` que pasan (sin listado de directorios, cabeceras de refuerzo, tiempo límite para conexiones inactivas, sin salto de ruta). No existe ningún proveedor de IA real basado en LLM en todo este repositorio - la puerta de `aiProvider.ts` es real, pero toda narrativa mostrada hoy es el fallback estadístico `NO_PROVIDER_CONFIGURED`, claramente etiquetado como tal. La Predicción de Tendencia es un ajuste de recta a corto plazo con su rango del 95 % (`lib/forecast.ts`), no un modelo de la máquina; los Consejos de Optimización son completamente aspiracionales - todavía no existe código para ellos. El Resaltado de Anomalías solo comprueba la línea base ya ajustada de HYDRA-UMC-ANOMALY-DETECTOR; nunca ajusta una por sí mismo. Ver `CHANGELOG.md` para lo que se ha entregado exactamente hasta ahora.
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | Versión | `0.2.4` |
 | Madurez | Funcional |
-| Tests | 261 (`npm test`) |
+| Tests | 272 (`npm test`) |
 | Tecnología | TypeScript/React / Vite |
 | Destino | La Raspberry Pi CM5 de una celda HYDRA-UMC |
 | En hardware real | No aplica: nada de esto se ejecuta en hardware |
@@ -55,7 +55,7 @@ Cada línea es una parte de este repositorio y la luz dice hasta dónde llega ho
 | Área | Estado | Qué significa aquí |
 |---|---|---|
 | Software | 🟡 | Funciona para su propósito principal; la comprobación de honestidad de arriba lista lo que aún falta |
-| Pruebas | 🟢 | 261 pruebas automáticas, ejecutadas en cada cambio |
+| Pruebas | 🟢 | 272 pruebas automáticas, ejecutadas en cada cambio |
 | Hardware real | 🟢 | No aplica: nada de esto se ejecuta en hardware |
 | Interfaz y protocolos | 🟡 | Las rutas o los mensajes que ofrece están documentados y probados con un cliente; aún no los han usado todos los clientes |
 | Integración | 🟡 | Funciona junto con los demás servicios en el banco de pruebas de la CM5 y sus mensajes siguen los contratos compartidos del SDK |
@@ -75,7 +75,7 @@ Está pensado para convertir la telemetría en bruto en resúmenes accionables d
 * 🧠 **Resúmenes Inteligentes (v0)** — estadísticas reales de mínimo/máximo/promedio/último valor/tendencia calculadas a partir del historial real de HYDRA-UMC-DATALAKE, con el mínimo/máximo/último valor enlazados cada uno a la marca de tiempo real de la observación que lo produjo. *(implementado como estadísticas reales, todavía no un resumen generado por IA — ver COMPILACIÓN Y EJECUCIÓN abajo)*
 * 🔒 **Verja de Proveedor de IA (v0)** — validación real de esquema de entrada/salida para la futura narrativa basada en LLM, más un respaldo estadístico real y honestamente etiquetado usado siempre que no hay proveedor de IA configurado o uno falla/devuelve salida no estructurada. *(implementado y conectado al panel de Resumen de Tendencia hoy; un proveedor real basado en LLM está planeado)*
 * 🛡️ **Verja de Contrato Externo (v0)** — valida cada respuesta de Datalake y del servicio de anomalías antes de que un panel calcule o la muestre; rechaza números, flags, identificadores sobredimensionados y caracteres de control no seguros malformados. *(implementado; ver [`docs/SECURITY.md`](docs/SECURITY.md))*
-* 📈 **Predicción de Tendencias** — un modelo de predicción real, más allá del indicador de dirección real-pero-simple de v0. *(planeado)*
+* 📈 **Predicción de Tendencias** — una previsión a corto plazo con la recta de mínimos cuadrados de la serie, un cuarto de la ventana consultada hacia delante, con su rango del 95 %; no da previsión si la ventana es demasiado corta o escasa. *(implementada como ajuste de recta; un modelo más allá está planeado)*
 * 🚨 **Resaltado de Anomalías (v0)** — comprueba las muestras reales más recientes contra una línea base real ya ajustada de HYDRA-UMC-ANOMALY-DETECTOR. *(implementado como un panel de texto real; superponerlo en la vista 3D de STUDIO está planeado)*
 * 🛠️ **Consejos de Optimización** — sugiere cambios de parámetros para mejorar el tiempo de ciclo o la vida útil de los motores. *(planeado)*
 * ⏳ **Vida útil restante (v0, apagada por defecto)** — una tarjeta que pregunta a HYDRA-UMC-ANOMALY-DETECTOR los días hasta que la tendencia de las puntuaciones de anomalía alcance un límite, con un rango, estados explícitos (datos insuficientes, no sube, límite alcanzado), un gráfico pequeño y avisos configurables; probada con un data lake y un detector simulados. *(implementado; véase [`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md))* Si el servidor tiene la opción cerrada, un administrador (y nadie más) ve un aviso que dice que la tarjeta está cerrada por el servidor.
@@ -176,7 +176,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 Pruebas
 
-261 pruebas automáticas se ejecutan con `npm test`. El servidor estático tiene sus propias pruebas de Python en `scripts/test_serve_static.py`. No necesitan hardware ni ningún servicio en marcha.
+272 pruebas automáticas se ejecutan con `npm test`. El servidor estático tiene sus propias pruebas de Python en `scripts/test_serve_static.py`. No necesitan hardware ni ningún servicio en marcha.
 
 El CI ejecuta `HYDRA_UMC_CI=1 python tools/ci_validate.py`, que comprueba el manifiesto, los documentos, los ocho README y las imágenes.
 

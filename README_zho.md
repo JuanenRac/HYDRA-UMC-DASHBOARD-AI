@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-261%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-272%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.2.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 261 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测（真正的预测模型）和优化建议都完全是愿景性的——目前两者都还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
+> **诚实检查——今天真正可运行的部分：** 趋势摘要统计（`lib/summary.ts`）、AI 提供方门控及其诚实的统计回退（`lib/aiProvider.ts`）、外部契约守卫、真实的 HTTP 客户端（`api/datalakeClient.ts`、`api/anomalyClient.ts`），以及按面板隔离渲染失败（`components/ErrorBoundary.tsx`——某个面板渲染时的崩溃只会被限制在该面板自己的卡片内，而不会卸载整个应用）都是真实的，并由 272 个通过的 Vitest 测试覆盖（`npm test` —— `summary.test.ts`、`aiProvider.test.ts`、`anomalyClient.test.ts`、`datalakeClient.test.ts`、`TrendSummaryPanel.test.tsx`、`ErrorBoundary.test.tsx`）；面向 CM5 的静态文件服务器（`scripts/serve_static.py`）有自己的 11 个通过的 `unittest` 测试（不列目录、加固响应头、空闲连接超时、无路径穿越）。本仓库中没有任何真正基于 LLM 的 AI 提供方——`aiProvider.ts` 的门控是真实的，但今天展示的每一段叙述都只是 `NO_PROVIDER_CONFIGURED` 统计回退，并明确标注为这一点。趋势预测是带 95 % 范围的短期直线拟合（`lib/forecast.ts`），而不是机器的模型；优化建议完全是愿景性的——目前还没有任何代码。异常高亮功能只会检查 HYDRA-UMC-ANOMALY-DETECTOR 自身已经拟合好的基线；它本身从不进行拟合。目前具体已交付的内容见 `CHANGELOG.md`。
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | 版本 | `0.2.4` |
 | 成熟度 | 可用 |
-| 测试 | 261 (`npm test`) |
+| 测试 | 272 (`npm test`) |
 | 技术栈 | TypeScript/React / Vite |
 | 目标 | HYDRA-UMC 工作单元的 Raspberry Pi CM5 |
 | 真实硬件 | 不适用：这里的内容不在硬件上运行 |
@@ -55,7 +55,7 @@ GPL-3.0-or-later - see LICENSE
 | 领域 | 状态 | 在这里的含义 |
 |---|---|---|
 | 软件 | 🟡 | 主要用途可用；上面的诚实性检查列出了仍然缺少的内容 |
-| 测试 | 🟢 | 261 项自动测试，每次变更都会运行 |
+| 测试 | 🟢 | 272 项自动测试，每次变更都会运行 |
 | 真实硬件 | 🟢 | 不适用：这里的内容不在硬件上运行 |
 | 接口与协议 | 🟡 | 提供的路由或消息已有文档，并用客户端测试过；尚未被所有客户端使用 |
 | 集成 | 🟡 | 在 CM5 测试台上与其他服务一起运行，其消息遵循 SDK 的共享契约 |
@@ -75,7 +75,7 @@ GPL-3.0-or-later - see LICENSE
 * 🧠 **智能摘要（v0）** —— 根据 HYDRA-UMC-DATALAKE 的真实历史数据计算的真实最小值/最大值/平均值/最新值/趋势统计，其中最小值/最大值/最新值都各自关联到产生它的真实观测时间戳。*（已实现为真实统计数据，尚非 AI 生成的摘要——见下方"构建与发布"）*
 * 🔒 **AI 提供方关卡（v0）** —— 为未来基于 LLM 的叙述真实校验输入/输出模式，加上一个真实的、诚实标注的统计回退方案，在没有配置 AI 提供方，或提供方失败/返回非结构化输出时始终使用。*（今天已实现并接入了趋势摘要面板；真正基于 LLM 的提供方本身仍在计划中）*
 * 🛡️ **外部契约防护（v0）** —— 在面板计算或显示之前校验每个 Datalake 和异常服务响应；格式错误的数值、标志、过长标识符和不安全控制字符都会被拒绝。*（已实现；参见 [`docs/SECURITY.md`](docs/SECURITY.md)）*
-* 📈 **趋势预测** —— 一个真实的预测模型，超越 v0 中真实但简单的方向指示器。*（计划中）*
+* 📈 **趋势预测** —— 根据序列的最小二乘直线给出短期预测，向前推进所查询时间窗口的四分之一，并附 95 % 范围；时间窗口过短或数据过少时不给出预测。*（已按直线拟合实现；更进一步的模型在计划中）*
 * 🚨 **异常高亮（v0）：** 将最新的真实样本与 HYDRA-UMC-ANOMALY-DETECTOR 已拟合的真实基线进行对比检查。*（已实现为真实的文字面板；在 STUDIO 自身的 3D 视图中叠加显示尚在计划中）*
 * 🛠️ **优化建议：** 提出改进周期时间或电机寿命的参数变更建议。*（计划中）*
 * ⏳ **剩余使用寿命（v0，默认关闭）** — 一张向 HYDRA-UMC-ANOMALY-DETECTOR 询问异常分数趋势到达上限还需多少天的卡片，带范围、明确状态（数据不足、不上升、已到上限）、小图表和可配置的警告；已用模拟的数据湖和检测器测试。*（已实现；参见 [`docs/REMAINING_USEFUL_LIFE.md`](docs/REMAINING_USEFUL_LIFE.md)）* 服务器关闭该选项时，只有管理员会看到提示：该卡片已被服务器关闭。
@@ -176,7 +176,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 测试
 
-运行 `npm test` 会执行 261 个自动测试。 静态服务器在 `scripts/test_serve_static.py` 中有自己的 Python 测试。不需要硬件，也不需要正在运行的服务。
+运行 `npm test` 会执行 272 个自动测试。 静态服务器在 `scripts/test_serve_static.py` 中有自己的 Python 测试。不需要硬件，也不需要正在运行的服务。
 
 CI 运行 `HYDRA_UMC_CI=1 python tools/ci_validate.py`，检查清单、文档、八个 README 和图片。
 

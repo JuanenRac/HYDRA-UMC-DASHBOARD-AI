@@ -78,6 +78,34 @@ describe('TrendSummaryPanel', () => {
     expect(screen.getByTestId('trend-narrative')).toHaveTextContent('robot-1/motor_temp/value')
   })
 
+  it('says there is not enough data to forecast when the window is short', async () => {
+    const baseUrl = await listen((_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify([
+        { sourceId: 'robot-1', kind: 'motor_temp', field: 'value', timestamp: 0, value: 10 },
+        { sourceId: 'robot-1', kind: 'motor_temp', field: 'value', timestamp: 1000, value: 12 },
+      ]))
+    })
+    render(<TrendSummaryPanel datalakeBaseUrl={baseUrl} lang="en" />)
+    await userEvent.setup().click(screen.getByRole('button', { name: /fetch summary/i }))
+    await waitFor(() => expect(screen.getByTestId('trend-forecast')).toHaveTextContent('Not enough steady data in this window to forecast.'))
+  })
+
+  it('shows the forecast and its range a quarter of the window ahead, in the language asked for', async () => {
+    const baseUrl = await listen((_req, res) => {
+      const points = [10, 12, 14, 16, 18, 20].map((value, i) => ({ sourceId: 'robot-1', kind: 'motor_temp', field: 'value', timestamp: i * 60_000, value }))
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(points))
+    })
+    render(<TrendSummaryPanel datalakeBaseUrl={baseUrl} lang="es" />)
+    const user = userEvent.setup()
+    const minutes = screen.getByLabelText(/minutes back/i)
+    await user.clear(minutes)
+    await user.type(minutes, '20') // a quarter of 20 minutes is 5, which the five minutes of data cover
+    await user.click(screen.getByRole('button', { name: /fetch summary/i }))
+    await waitFor(() => expect(screen.getByTestId('trend-forecast')).toHaveTextContent('Previsión a 5 min: 30.00 (rango de 30.00 a 30.00, con 6 muestras).'))
+  })
+
   it('shows a real error message when the server is unreachable', async () => {
     render(<TrendSummaryPanel datalakeBaseUrl="http://127.0.0.1:1" />)
 
