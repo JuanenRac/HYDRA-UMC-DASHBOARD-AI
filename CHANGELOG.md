@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Dependabot no longer proposes a major TypeScript bump inside the npm group:** `typescript-eslint` declares a peer range for TypeScript below 6.1, so a TypeScript 7 bump made `npm install` stop with ERESOLVE for the whole group of npm updates (one pull request per ecosystem, as before). `.github/dependabot.yml` now ignores major updates of `typescript` until `typescript-eslint` accepts it; minor and patch updates of everything else still arrive together in the one grouped pull request.
+
 - **A simulation bench for the forecast, the small chart and the verifier of narratives:** `tests/simulationBench.test.ts` runs the real forecast, the real geometry of the small chart and the real verifier of the numbers of a narrative on the history of a simulated plant made by a generator with a fixed seed (a drift, noise, a gap, readings that are not numbers) and on summaries drawn from a plant, and states what must hold whatever the history is: the slope of the forecast is the drift and its range holds the true value more than nine times in ten, the points of the chart stay in the box, and a narrative that quotes a figure that is not in the summary is refused and the figure is named. The workflow "Simulation bench" runs it on every change and `docs/SIMULATION.md` describes it.
 
 - **README: the platform statement:** a note says that where the README speaks of the CM5 it means the pilot bench that runs today, and that the target platform of HYDRA-UMC, an NVIDIA Jetson Orin NX 16 GB, is a design that has not been built or tested.
