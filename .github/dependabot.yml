@@ -16,6 +16,11 @@ updates:
       npm_updates:
         patterns:
           - "*"
+    # typescript-eslint declares a peer range for TypeScript (below 6.1), so a major
+    # TypeScript bump in the group makes npm stop with ERESOLVE for the whole group.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
