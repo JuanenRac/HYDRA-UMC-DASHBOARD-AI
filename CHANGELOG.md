@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **Simulation of the services that go wrong and come back:** the simulation bench now also runs the clients of the data lake, the anomaly detector and the fleet view against a real local HTTP server that cuts the connection, answers an error, text that is not JSON, a wrong shape, a forbidden status or nothing at all, in an order drawn from a fixed seed, and the gate of the language model against a model that throws, answers nothing, an empty or unsafe text, a label nobody has or a figure that is not in the summary. Every failure comes out as the error of its client with its reason, the call after the service is back works, and the reader always gets a sentence. The evidence level is `simulator`; the run against the real services of the CM5 stays pending.
+
 
 ## [0.2.5]
 

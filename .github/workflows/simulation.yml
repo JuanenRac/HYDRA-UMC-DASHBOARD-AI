@@ -4,7 +4,8 @@
 # GPL-3.0-or-later - see LICENSE
 #
 # Runs the forecast, the geometry of the small chart and the verifier of the numbers of a narrative against the history of a simulated plant (a generator with a
-# fixed seed). See docs/SIMULATION.md.
+# fixed seed), and the clients of the data lake, the detector and the fleet view and the gate of the language model against services that go wrong and come back.
+# See docs/SIMULATION.md.
 # =============================================================================
 name: Simulation bench
 
@@ -34,4 +35,4 @@ jobs:
       - name: Install the dependencies
         run: npm ci --ignore-scripts
       - name: Run the simulation bench
-        run: npx vitest run tests/simulationBench.test.ts
+        run: npx vitest run tests/simulationBench.test.ts tests/simulationServices.test.ts
