@@ -50,7 +50,7 @@ const FLEET = {
 }
 
 function json(res: ServerResponse, status: number, body: unknown): void {
-  res.writeHead(status, { 'Content-Type': 'application/json' })
+  res.writeHead(status, { 'Content-Type': 'application/json', Connection: 'close' })
   res.end(JSON.stringify(body))
 }
 
@@ -63,7 +63,7 @@ function handler(req: IncomingMessage, res: ServerResponse): void {
   if (mode === 'forbidden') return json(res, 403, { error: 'no' })
   if (mode === 'off') return json(res, 404, { error: 'off' })
   if (mode === 'badjson') {
-    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.writeHead(200, { 'Content-Type': 'application/json', Connection: 'close' })
     return void res.end('{"series": [')
   }
   if (path === '/query') {
