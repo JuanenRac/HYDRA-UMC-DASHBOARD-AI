@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+
+## [0.2.5]
+
 - **The SDK pin and the shared tools are up to date:** the SDK dependency names the newest release tag, and the shared tools are the canonical copies again.
 - **Dependabot no longer proposes a major TypeScript bump inside the npm group:** `typescript-eslint` declares a peer range for TypeScript below 6.1, so a TypeScript 7 bump made `npm install` stop with ERESOLVE for the whole group of npm updates (one pull request per ecosystem, as before). `.github/dependabot.yml` now ignores major updates of `typescript` until `typescript-eslint` accepts it; minor and patch updates of everything else still arrive together in the one grouped pull request.
 
@@ -11,6 +14,8 @@ All notable changes to this project are documented here.
 
 - **README: the platform statement:** a note says that where the README speaks of the CM5 it means the pilot bench that runs today, and that the target platform of HYDRA-UMC, an NVIDIA Jetson Orin NX 16 GB, is a design that has not been built or tested.
 - **The trend summary shows a short-term forecast with its range:** `lib/forecast.ts` fits the least-squares line of the queried series and continues it a quarter of the window ahead (never further than the data reaches back), with the range of a 95 % prediction interval widened for few samples. A window with fewer than five points, no spread in time or a horizon beyond the data gives no forecast, and the panel says so instead of showing a number; points that are not numbers are left out. The line of the panel is in the eight languages. It is a line fit over the points of the data lake, not a model of the machine. 11 tests.
+
+- Build version synchronized with `hydra-umc.project.json` and the repository-native version source.
 
 ## [0.2.4] - Dependencies updated: the npm dependencies of the application and of the end-to-end suite move to their latest compatible releases (React 19.3, Vite React plugin 6.1, jsdom 30, Testing Library, axe-core and the type... (and 1 more changes)
 
