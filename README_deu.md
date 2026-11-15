@@ -18,14 +18,14 @@ GPL-3.0-or-later - see LICENSE
   <img src="https://img.shields.io/badge/License-GPL%203.0--or--later-blue.svg" alt="GPL 3.0 or later">
   <img src="https://img.shields.io/badge/Stack-React%20%2F%20Vite%20%2F%20TypeScript-61DAFB.svg" alt="Stack">
   <img src="https://img.shields.io/badge/Feature-AI%20Insights-blueviolet.svg" alt="Feature">
-  <img src="https://img.shields.io/badge/Tests-272%20passing-2ea44f.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-287%20passing-2ea44f.svg" alt="Tests">
   <img src="https://img.shields.io/badge/Version-0.2.4-0f6cbd.svg" alt="Version">
   <img src="https://img.shields.io/badge/Maturity-functional-0F6CBD.svg" alt="Maturity">
 </p>
 
 ---
 
-> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 272 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Die Trend-Vorhersage ist eine kurzfristige Geradenanpassung mit ihrem 95-%-Bereich (`lib/forecast.ts`), kein Modell der Maschine; Optimierungstipps sind vollständig aspirativ - dafür existiert bisher kein Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
+> **Ehrlichkeitscheck - was heute wirklich läuft:** die Trend-Zusammenfassungsstatistik (`lib/summary.ts`), das KI-Anbieter-Gate mit seinem ehrlichen statistischen Fallback (`lib/aiProvider.ts`), der externe Vertragswächter, die echten HTTP-Clients (`api/datalakeClient.ts`, `api/anomalyClient.ts`) und die Isolation von Render-Fehlern pro Panel (`components/ErrorBoundary.tsx` - ein Absturz beim Rendern eines Panels bleibt auf dessen eigene Karte begrenzt, statt die gesamte App zu demontieren) sind real und durch 287 bestehende Vitest-Tests abgedeckt (`npm test` - `tests/*.test.ts(x)`); der CM5-Static-File-Server (`scripts/serve_static.py`) hat seine eigenen 11 bestehenden `unittest`-Tests (keine Verzeichnislisten, Härtungs-Header, Zeitlimit für untätige Verbindungen, keine Pfadumgehung). Es gibt in diesem Repository nirgendwo einen echten LLM-gestützten KI-Anbieter - das Gate von `aiProvider.ts` ist real, aber jede heute gezeigte Erzählung ist der `NO_PROVIDER_CONFIGURED`-Statistik-Fallback, klar als solcher gekennzeichnet. Die Trend-Vorhersage ist eine kurzfristige Geradenanpassung mit ihrem 95-%-Bereich (`lib/forecast.ts`), kein Modell der Maschine; Optimierungstipps sind vollständig aspirativ - dafür existiert bisher kein Code. Die Anomalie-Hervorhebung prüft nur die bereits angepasste Baseline von HYDRA-UMC-ANOMALY-DETECTOR; sie passt selbst nie eine an. Siehe `CHANGELOG.md` für das, was bisher genau ausgeliefert wurde.
 
 ---
 
@@ -39,7 +39,7 @@ GPL-3.0-or-later - see LICENSE
 |---|---|
 | Version | `0.2.4` |
 | Reifegrad | Funktionsfähig |
-| Tests | 272 (`npm test`) |
+| Tests | 287 (`npm test`) |
 | Technik | TypeScript/React / Vite |
 | Ziel | Der Raspberry Pi CM5 einer HYDRA-UMC-Zelle |
 | Auf echter Hardware | Nicht zutreffend: nichts hiervon läuft auf Hardware |
@@ -55,7 +55,7 @@ Jede Zeile ist ein Teil dieses Repositorys, und die Ampel sagt, wie weit er heut
 | Bereich | Stand | Was das hier bedeutet |
 |---|---|---|
 | Software | 🟡 | Funktioniert für seinen Hauptzweck; die Ehrlichkeitsprüfung oben nennt, was noch fehlt |
-| Tests | 🟢 | 272 automatische Tests, bei jeder Änderung ausgeführt |
+| Tests | 🟢 | 287 automatische Tests, bei jeder Änderung ausgeführt |
 | Echte Hardware | ⚪ | Nicht zutreffend: nichts hiervon läuft auf Hardware |
 | Schnittstelle und Protokolle | 🟡 | Die angebotenen Routen oder Nachrichten sind dokumentiert und mit einem Client getestet; noch nicht jeder Client hat sie benutzt |
 | Integration | 🟡 | Es läuft zusammen mit den anderen Diensten auf dem CM5-Prüfstand, und seine Nachrichten folgen den gemeinsamen Verträgen des SDK |
@@ -178,7 +178,7 @@ python scripts/serve_static.py --port 8115  # serves dist/ and forwards /api/dat
 
 ## 🧪 Tests
 
-272 automatische Tests laufen mit `npm test`. Der statische Server hat eigene Python-Tests in `scripts/test_serve_static.py`. Sie brauchen weder Hardware noch einen laufenden Dienst.
+287 automatische Tests laufen mit `npm test`. Der statische Server hat eigene Python-Tests in `scripts/test_serve_static.py`. Sie brauchen weder Hardware noch einen laufenden Dienst.
 
 Die CI führt `HYDRA_UMC_CI=1 python tools/ci_validate.py` aus; das prüft das Manifest, die Dokumente, die acht READMEs und die Bilder.
 
