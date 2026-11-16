@@ -165,6 +165,7 @@ Catturate su un banco di prova con dati di esempio inventati e senza alcuna inst
 | `VITE_RUL_ENABLED` | `false` | `true` (esattamente) consente la scheda della vita utile residua, che compare inoltre solo finché il server in esecuzione ha l'opzione aperta (`GET /api/rul/config`); con qualsiasi altro valore non c'è né scheda né richiesta al rilevatore o al server |
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | il rilevatore che risponde a `POST /rul`, la serie di punteggi di anomalia letta dal data lake, il punteggio che conta come limite e quanti dei campioni più recenti (da 1 a 1000) vengono inviati |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | la scheda avvisa quando il giorno plausibile più vicino cade entro questi giorni e diventa critica entro il secondo numero (mai superiore al primo); il limite di tempo della richiesta in millisecondi |
+| `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | disattivato (nessun controllo dell'Host) | con essa, una chiamata inoltrata riceve risposta solo se l'intestazione `Host` è uno dei valori indicati (`host:porta`, come lo invia il browser); una pagina arrivata alla porta tramite DNS rebinding viene rifiutata. Indicare ogni nome con cui il browser apre la dashboard. |
 
 ## 🚀 Avvio rapido
 

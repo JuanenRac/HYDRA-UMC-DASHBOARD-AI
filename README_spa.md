@@ -165,6 +165,7 @@ Capturadas en un banco de pruebas con datos de ejemplo inventados y sin ninguna 
 | `VITE_RUL_ENABLED` | `false` | `true` (exactamente eso) permite la tarjeta de vida útil restante, que además solo aparece mientras el servidor en ejecución tenga la opción abierta (`GET /api/rul/config`); con cualquier otro valor no hay tarjeta ni petición al detector ni al servidor |
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | el detector que responde a `POST /rul`, la serie de puntuaciones de anomalía que se lee del data lake, la puntuación que cuenta como límite y cuántas de las muestras más recientes (1 a 1000) se envían |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | la tarjeta avisa cuando el día más temprano plausible cae dentro de esos días y pasa a crítico dentro del segundo número (nunca mayor que el primero); el límite de tiempo de la petición en milisegundos |
+| `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | desactivado (sin comprobación del Host) | con ella, una llamada reenviada solo se atiende si su cabecera `Host` es uno de los valores dados (`host:puerto`, como lo envía el navegador), de modo que se rechaza una página que llegó al puerto por reenlace de DNS; indique todos los nombres con los que el navegador abre el panel. |
 
 ## 🚀 Inicio rápido
 

@@ -165,6 +165,7 @@ flowchart LR
 | `VITE_RUL_ENABLED` | `false` | `true`（必须完全一致）允许“剩余使用寿命”卡片，且只有在运行中的服务器开启了该选项时才会显示（`GET /api/rul/config`）；其他任何值都不会有卡片，也不会向检测器或服务器发请求 |
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | 响应 `POST /rul` 的检测器、从数据湖读取的异常分数序列、被视为上限的分数，以及发送的最新样本数量（1 到 1000） |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | 最早的合理日期落在该天数内时发出警告，落在第二个数（不会大于第一个）内时变为严重；请求的超时时间（毫秒） |
+| `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | 关闭（不检查 Host） | 启用后，只有 `Host` 头属于所给值（浏览器发送的 `host:port`）时才会应答转发的调用，通过 DNS 重绑定访问该端口的页面会被拒绝；请列出浏览器打开仪表板所用的每个名称。 |
 
 ## 🚀 快速开始
 
