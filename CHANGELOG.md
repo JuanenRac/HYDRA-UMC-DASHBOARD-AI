@@ -4,6 +4,7 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **The README lists `--allowed-host` in its configuration table, in the eight languages.**
 - **The static server can refuse calls that do not come from its own page (`--allowed-host`):** with one or more `HOST:PORT` values, a proxied call whose `Host` is not one of them (a page that reached the port by DNS rebinding) or that carries another `Origin` is answered 403 before any service token is presented. Off by default, so nothing changes until it is set. A test covers it.
 
 - **Simulation of the services that go wrong and come back:** the simulation bench now also runs the clients of the data lake, the anomaly detector and the fleet view against a real local HTTP server that cuts the connection, answers an error, text that is not JSON, a wrong shape, a forbidden status or nothing at all, in an order drawn from a fixed seed, and the gate of the language model against a model that throws, answers nothing, an empty or unsafe text, a label nobody has or a figure that is not in the summary. Every failure comes out as the error of its client with its reason, the call after the service is back works, and the reader always gets a sentence. The evidence level is `simulator`; the run against the real services of the CM5 stays pending.

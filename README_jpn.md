@@ -165,6 +165,7 @@ flowchart LR
 | `VITE_RUL_ENABLED` | `false` | `true`（この文字列のみ）で残存耐用期間のカードを許可します。カードは、稼働中のサーバーがこのオプションを開いている間だけ表示されます（`GET /api/rul/config`）。それ以外ではカードも、検出器やサーバーへのリクエストもありません |
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | `POST /rul` に答える検出器、データレイクから読む異常スコアの系列、限界とみなすスコア、送る最新サンプルの数（1〜1000） |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | 最も早い妥当な日が日数以内になると警告し、2 番目の数（1 番目を超えない）以内で重大になります。リクエストの制限時間（ミリ秒） |
+| `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | オフ（Host の確認なし） | 指定すると、転送される呼び出しは `Host` ヘッダーが指定値（ブラウザーが送る `host:port`）のいずれかである場合にのみ応答され、DNS リバインディングでポートに到達したページは拒否されます。ブラウザーがダッシュボードを開くときに使うすべての名前を指定してください。 |
 
 ## 🚀 クイックスタート
 

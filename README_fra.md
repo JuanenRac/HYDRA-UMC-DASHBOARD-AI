@@ -165,6 +165,7 @@ Capturées sur un banc d'essai avec des données d'exemple fictives et sans inst
 | `VITE_RUL_ENABLED` | `false` | `true` (exactement) autorise la carte de durée de vie restante, qui n'apparaît en outre que si le serveur en cours d'exécution a l'option ouverte (`GET /api/rul/config`) ; avec toute autre valeur il n'y a ni carte ni requête au détecteur ou au serveur |
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | le détecteur qui répond à `POST /rul`, la série de scores d'anomalie lue dans le data lake, le score qui compte comme limite et combien des échantillons les plus récents (1 à 1000) sont envoyés |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | la carte avertit quand le jour plausible le plus proche tombe dans ce nombre de jours et devient critique dans le second nombre (jamais au-dessus du premier) ; le délai de la requête en millisecondes |
+| `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | désactivé (aucun contrôle du Host) | avec elle, un appel relayé n'est traité que si son en-tête `Host` est l'une des valeurs données (`hôte:port`, comme l'envoie le navigateur) ; une page qui a atteint le port par DNS rebinding est refusée. Indiquez chaque nom avec lequel le navigateur ouvre le tableau de bord. |
 
 ## 🚀 Démarrage rapide
 
