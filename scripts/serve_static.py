@@ -29,6 +29,7 @@ import argparse
 import functools
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -129,6 +130,21 @@ class QuietHandler(SimpleHTTPRequestHandler):
     proxy_tokens: dict[str, str] = {}
     # the Content-Security-Policy sent with every answer; None sends none. serve() sets it from --csp.
     csp_policy: str | None = build_csp()
+    # The Host values (host:port, as the browser sends them) the proxied calls answer to; empty checks nothing. serve() sets it from --allowed-host.
+    allowed_hosts: tuple[str, ...] = ()
+
+    def _origin_and_host_ok(self) -> bool:
+        """With --allowed-host: a call whose Host is not one of them (a page that reached this port by DNS rebinding) is refused, and so is a call
+        that carries an Origin which is not one of them either (a page of another site posting to this port)."""
+        if not self.allowed_hosts:
+            return True
+        allowed = {host.lower() for host in self.allowed_hosts}
+        if (self.headers.get("Host") or "").strip().lower() not in allowed:
+            return False
+        origin = (self.headers.get("Origin") or "").strip()
+        if origin and urllib.parse.urlsplit(origin).netloc.lower() not in allowed:
+            return False
+        return True
 
     def _proxy_target(self) -> str | None:
         for prefix, upstream in self.proxy_routes.items():
@@ -157,6 +173,9 @@ class QuietHandler(SimpleHTTPRequestHandler):
     def _forward(self, target: str, body: bytes | None) -> None:
         if not self._allowed_here():
             self.send_error(403, "This call is not forwarded")
+            return
+        if not self._origin_and_host_ok():
+            self.send_error(403, "This call does not come from the page of this server")
             return
         request = urllib.request.Request(target, data=body, method=self.command)
         content_type = self.headers.get("Content-Type")
@@ -232,6 +251,7 @@ def serve(
     upstream_tokens: dict[str, str] | None = None,
     allow_tokens_off_loopback: bool = False,
     cognitive: str = "http://127.0.0.1:8096",
+    allowed_hosts: tuple[str, ...] = (),
 ) -> None:
     if upstream_tokens and addr not in ("127.0.0.1", "::1", "localhost") and not allow_tokens_off_loopback:
         # This server would let anyone who can reach it read the data lake and score windows as if signed in.
@@ -251,6 +271,7 @@ def serve(
             "proxy_routes": {"/api/datalake": datalake, "/api/anomaly": anomaly, "/api/cognitive": cognitive},
             "proxy_tokens": dict(upstream_tokens or {}),
             "csp_policy": build_csp(csp or "default", connect_origins),
+            "allowed_hosts": tuple(allowed_hosts),
         },
     )
     handler = functools.partial(handler_class, directory=str(directory))
@@ -285,6 +306,9 @@ def main() -> int:
     parser.add_argument("--allow-tokens-off-loopback", action="store_true",
                          help="Allow the service tokens (HYDRA_UMC_DATALAKE_READ_TOKEN, HYDRA_UMC_ANOMALY_TOKEN, each also as ..._FILE) "
                               "to be presented by a server bound to an address other than loopback. Off by default.")
+    parser.add_argument("--allowed-host", action="append", default=[], metavar="HOST:PORT",
+                         help="A Host value the proxied calls (/api/...) answer to, as the browser sends it, for example 127.0.0.1:8115 (repeatable). "
+                              "With it, a call with another Host, or with an Origin that is not one of them, is refused. Off by default.")
     args = parser.parse_args()
 
     try:
@@ -292,7 +316,7 @@ def main() -> int:
     except ValueError as error:
         parser.error(str(error))
     serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly, args.csp, tuple(args.connect_src),
-          read_upstream_tokens(), args.allow_tokens_off_loopback, args.cognitive)
+          read_upstream_tokens(), args.allow_tokens_off_loopback, args.cognitive, tuple(args.allowed_host))
     return 0
 
 
