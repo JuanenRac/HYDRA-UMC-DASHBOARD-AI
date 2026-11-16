@@ -220,6 +220,75 @@ class ProxyTests(unittest.TestCase):
         self.upstream.server_close = lambda: None  # type: ignore[method-assign]
 
 
+class AllowedHostTests(unittest.TestCase):
+    """With allowed hosts, a proxied call must carry one of them as Host and, when it has an Origin, one of them as Origin."""
+
+    def setUp(self) -> None:
+        import functools
+        from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+        from serve_static import QuietHandler
+
+        seen: list[str] = []
+        self.seen = seen
+
+        class Upstream(BaseHTTPRequestHandler):
+            def log_message(self, format, *args):  # noqa: A002, ANN001, ANN002
+                pass
+
+            def do_GET(self) -> None:  # noqa: N802
+                seen.append(self.path)
+                self.send_response(200)
+                self.send_header("Content-Length", "2")
+                self.end_headers()
+                self.wfile.write(b"{}")
+
+        self.upstream = ThreadingHTTPServer(("127.0.0.1", 0), Upstream)
+        threading.Thread(target=self.upstream.serve_forever, daemon=True).start()
+        upstream_url = f"http://127.0.0.1:{self.upstream.server_address[1]}"
+        self._tmpdir = tempfile.TemporaryDirectory()
+        (Path(self._tmpdir.name) / "index.html").write_text("<html></html>", encoding="utf-8")
+        self.httpd = None
+        self._make = lambda hosts: self._start(functools, ThreadingHTTPServer, QuietHandler, upstream_url, hosts)
+
+    def _start(self, functools, server_class, handler_base, upstream_url, hosts):  # noqa: ANN001
+        handler_class = type("HostHandler", (handler_base,), {"proxy_routes": {"/api/datalake": upstream_url}, "allowed_hosts": tuple(hosts)})
+        self.httpd = server_class(("127.0.0.1", 0), functools.partial(handler_class, directory=self._tmpdir.name))
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+        self.port = self.httpd.server_address[1]
+
+    def tearDown(self) -> None:
+        for server in (self.httpd, self.upstream):
+            if server is not None:
+                server.shutdown()
+                server.server_close()
+        self._tmpdir.cleanup()
+
+    def _status(self, headers: dict[str, str]) -> int:
+        request = urllib.request.Request(f"http://127.0.0.1:{self.port}/api/datalake/stats", headers=headers)
+        try:
+            with urllib.request.urlopen(request) as response:
+                return response.status
+        except urllib.error.HTTPError as error:
+            return error.code
+
+    def test_without_allowed_hosts_nothing_is_checked(self) -> None:
+        self._make([])
+        self.assertEqual(self._status({"Host": "evil.example"}), 200)
+
+    def test_a_foreign_host_or_origin_is_refused_and_the_page_itself_is_served(self) -> None:
+        self._make(["127.0.0.1:8115"])
+        self.assertEqual(self._status({"Host": "evil.example:8115"}), 403, "a rebinding page arrives with its own Host")
+        self.assertEqual(self._status({"Host": "127.0.0.1:8115", "Origin": "http://evil.example"}), 403)
+        self.assertEqual(self._seen_count(), 0)
+        self.assertEqual(self._status({"Host": "127.0.0.1:8115"}), 200)
+        self.assertEqual(self._status({"Host": "127.0.0.1:8115", "Origin": "http://127.0.0.1:8115"}), 200)
+
+    def _seen_count(self) -> int:
+        return len(self.seen)
+
+
+
 class ContentSecurityPolicyTests(unittest.TestCase):
     def test_the_default_policy_allows_only_the_page_itself(self) -> None:
         from serve_static import build_csp
