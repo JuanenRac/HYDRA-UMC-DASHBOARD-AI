@@ -248,6 +248,28 @@ describe('the Fleet view', () => {
     expect(spy).toHaveBeenCalledTimes(2)
     vi.useRealTimers()
   })
+
+  it('does not ask the detector while the page is hidden and asks again when it is shown', async () => {
+    vi.useFakeTimers()
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => json(200, { series: [] }))
+    let hidden = false
+    const original = Object.getOwnPropertyDescriptor(Document.prototype, 'hidden')
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden })
+    const { unmount } = render(<FleetPanel anomalyBaseUrl="/api/anomaly" refreshMs={5000} lang="en" />)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(spy).toHaveBeenCalledTimes(1)
+    hidden = true
+    await vi.advanceTimersByTimeAsync(20_000)
+    expect(spy).toHaveBeenCalledTimes(1)
+    hidden = false
+    document.dispatchEvent(new Event('visibilitychange'))
+    await vi.advanceTimersByTimeAsync(0)
+    expect(spy).toHaveBeenCalledTimes(2)
+    unmount()
+    Reflect.deleteProperty(document, 'hidden')
+    if (original) Object.defineProperty(Document.prototype, 'hidden', original)
+    vi.useRealTimers()
+  })
 })
 
 // ------------------------------------------------------------------------------------------------------------ the page
