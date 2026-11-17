@@ -71,9 +71,17 @@ export function FleetPanel({ anomalyBaseUrl, refreshMs, lang }: Props) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- the card asks the detector once when it appears
     void load()
     if (refreshMs <= 0) return undefined
-    const timer = setInterval(() => void load(), refreshMs)
+    // a page nobody can see does not ask the detector (the card often sits in a frame that is not visible); it asks again as soon as it is shown
+    const timer = setInterval(() => {
+      if (!document.hidden) void load()
+    }, refreshMs)
+    const onVisible = () => {
+      if (!document.hidden) void load()
+    }
+    document.addEventListener('visibilitychange', onVisible)
     return () => {
       clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisible)
       latest.current += 1
     }
   }, [load, refreshMs])
