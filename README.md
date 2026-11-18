@@ -166,6 +166,7 @@ Captured on a test bench with made-up sample data and no real installation behin
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | the detector that answers `POST /rul`, the series of anomaly scores read from the data lake, the score that counts as the limit, and how many of the newest samples (1 to 1000) are sent |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | the card warns when the earliest plausible day is within this many days, and turns critical within the second number (never above the first); the request time limit in milliseconds |
 | `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | off (no Host check) | with it, a forwarded call is answered only when its `Host` header is one of the values given (`host:port`, as the browser sends it), so a page that reached the port through DNS rebinding is refused; give every name the browser uses to open the dashboard. |
+| `--log-proxy` (`scripts/serve_static.py`) | off | writes one line on stderr for every forwarded call: method, path without the query, status and milliseconds, never the token or the body |
 
 ## 🚀 Quick start
 

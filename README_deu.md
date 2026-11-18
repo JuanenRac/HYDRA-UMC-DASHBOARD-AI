@@ -166,6 +166,7 @@ Aufgenommen auf einem Prüfstand mit erfundenen Beispieldaten und ohne eine echt
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | der Detektor, der `POST /rul` beantwortet, die aus dem Data Lake gelesene Serie der Anomalie-Scores, der Score, der als Grenzwert gilt, und wie viele der neuesten Proben (1 bis 1000) gesendet werden |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | die Karte warnt, wenn der früheste plausible Tag innerhalb dieser Tage liegt, und wird kritisch innerhalb der zweiten Zahl (nie größer als die erste); das Zeitlimit der Anfrage in Millisekunden |
 | `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | aus (keine Host-Prüfung) | damit wird ein weitergeleiteter Aufruf nur beantwortet, wenn sein `Host`-Header einer der angegebenen Werte ist (`host:port`, wie der Browser ihn sendet); eine Seite, die den Port per DNS-Rebinding erreicht hat, wird abgewiesen. Geben Sie jeden Namen an, mit dem der Browser das Dashboard öffnet. |
+| `--log-proxy` (`scripts/serve_static.py`) | aus | schreibt für jeden weitergeleiteten Aufruf eine Zeile auf stderr: Methode, Pfad ohne Abfrage, Status und Millisekunden, nie das Token oder den Inhalt |
 
 ## 🚀 Schnellstart
 

@@ -203,6 +203,30 @@ class ProxyTests(unittest.TestCase):
             self.assertEqual(response.status, 200)
         self.assertEqual(self.seen[0], ("POST", "/detect", b'{"window":[1,2]}'))
 
+    def test_log_proxy_writes_one_line_per_forwarded_call_without_the_query(self) -> None:
+        import contextlib
+        import io
+
+        self.httpd.RequestHandlerClass.func.log_proxy = True
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with urllib.request.urlopen(f"{self.base}/api/datalake/query?sourceId=secret&limit=5") as response:
+                self.assertEqual(response.status, 200)
+        lines = [line for line in captured.getvalue().splitlines() if line.startswith("[dashboard-ai]")]
+        self.assertEqual(len(lines), 1)
+        self.assertIn("GET /api/datalake/query -> 200 ", lines[0])
+        self.assertNotIn("secret", lines[0])
+
+    def test_nothing_is_logged_by_default(self) -> None:
+        import contextlib
+        import io
+
+        captured = io.StringIO()
+        with contextlib.redirect_stderr(captured):
+            with urllib.request.urlopen(f"{self.base}/api/datalake/stats") as response:
+                self.assertEqual(response.status, 200)
+        self.assertEqual(captured.getvalue(), "")
+
     def test_post_elsewhere_is_refused_and_a_dead_upstream_is_a_502(self) -> None:
         request = urllib.request.Request(f"{self.base}/other", data=b"{}", method="POST")
         with self.assertRaises(urllib.error.HTTPError) as caught:

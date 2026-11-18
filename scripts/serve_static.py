@@ -28,6 +28,8 @@ from __future__ import annotations
 import argparse
 import functools
 import os
+import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -124,6 +126,15 @@ class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, format: str, *args: object) -> None:  # noqa: A002
         pass  # quiet by default, same reasoning as this ecosystem's other services
 
+    # When true, every forwarded call leaves one line on stderr (method, path without query, status, milliseconds); set per server by serve()
+    log_proxy: bool = False
+
+    def _log_proxy_call(self, started: float, status: int) -> None:
+        if self.log_proxy:
+            path = self.path.split("?", 1)[0]
+            elapsed_ms = int((time.monotonic() - started) * 1000)
+            print(f"[dashboard-ai] {self.command} {path} -> {status} {elapsed_ms} ms", file=sys.stderr, flush=True)
+
     # prefix -> upstream base URL; set per server by serve()
     proxy_routes: dict[str, str] = {}
     # prefix -> Bearer token presented on the calls of TOKEN_ALLOWED_CALLS; set per server by serve()
@@ -177,6 +188,7 @@ class QuietHandler(SimpleHTTPRequestHandler):
         if not self._origin_and_host_ok():
             self.send_error(403, "This call does not come from the page of this server")
             return
+        started = time.monotonic()
         request = urllib.request.Request(target, data=body, method=self.command)
         content_type = self.headers.get("Content-Type")
         if content_type:
@@ -190,11 +202,14 @@ class QuietHandler(SimpleHTTPRequestHandler):
         except urllib.error.HTTPError as err:
             status, payload, upstream_type = err.code, err.read(MAX_PROXY_BODY_BYTES + 1), err.headers.get("Content-Type")
         except (urllib.error.URLError, TimeoutError, OSError):
+            self._log_proxy_call(started, 502)
             self.send_error(502, "Upstream service unavailable")
             return
         if len(payload) > MAX_PROXY_BODY_BYTES:
+            self._log_proxy_call(started, 502)
             self.send_error(502, "Upstream response too large")
             return
+        self._log_proxy_call(started, status)
         self.send_response(status)
         self.send_header("Content-Type", upstream_type or "application/json")
         self.send_header("Content-Length", str(len(payload)))
@@ -252,6 +267,7 @@ def serve(
     allow_tokens_off_loopback: bool = False,
     cognitive: str = "http://127.0.0.1:8096",
     allowed_hosts: tuple[str, ...] = (),
+    log_proxy: bool = False,
 ) -> None:
     if upstream_tokens and addr not in ("127.0.0.1", "::1", "localhost") and not allow_tokens_off_loopback:
         # This server would let anyone who can reach it read the data lake and score windows as if signed in.
@@ -272,6 +288,7 @@ def serve(
             "proxy_tokens": dict(upstream_tokens or {}),
             "csp_policy": build_csp(csp or "default", connect_origins),
             "allowed_hosts": tuple(allowed_hosts),
+            "log_proxy": log_proxy,
         },
     )
     handler = functools.partial(handler_class, directory=str(directory))
@@ -309,6 +326,8 @@ def main() -> int:
     parser.add_argument("--allowed-host", action="append", default=[], metavar="HOST:PORT",
                          help="A Host value the proxied calls (/api/...) answer to, as the browser sends it, for example 127.0.0.1:8115 (repeatable). "
                               "With it, a call with another Host, or with an Origin that is not one of them, is refused. Off by default.")
+    parser.add_argument("--log-proxy", action="store_true",
+                         help="Write one line on stderr for every forwarded call (method, path without the query, status, milliseconds); never the token or the body. Off by default.")
     args = parser.parse_args()
 
     try:
@@ -316,7 +335,7 @@ def main() -> int:
     except ValueError as error:
         parser.error(str(error))
     serve(args.dir.resolve(), args.addr, args.port, args.datalake, args.anomaly, args.csp, tuple(args.connect_src),
-          read_upstream_tokens(), args.allow_tokens_off_loopback, args.cognitive, tuple(args.allowed_host))
+          read_upstream_tokens(), args.allow_tokens_off_loopback, args.cognitive, tuple(args.allowed_host), args.log_proxy)
     return 0
 
 
