@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **`--log-proxy` writes one line for every forwarded call:** method, path without the query, status and milliseconds, never the token or the body, so an empty panel can be told from a 502 of the upstream. Off by default.
+
 - **The fleet card does not ask the detector while the page is hidden:** the periodic refresh is skipped when the page is not visible (it often sits in a frame nobody sees) and the card refreshes as soon as the page is shown again.
 - **The README lists `--allowed-host` in its configuration table, in the eight languages.**
 - **The static server can refuse calls that do not come from its own page (`--allowed-host`):** with one or more `HOST:PORT` values, a proxied call whose `Host` is not one of them (a page that reached the port by DNS rebinding) or that carries another `Origin` is answered 403 before any service token is presented. Off by default, so nothing changes until it is set. A test covers it.

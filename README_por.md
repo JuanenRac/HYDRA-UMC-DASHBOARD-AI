@@ -166,6 +166,7 @@ Capturadas numa bancada de testes com dados de exemplo inventados e sem qualquer
 | `VITE_RUL_URL`, `VITE_RUL_SOURCE_ID`, `VITE_RUL_KIND`, `VITE_RUL_FIELD`, `VITE_RUL_LIMIT`, `VITE_RUL_POINTS` | the anomaly URL, `robot-1`, `anomaly_score`, `value`, `1`, `200` | o detetor que responde a `POST /rul`, a série de pontuações de anomalia lida do data lake, a pontuação que conta como limite e quantas das amostras mais recentes (1 a 1000) são enviadas |
 | `VITE_RUL_WARN_DAYS`, `VITE_RUL_CRITICAL_DAYS`, `VITE_RUL_TIMEOUT_MS` | `30`, `7`, `5000` | o cartão avisa quando o dia plausível mais próximo cai dentro destes dias e passa a crítico dentro do segundo número (nunca acima do primeiro); o limite de tempo do pedido em milissegundos |
 | `--allowed-host HOST:PORT` (`scripts/serve_static.py`, repeatable) | desligado (sem verificação do Host) | com ela, uma chamada reencaminhada só é respondida se o cabeçalho `Host` for um dos valores indicados (`host:porta`, como o navegador o envia), pelo que uma página que chegou à porta por DNS rebinding é recusada; indique todos os nomes com que o navegador abre o painel. |
+| `--log-proxy` (`scripts/serve_static.py`) | desligado | escreve uma linha no stderr por cada chamada reencaminhada: método, caminho sem a consulta, estado e milissegundos, nunca o token nem o corpo |
 
 ## 🚀 Início rápido
 
