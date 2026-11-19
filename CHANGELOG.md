@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+## [0.2.6]
+
 - **`--log-proxy` writes one line for every forwarded call:** method, path without the query, status and milliseconds, never the token or the body, so an empty panel can be told from a 502 of the upstream. Off by default.
 
 - **The fleet card does not ask the detector while the page is hidden:** the periodic refresh is skipped when the page is not visible (it often sits in a frame nobody sees) and the card refreshes as soon as the page is shown again.
@@ -12,6 +14,7 @@ All notable changes to this project are documented here.
 
 - **Simulation of the services that go wrong and come back:** the simulation bench now also runs the clients of the data lake, the anomaly detector and the fleet view against a real local HTTP server that cuts the connection, answers an error, text that is not JSON, a wrong shape, a forbidden status or nothing at all, in an order drawn from a fixed seed, and the gate of the language model against a model that throws, answers nothing, an empty or unsafe text, a label nobody has or a figure that is not in the summary. Every failure comes out as the error of its client with its reason, the call after the service is back works, and the reader always gets a sentence. The evidence level is `simulator`; the run against the real services of the CM5 stays pending.
 
+- Build version synchronized with `hydra-umc.project.json` and the repository-native version source.
 
 ## [0.2.5]
 
