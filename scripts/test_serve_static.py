@@ -495,6 +495,17 @@ class UpstreamTokenSettingsTests(unittest.TestCase):
         self.assertEqual(read_upstream_tokens({"HYDRA_UMC_DATALAKE_READ_TOKEN": "read-one", "HYDRA_UMC_DATALAKE_TOKEN": "write-one"}), {"/api/datalake": "read-one"})
         self.assertEqual(read_upstream_tokens({}), {})
 
+    def test_a_token_file_may_carry_a_byte_order_mark_but_no_other_encoding(self) -> None:
+        from serve_static import read_upstream_tokens
+
+        with tempfile.TemporaryDirectory() as folder:
+            token_file = Path(folder) / "detector.token"
+            token_file.write_bytes(bytes((0xEF, 0xBB, 0xBF)) + b"from-a-file-1234567890" + bytes((13, 10)))
+            self.assertEqual(read_upstream_tokens({"HYDRA_UMC_ANOMALY_TOKEN_FILE": str(token_file)}), {"/api/anomaly": "from-a-file-1234567890"})
+            token_file.write_bytes("from-a-file-1234567890".encode("utf-16"))
+            with self.assertRaises(SystemExit):
+                read_upstream_tokens({"HYDRA_UMC_ANOMALY_TOKEN_FILE": str(token_file)})
+
     def test_a_token_with_a_line_break_or_a_missing_file_is_refused(self) -> None:
         from serve_static import read_upstream_tokens
 

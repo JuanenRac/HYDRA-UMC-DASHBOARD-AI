@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+- **A token file saved with a byte order mark is read:** the static server could not send such a token in a header; the mark is dropped now and a file in another encoding stops the start with a message. Test added.
+
 ## [0.2.6]
 
 - **`--log-proxy` writes one line for every forwarded call:** method, path without the query, status and milliseconds, never the token or the body, so an empty panel can be told from a 502 of the upstream. Off by default.
