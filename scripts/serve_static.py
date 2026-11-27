@@ -72,8 +72,8 @@ def read_upstream_tokens(environ: dict[str, str] | None = None) -> dict[str, str
             path = (env.get(name + "_FILE") or "").strip()
             if not value and path:
                 try:
-                    value = Path(path).read_text(encoding="utf-8").splitlines()[0].strip()
-                except (OSError, IndexError) as error:
+                    value = Path(path).read_text(encoding="utf-8-sig").splitlines()[0].strip()
+                except (OSError, UnicodeDecodeError, IndexError) as error:
                     raise SystemExit(f"error: cannot read the token file {path} ({name}_FILE): {error}")
             if not value:
                 continue
